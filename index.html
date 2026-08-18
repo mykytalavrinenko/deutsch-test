@@ -77,7 +77,7 @@
     padding:28px 20px 64px;
   }
   header.top{
-    position:sticky; top:0; z-index:5;
+    position:sticky; top:53px; z-index:5;
     background:color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter:blur(8px);
     -webkit-backdrop-filter:blur(8px);
@@ -163,6 +163,148 @@
   main{max-width:680px;margin:0 auto;}
   .view{display:none;}
   .view.active{display:block;}
+  .gtab-view{display:none;}
+  .gtab-view.active{display:block;}
+
+  /* ---- App shell / navigation ---- */
+  .appbar{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; gap:10px;
+    padding:12px 20px;
+    background:color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .appbar .back-btn{
+    appearance:none; border:1px solid var(--border); background:var(--surface);
+    color:var(--ink); width:32px; height:32px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:16px; flex:0 0 auto; font-family:inherit;
+  }
+  .appbar .back-btn[hidden]{display:none;}
+  .appbar .app-title{font-size:15px; font-weight:700; letter-spacing:.2px;}
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  /* ---- Home ---- */
+  .home-wrap{max-width:680px;margin:0 auto;padding:20px 20px 64px;}
+  .home-lead{margin:0 0 22px;}
+  .home-lead h1{margin:0 0 6px;}
+  .home-lead p{margin:0;color:var(--ink-muted);font-size:13.5px;}
+  .home-grid{display:grid; gap:12px;}
+  .home-card{
+    display:flex; align-items:center; gap:14px;
+    text-align:left;
+    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:16px;
+    padding:16px 18px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    font-family:inherit;
+    width:100%;
+    transition:border-color .15s ease, transform .05s ease;
+  }
+  .home-card:hover{border-color:var(--accent);}
+  .home-card:active{transform:scale(.99);}
+  .home-card .badge-mono{
+    flex:0 0 auto;
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px; font-weight:700;
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    background:var(--accent-soft); color:var(--accent-ink);
+  }
+  .home-card .txt{flex:1;min-width:0;}
+  .home-card .txt .t{font-size:15.5px;font-weight:700;margin-bottom:2px;}
+  .home-card .txt .d{font-size:12.5px;color:var(--ink-muted);}
+  .home-card .chevron{color:var(--ink-muted);font-size:18px;flex:0 0 auto;}
+
+  /* ---- Grammatik ---- */
+  .rule-card{margin-bottom:14px;}
+  .rule-card h3{margin:0 0 4px;font-size:16px;}
+  .rule-card .when{font-size:12.5px;color:var(--ink-muted);margin-bottom:10px;}
+  .rule-card .formula{
+    background:var(--surface-2); border-radius:10px; padding:10px 12px;
+    font-size:13.5px; margin-bottom:10px;
+  }
+  .rule-card .formula b{color:var(--accent-ink);}
+  .rule-card .ex-line{font-size:13.5px;margin-bottom:6px;}
+  .rule-card .ex-line .de{margin-bottom:1px;}
+  .rule-card .ex-line .ru{color:var(--ink-muted);}
+  table.gram{width:100%;border-collapse:collapse;font-size:12.5px;margin:4px 0 16px;font-variant-numeric:tabular-nums;}
+  table.gram th,table.gram td{padding:7px 6px;border:1px solid var(--border);text-align:center;}
+  table.gram th{background:var(--surface-2);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--ink-muted);}
+  table.gram td:first-child, table.gram th:first-child{text-align:left;font-weight:600;background:var(--surface-2);}
+  .prep-list{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;}
+  .prep-chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;}
+
+  /* ---- List / vocab table (shared) ---- */
+  .search{
+    width:100%;
+    font-family:inherit;
+    font-size:14px;
+    padding:10px 13px;
+    border-radius:11px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    margin:12px 0 12px;
+  }
+  .search:focus{outline:none;border-color:var(--accent);}
+  .table-scroll{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface);
+  }
+  table.list{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  table.list th{
+    text-align:left;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--ink-muted);
+    padding:10px 10px;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    background:var(--surface);
+  }
+  table.list td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.list tr:last-child td{border-bottom:none;}
+  table.list td.inf{font-weight:600;}
+  table.list td.inf .sep-dot{color:var(--amber);font-weight:700;}
+  table.list td.ru{color:var(--ink-muted);}
+  table.list td.known{width:18px;text-align:center;}
+  .dot-known{color:var(--good);font-size:14px;}
+
+  /* ---- Redewendungen ---- */
+  .phrase-list{display:flex;flex-direction:column;gap:8px;}
+  .phrase-item{
+    border:1px solid var(--border);background:var(--surface);
+    border-radius:12px;padding:12px 14px;
+  }
+  .phrase-item .de{font-weight:600;font-size:14.5px;margin-bottom:2px;}
+  .phrase-item .ru{color:var(--accent-ink);font-size:13.5px;}
+  .phrase-item .note{color:var(--ink-muted);font-size:12px;margin-top:4px;font-style:italic;}
+
+  .empty{
+    text-align:center;
+    color:var(--ink-muted);
+    font-size:13.5px;
+    padding:30px 0;
+  }
 
   /* ---- Flashcards ---- */
   .deck-meta{
@@ -229,9 +371,6 @@
   }
   .badge.sep{background:var(--amber-soft);color:var(--amber);}
 
-  .inf-word{
-    font-size:15px;
-  }
   .card-front-center{
     flex:1;
     display:flex;
@@ -400,62 +539,6 @@
   .quiz-next{display:none;}
   .quiz-next.show{display:block;}
 
-  /* ---- List ---- */
-  .search{
-    width:100%;
-    font-family:inherit;
-    font-size:14px;
-    padding:10px 13px;
-    border-radius:11px;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--ink);
-    margin:12px 0 12px;
-  }
-  .search:focus{outline:none;border-color:var(--accent);}
-  .table-scroll{
-    overflow-x:auto;
-    border:1px solid var(--border);
-    border-radius:14px;
-    background:var(--surface);
-  }
-  table.list{
-    width:100%;
-    border-collapse:collapse;
-    font-size:13px;
-    min-width:560px;
-  }
-  table.list th{
-    text-align:left;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-    color:var(--ink-muted);
-    padding:10px 10px;
-    border-bottom:1px solid var(--border);
-    position:sticky;
-    top:0;
-    background:var(--surface);
-  }
-  table.list td{
-    padding:9px 10px;
-    border-bottom:1px solid var(--border);
-    vertical-align:top;
-  }
-  table.list tr:last-child td{border-bottom:none;}
-  table.list td.inf{font-weight:600;}
-  table.list td.inf .sep-dot{color:var(--amber);font-weight:700;}
-  table.list td.ru{color:var(--ink-muted);}
-  table.list td.known{width:18px;text-align:center;}
-  .dot-known{color:var(--good);font-size:14px;}
-
-  .empty{
-    text-align:center;
-    color:var(--ink-muted);
-    font-size:13.5px;
-    padding:30px 0;
-  }
-
   footer{
     text-align:center;
     font-size:11.5px;
@@ -473,117 +556,532 @@
   }
 </style>
 
-<header class="top">
-  <div class="inner">
-    <h1 class="serif">Deutsch A2 — Verben für die Konversation</h1>
-    <p class="sub">150 самых нужных глаголов A2–B1 для устной речи · <b id="knownCount">0</b>/150 отмечены как «знаю»</p>
-    <nav class="tabs" role="tablist">
-      <button class="active" data-view="cards">Karten</button>
-      <button data-view="drill">Konjugation</button>
-      <button data-view="quiz">Quiz</button>
-      <button data-view="list">Liste</button>
-    </nav>
-    <div class="chips" id="chips"></div>
+<div class="appbar">
+  <button class="back-btn" id="backBtn" hidden title="Zurück">←</button>
+  <div class="app-title serif" id="appTitle">Deutsch</div>
+</div>
+
+<!-- ================= HOME ================= -->
+<div class="screen active" id="screen-home">
+  <div class="home-wrap">
+    <div class="home-lead">
+      <h1 class="serif">Deutsch</h1>
+      <p>Выбери раздел, который сегодня учим</p>
+    </div>
+    <div class="home-grid">
+      <button class="home-card" data-target="screen-grammatik">
+        <div class="badge-mono">G</div>
+        <div class="txt">
+          <div class="t">Grammatik</div>
+          <div class="d">Правила: времена и падежи, с примерами</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card" data-target="screen-verben">
+        <div class="badge-mono">V</div>
+        <div class="txt">
+          <div class="t">Verben</div>
+          <div class="d">150 глаголов: карточки, спряжение, квиз</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card" data-target="screen-wortschatz">
+        <div class="badge-mono">W</div>
+        <div class="txt">
+          <div class="t">Wortschatz</div>
+          <div class="d">Лексика по темам: семья, еда, дом, работа…</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card" data-target="screen-redewendungen">
+        <div class="badge-mono">R</div>
+        <div class="txt">
+          <div class="t">Redewendungen</div>
+          <div class="d">Расхожие фразы и идиомы</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+    </div>
   </div>
-</header>
+</div>
 
-<main class="wrap" style="padding-top:0;">
-
-  <!-- CARDS -->
-  <section class="view active" id="view-cards">
-    <div class="deck-meta">
-      <span id="cardsPos">1 / 150</span>
-      <div class="progress-track"><div class="progress-fill" id="cardsProgress" style="width:0%"></div></div>
-      <span id="cardsKnown">0 знаю</span>
+<!-- ================= GRAMMATIK ================= -->
+<div class="screen" id="screen-grammatik">
+  <header class="top">
+    <div class="inner">
+      <h1 class="serif">Grammatik</h1>
+      <p class="sub">Времена и падежи — с формулами и примерами</p>
+      <nav class="tabs" role="tablist">
+        <button class="active" data-gtab="zeiten">Zeiten</button>
+        <button data-gtab="kasus">Kasus</button>
+      </nav>
     </div>
-    <div class="card-scene">
-      <div class="card" id="card">
-        <div class="face front">
-          <div class="badges" id="frontBadges"></div>
-          <div class="card-front-center">
-            <div class="big-inf serif" id="frontWord">—</div>
-          </div>
-          <div class="hint-tap">нажми на карточку, чтобы перевернуть</div>
+  </header>
+  <main class="wrap" style="padding-top:0;">
+
+    <section class="gtab-view active" id="gtab-zeiten">
+      <div class="panel rule-card">
+        <h3 class="serif">Präsens — настоящее время</h3>
+        <div class="when">Для действий сейчас, фактов, привычек, а иногда и для будущего (с указанием времени).</div>
+        <div class="formula">Основа глагола + окончание: <b>-e, -st, -t, -en, -t, -en</b><br>machen: ich mache, du machst, er macht, wir machen, ihr macht, sie machen</div>
+        <div class="ex-line"><div class="de">Ich arbeite in Berlin.</div><div class="ru">Я работаю в Берлине.</div></div>
+        <div class="ex-line"><div class="de">Morgen fliege ich nach Rom.</div><div class="ru">Завтра я лечу в Рим.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Perfekt — разговорное прошедшее</h3>
+        <div class="when">Самое частое прошедшее время в устной речи и переписке.</div>
+        <div class="formula"><b>haben/sein</b> (в Präsens) + <b>Partizip II</b> в конце предложения<br>sein — для глаголов движения и изменения состояния (gehen, kommen, fahren, aufwachen…), а также sein, bleiben, werden</div>
+        <div class="ex-line"><div class="de">Ich habe gestern gearbeitet.</div><div class="ru">Вчера я работал(а).</div></div>
+        <div class="ex-line"><div class="de">Wir sind ins Kino gegangen.</div><div class="ru">Мы сходили в кино.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Präteritum — книжное прошедшее</h3>
+        <div class="when">В письменной речи, рассказах, новостях. В разговоре — почти всегда для haben, sein и модальных глаголов.</div>
+        <div class="formula">Слабые глаголы: основа + <b>-te-</b> + окончание (machte, machtest…)<br>Сильные глаголы меняют корневую гласную (ging, sah, kam…)</div>
+        <div class="ex-line"><div class="de">Ich war müde.</div><div class="ru">Я был(а) уставшим(ей).</div></div>
+        <div class="ex-line"><div class="de">Er hatte keine Zeit.</div><div class="ru">У него не было времени.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Futur I — будущее время</h3>
+        <div class="when">Формально для будущего — в разговоре чаще используют Präsens со словом о времени. Также выражает предположение.</div>
+        <div class="formula"><b>werden</b> (в Präsens) + инфинитив в конце предложения</div>
+        <div class="ex-line"><div class="de">Ich werde morgen anrufen.</div><div class="ru">Я позвоню завтра.</div></div>
+        <div class="ex-line"><div class="de">Es wird bald regnen.</div><div class="ru">Скоро пойдёт дождь.</div></div>
+      </div>
+    </section>
+
+    <section class="gtab-view" id="gtab-kasus">
+      <div class="panel rule-card">
+        <h3 class="serif">Артикли по падежам</h3>
+        <table class="gram">
+          <tr><th></th><th>Nom.</th><th>Akk.</th><th>Dat.</th><th>Gen.</th></tr>
+          <tr><td>der (m)</td><td>der / ein</td><td>den / einen</td><td>dem / einem</td><td>des / eines</td></tr>
+          <tr><td>die (f)</td><td>die / eine</td><td>die / eine</td><td>der / einer</td><td>der / einer</td></tr>
+          <tr><td>das (n)</td><td>das / ein</td><td>das / ein</td><td>dem / einem</td><td>des / eines</td></tr>
+          <tr><td>die (Pl.)</td><td>die / –</td><td>die / –</td><td>den -n / –</td><td>der / –</td></tr>
+        </table>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Nominativ — именительный</h3>
+        <div class="when">Вопрос <b>Wer?/Was?</b> (кто?/что?) — подлежащее предложения.</div>
+        <div class="ex-line"><div class="de">Der Mann ist nett.</div><div class="ru">Мужчина приятный.</div></div>
+        <div class="ex-line"><div class="de">Die Tasche ist neu.</div><div class="ru">Сумка новая.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Akkusativ — винительный</h3>
+        <div class="when">Вопрос <b>Wen?/Was?</b> (кого?/что?) — прямое дополнение. Меняется только мужской род: der→den, ein→einen.</div>
+        <div class="prep-list">
+          <span class="prep-chip">für</span><span class="prep-chip">ohne</span><span class="prep-chip">gegen</span><span class="prep-chip">durch</span><span class="prep-chip">um</span>
         </div>
-        <div class="face back">
-          <div class="back-inf serif" id="backWord">—</div>
-          <div class="back-ru" id="backRu">—</div>
-          <div class="example">
-            <div class="de" id="backEx">—</div>
-            <div class="ru" id="backExRu">—</div>
+        <div class="ex-line"><div class="de">Ich sehe den Mann.</div><div class="ru">Я вижу мужчину.</div></div>
+        <div class="ex-line"><div class="de">Das Geschenk ist für dich.</div><div class="ru">Этот подарок для тебя.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Dativ — дательный</h3>
+        <div class="when">Вопрос <b>Wem?</b> (кому?) — косвенное дополнение.</div>
+        <div class="prep-list">
+          <span class="prep-chip">mit</span><span class="prep-chip">nach</span><span class="prep-chip">bei</span><span class="prep-chip">seit</span><span class="prep-chip">von</span><span class="prep-chip">zu</span><span class="prep-chip">aus</span><span class="prep-chip">gegenüber</span>
+        </div>
+        <div class="ex-line"><div class="de">Ich helfe dem Kind.</div><div class="ru">Я помогаю ребёнку.</div></div>
+        <div class="ex-line"><div class="de">Ich fahre mit dem Bus.</div><div class="ru">Я еду на автобусе.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Genitiv — родительный</h3>
+        <div class="when">Вопрос <b>Wessen?</b> (чей?) — принадлежность. В разговорной речи часто заменяется на «von + Dativ».</div>
+        <div class="prep-list">
+          <span class="prep-chip">während</span><span class="prep-chip">trotz</span><span class="prep-chip">wegen</span><span class="prep-chip">statt</span>
+        </div>
+        <div class="ex-line"><div class="de">Das ist das Auto meines Vaters.</div><div class="ru">Это машина моего отца.</div></div>
+        <div class="ex-line"><div class="de">Wegen des Wetters bleiben wir zu Hause.</div><div class="ru">Из-за погоды мы останемся дома.</div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= VERBEN ================= -->
+<div class="screen" id="screen-verben">
+  <header class="top">
+    <div class="inner">
+      <h1 class="serif">Verben</h1>
+      <p class="sub">150 самых нужных глаголов A2–B1 для устной речи · <b id="knownCount">0</b>/150 отмечены как «знаю»</p>
+      <nav class="tabs" role="tablist">
+        <button class="active" data-view="cards">Karten</button>
+        <button data-view="drill">Konjugation</button>
+        <button data-view="quiz">Quiz</button>
+        <button data-view="list">Liste</button>
+      </nav>
+      <div class="chips" id="chips"></div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:0;">
+
+    <!-- CARDS -->
+    <section class="view active" id="view-cards">
+      <div class="deck-meta">
+        <span id="cardsPos">1 / 150</span>
+        <div class="progress-track"><div class="progress-fill" id="cardsProgress" style="width:0%"></div></div>
+        <span id="cardsKnown">0 знаю</span>
+      </div>
+      <div class="card-scene">
+        <div class="card" id="card">
+          <div class="face front">
+            <div class="badges" id="frontBadges"></div>
+            <div class="card-front-center">
+              <div class="big-inf serif" id="frontWord">—</div>
+            </div>
+            <div class="hint-tap">нажми на карточку, чтобы перевернуть</div>
           </div>
-          <table class="conj" id="backConj"></table>
-          <div class="perf-line" id="backPerf"></div>
+          <div class="face back">
+            <div class="back-inf serif" id="backWord">—</div>
+            <div class="back-ru" id="backRu">—</div>
+            <div class="example">
+              <div class="de" id="backEx">—</div>
+              <div class="ru" id="backExRu">—</div>
+            </div>
+            <table class="conj" id="backConj"></table>
+            <div class="perf-line" id="backPerf"></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="deck-actions">
-      <button class="shuffle" id="btnShuffle" title="Neu mischen">🔀</button>
-      <button class="again" id="btnAgain">✗ Nochmal üben</button>
-      <button class="know" id="btnKnow">✓ Kann ich</button>
-    </div>
-  </section>
+      <div class="deck-actions">
+        <button class="shuffle" id="btnShuffle" title="Neu mischen">🔀</button>
+        <button class="again" id="btnAgain">✗ Nochmal üben</button>
+        <button class="know" id="btnKnow">✓ Kann ich</button>
+      </div>
+    </section>
 
-  <!-- DRILL -->
-  <section class="view" id="view-drill">
-    <div class="panel">
-      <div class="score-row">
-        <span>Konjugation üben — Präsens</span>
-        <span>Punkte: <b id="drillScore">0/0</b></span>
+    <!-- DRILL -->
+    <section class="view" id="view-drill">
+      <div class="panel">
+        <div class="score-row">
+          <span>Konjugation üben — Präsens</span>
+          <span>Punkte: <b id="drillScore">0/0</b></span>
+        </div>
+        <div class="prompt">
+          <div class="verb serif" id="drillVerb">—</div>
+          <div class="gloss" id="drillGloss">—</div>
+        </div>
+        <input class="answer" id="drillInput" placeholder="Form eingeben, z. B. „mache“" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <div class="feedback" id="drillFeedback"></div>
+        <div class="drill-actions">
+          <button id="drillCheck">Prüfen</button>
+          <button id="drillNext" style="display:none;">Weiter →</button>
+        </div>
       </div>
-      <div class="prompt">
-        <div class="verb serif" id="drillVerb">—</div>
-        <div class="gloss" id="drillGloss">—</div>
-      </div>
-      <input class="answer" id="drillInput" placeholder="Form eingeben, z. B. „mache“" autocomplete="off" autocapitalize="off" spellcheck="false" />
-      <div class="feedback" id="drillFeedback"></div>
-      <div class="drill-actions">
-        <button id="drillCheck">Prüfen</button>
-        <button id="drillNext" style="display:none;">Weiter →</button>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- QUIZ -->
-  <section class="view" id="view-quiz">
-    <div class="panel">
-      <div class="score-row">
-        <span>Übersetzung erraten</span>
-        <span>Punkte: <b id="quizScore">0/0</b></span>
+    <!-- QUIZ -->
+    <section class="view" id="view-quiz">
+      <div class="panel">
+        <div class="score-row">
+          <span>Übersetzung erraten</span>
+          <span>Punkte: <b id="quizScore">0/0</b></span>
+        </div>
+        <div class="quiz-verb">
+          <div class="verb serif" id="quizVerb">—</div>
+        </div>
+        <div class="options" id="quizOptions"></div>
+        <button class="quiz-next" id="quizNext">Weiter →</button>
       </div>
-      <div class="quiz-verb">
-        <div class="verb serif" id="quizVerb">—</div>
-      </div>
-      <div class="options" id="quizOptions"></div>
-      <button class="quiz-next" id="quizNext">Weiter →</button>
-    </div>
-  </section>
+    </section>
 
-  <!-- LIST -->
-  <section class="view" id="view-list">
-    <input class="search" id="listSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
+    <!-- LIST -->
+    <section class="view" id="view-list">
+      <input class="search" id="listSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
+      <div class="table-scroll">
+        <table class="list">
+          <thead>
+            <tr><th></th><th>Verb</th><th>Übersetzung</th><th>ich</th><th>du</th><th>er/sie/es</th><th>Perfekt</th></tr>
+          </thead>
+          <tbody id="listBody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="listEmpty" style="display:none;">Nichts gefunden.</div>
+    </section>
+
+    <footer>
+      <span id="footerNote">Fortschritt wird lokal in diesem Browser gespeichert.</span>
+      · <button id="resetProgress">Fortschritt zurücksetzen</button>
+    </footer>
+  </main>
+</div>
+
+<!-- ================= WORTSCHATZ ================= -->
+<div class="screen" id="screen-wortschatz">
+  <header class="top">
+    <div class="inner">
+      <h1 class="serif">Wortschatz</h1>
+      <p class="sub">Полезная лексика по темам A2–B1</p>
+      <div class="chips" id="lexChips"></div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:0;">
+    <input class="search" id="lexSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
     <div class="table-scroll">
       <table class="list">
-        <thead>
-          <tr><th></th><th>Verb</th><th>Übersetzung</th><th>ich</th><th>du</th><th>er/sie/es</th><th>Perfekt</th></tr>
-        </thead>
-        <tbody id="listBody"></tbody>
+        <thead><tr><th>Wort</th><th>Übersetzung</th></tr></thead>
+        <tbody id="lexBody"></tbody>
       </table>
     </div>
-    <div class="empty" id="listEmpty" style="display:none;">Nichts gefunden.</div>
-  </section>
+    <div class="empty" id="lexEmpty" style="display:none;">Nichts gefunden.</div>
+  </main>
+</div>
 
-  <footer>
-    <span id="footerNote">Fortschritt wird lokal in diesem Browser gespeichert.</span>
-    · <button id="resetProgress">Fortschritt zurücksetzen</button>
-  </footer>
-</main>
+<!-- ================= REDEWENDUNGEN ================= -->
+<div class="screen" id="screen-redewendungen">
+  <header class="top">
+    <div class="inner">
+      <h1 class="serif">Redewendungen</h1>
+      <p class="sub">Расхожие фразы и идиомы для разговора</p>
+      <div class="chips" id="phraseChips"></div>
+    </div>
+  </header>
+  <main class="wrap" style="padding-top:0;">
+    <input class="search" id="phraseSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
+    <div class="phrase-list" id="phraseList"></div>
+    <div class="empty" id="phraseEmpty" style="display:none;">Nichts gefunden.</div>
+  </main>
+</div>
 
 <script>
 (function(){
 "use strict";
 
-// inf, ru, cat(grund|modal|unreg|reg|trenn), sep(bool),
+/* ================= NAVIGATION ================= */
+const SCREEN_TITLES = {
+  "screen-home": "Deutsch",
+  "screen-grammatik": "Grammatik",
+  "screen-verben": "Verben",
+  "screen-wortschatz": "Wortschatz",
+  "screen-redewendungen": "Redewendungen",
+};
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active", s.id===id));
+  document.getElementById("backBtn").hidden = (id==="screen-home");
+  document.getElementById("appTitle").textContent = SCREEN_TITLES[id] || "Deutsch";
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".home-card").forEach(card=>{
+  card.addEventListener("click", ()=> showScreen(card.dataset.target));
+});
+document.getElementById("backBtn").addEventListener("click", ()=> showScreen("screen-home"));
+
+/* ================= GRAMMATIK sub-tabs ================= */
+document.querySelectorAll("#screen-grammatik nav.tabs button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("#screen-grammatik nav.tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll("#screen-grammatik .gtab-view").forEach(v=>v.classList.remove("active"));
+    document.getElementById("gtab-"+btn.dataset.gtab).classList.add("active");
+  });
+});
+
+/* ================= WORTSCHATZ data ================= */
+const LEX_TOPICS = [
+  {key:"familie", label:"Familie", words:[
+    {de:"die Mutter", ru:"мама"}, {de:"der Vater", ru:"папа"}, {de:"die Eltern", ru:"родители"},
+    {de:"das Kind", ru:"ребёнок"}, {de:"der Bruder", ru:"брат"}, {de:"die Schwester", ru:"сестра"},
+    {de:"die Geschwister", ru:"братья и сёстры"}, {de:"die Großmutter", ru:"бабушка"}, {de:"der Großvater", ru:"дедушка"},
+    {de:"die Tante", ru:"тётя"}, {de:"der Onkel", ru:"дядя"}, {de:"der Sohn", ru:"сын"},
+    {de:"die Tochter", ru:"дочь"}, {de:"der Ehemann", ru:"муж"}, {de:"die Ehefrau", ru:"жена"},
+  ]},
+  {key:"essen", label:"Essen & Trinken", words:[
+    {de:"das Brot", ru:"хлеб"}, {de:"die Butter", ru:"масло"}, {de:"der Käse", ru:"сыр"},
+    {de:"das Ei", ru:"яйцо"}, {de:"das Gemüse", ru:"овощи"}, {de:"das Obst", ru:"фрукты"},
+    {de:"das Fleisch", ru:"мясо"}, {de:"der Fisch", ru:"рыба"}, {de:"der Reis", ru:"рис"},
+    {de:"die Nudeln", ru:"макароны"}, {de:"das Wasser", ru:"вода"}, {de:"der Kaffee", ru:"кофе"},
+    {de:"der Tee", ru:"чай"}, {de:"der Saft", ru:"сок"}, {de:"das Frühstück", ru:"завтрак"},
+    {de:"das Mittagessen", ru:"обед"}, {de:"das Abendessen", ru:"ужин"},
+  ]},
+  {key:"wohnen", label:"Zuhause & Wohnen", words:[
+    {de:"die Wohnung", ru:"квартира"}, {de:"das Haus", ru:"дом"}, {de:"das Zimmer", ru:"комната"},
+    {de:"die Küche", ru:"кухня"}, {de:"das Badezimmer", ru:"ванная"}, {de:"das Schlafzimmer", ru:"спальня"},
+    {de:"das Wohnzimmer", ru:"гостиная"}, {de:"der Balkon", ru:"балкон"}, {de:"der Tisch", ru:"стол"},
+    {de:"der Stuhl", ru:"стул"}, {de:"das Bett", ru:"кровать"}, {de:"der Schrank", ru:"шкаф"},
+    {de:"das Fenster", ru:"окно"}, {de:"die Tür", ru:"дверь"}, {de:"die Miete", ru:"аренда"},
+  ]},
+  {key:"kleidung", label:"Kleidung", words:[
+    {de:"die Hose", ru:"брюки"}, {de:"das Hemd", ru:"рубашка"}, {de:"das T-Shirt", ru:"футболка"},
+    {de:"der Pullover", ru:"свитер"}, {de:"die Jacke", ru:"куртка"}, {de:"das Kleid", ru:"платье"},
+    {de:"der Rock", ru:"юбка"}, {de:"die Schuhe", ru:"обувь"}, {de:"die Socken", ru:"носки"},
+    {de:"die Mütze", ru:"шапка"}, {de:"der Schal", ru:"шарф"}, {de:"die Handschuhe", ru:"перчатки"},
+  ]},
+  {key:"koerper", label:"Körper & Gesundheit", words:[
+    {de:"der Kopf", ru:"голова"}, {de:"das Auge", ru:"глаз"}, {de:"die Nase", ru:"нос"},
+    {de:"der Mund", ru:"рот"}, {de:"das Ohr", ru:"ухо"}, {de:"der Arm", ru:"рука (от плеча)"},
+    {de:"die Hand", ru:"кисть руки"}, {de:"das Bein", ru:"нога"}, {de:"der Bauch", ru:"живот"},
+    {de:"der Rücken", ru:"спина"}, {de:"das Herz", ru:"сердце"}, {de:"die Erkältung", ru:"простуда"},
+    {de:"die Schmerzen", ru:"боль"}, {de:"der Arzt", ru:"врач"}, {de:"das Krankenhaus", ru:"больница"},
+    {de:"die Apotheke", ru:"аптека"},
+  ]},
+  {key:"arbeit", label:"Arbeit & Beruf", words:[
+    {de:"der Beruf", ru:"профессия"}, {de:"die Firma", ru:"фирма"}, {de:"das Büro", ru:"офис"},
+    {de:"der Kollege", ru:"коллега"}, {de:"der Chef", ru:"начальник"}, {de:"das Gehalt", ru:"зарплата"},
+    {de:"die Besprechung", ru:"совещание"}, {de:"die Bewerbung", ru:"заявление о приёме на работу"},
+    {de:"der Lebenslauf", ru:"резюме"}, {de:"der Urlaub", ru:"отпуск"}, {de:"die Kündigung", ru:"увольнение"},
+    {de:"der Termin", ru:"назначенная встреча"},
+  ]},
+  {key:"freizeit", label:"Freizeit & Hobbys", words:[
+    {de:"das Buch", ru:"книга"}, {de:"der Film", ru:"фильм"}, {de:"die Musik", ru:"музыка"},
+    {de:"das Spiel", ru:"игра"}, {de:"der Sport", ru:"спорт"}, {de:"das Fahrrad", ru:"велосипед"},
+    {de:"der Ausflug", ru:"прогулка, вылазка"}, {de:"die Party", ru:"вечеринка"}, {de:"das Konzert", ru:"концерт"},
+    {de:"das Museum", ru:"музей"}, {de:"der Garten", ru:"сад"}, {de:"das Hobby", ru:"хобби"},
+  ]},
+  {key:"reisen", label:"Reisen & Verkehr", words:[
+    {de:"der Zug", ru:"поезд"}, {de:"der Bus", ru:"автобус"}, {de:"das Flugzeug", ru:"самолёт"},
+    {de:"das Auto", ru:"машина"}, {de:"das Ticket", ru:"билет"}, {de:"der Bahnhof", ru:"вокзал"},
+    {de:"der Flughafen", ru:"аэропорт"}, {de:"das Gepäck", ru:"багаж"}, {de:"der Koffer", ru:"чемодан"},
+    {de:"die Fahrkarte", ru:"проездной билет"}, {de:"die Ankunft", ru:"прибытие"}, {de:"die Abfahrt", ru:"отправление"},
+    {de:"das Hotel", ru:"отель"},
+  ]},
+  {key:"wetter", label:"Wetter & Jahreszeiten", words:[
+    {de:"die Sonne", ru:"солнце"}, {de:"der Regen", ru:"дождь"}, {de:"der Schnee", ru:"снег"},
+    {de:"der Wind", ru:"ветер"}, {de:"die Wolke", ru:"облако"}, {de:"warm", ru:"тёплый"},
+    {de:"kalt", ru:"холодный"}, {de:"der Frühling", ru:"весна"}, {de:"der Sommer", ru:"лето"},
+    {de:"der Herbst", ru:"осень"}, {de:"der Winter", ru:"зима"},
+  ]},
+];
+
+let activeLex = "all";
+const lexChipsEl = document.getElementById("lexChips");
+function buildLexChips(){
+  const all = [{key:"all",label:"Alle"}].concat(LEX_TOPICS.map(t=>({key:t.key,label:t.label})));
+  all.forEach(c=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (c.key==="all" ? " active" : "");
+    b.textContent = c.label;
+    b.dataset.key = c.key;
+    b.addEventListener("click", ()=>{
+      activeLex = c.key;
+      [...lexChipsEl.children].forEach(x=>x.classList.toggle("active", x.dataset.key===c.key));
+      renderLex();
+    });
+    lexChipsEl.appendChild(b);
+  });
+}
+let lexQuery = "";
+document.getElementById("lexSearch").addEventListener("input", (e)=>{
+  lexQuery = e.target.value.trim().toLowerCase();
+  renderLex();
+});
+function lexWords(){
+  const topics = activeLex==="all" ? LEX_TOPICS : LEX_TOPICS.filter(t=>t.key===activeLex);
+  let words = topics.flatMap(t=>t.words);
+  if(lexQuery){
+    words = words.filter(w=> w.de.toLowerCase().includes(lexQuery) || w.ru.toLowerCase().includes(lexQuery));
+  }
+  return words;
+}
+function renderLex(){
+  const words = lexWords();
+  const body = document.getElementById("lexBody");
+  const empty = document.getElementById("lexEmpty");
+  if(words.length===0){ body.innerHTML=""; empty.style.display=""; return; }
+  empty.style.display = "none";
+  body.innerHTML = words.map(w=>`<tr><td class="inf">${w.de}</td><td class="ru">${w.ru}</td></tr>`).join("");
+}
+buildLexChips();
+renderLex();
+
+/* ================= REDEWENDUNGEN data ================= */
+const PHRASE_CATS = [
+  {key:"alltag", label:"Alltag & Höflichkeit"},
+  {key:"meinung", label:"Gefühle & Meinung"},
+  {key:"idiome", label:"Redewendungen"},
+];
+const PHRASES = [
+  {de:"Wie geht's?", ru:"Как дела?", cat:"alltag"},
+  {de:"Alles klar!", ru:"Всё понятно! / Всё ок!", cat:"alltag"},
+  {de:"Kein Problem.", ru:"Без проблем.", cat:"alltag"},
+  {de:"Macht nichts.", ru:"Ничего страшного.", cat:"alltag"},
+  {de:"Viel Glück!", ru:"Удачи!", cat:"alltag"},
+  {de:"Viel Spaß!", ru:"Хорошо провести время!", cat:"alltag"},
+  {de:"Gute Besserung!", ru:"Выздоравливай!", cat:"alltag"},
+  {de:"Herzlichen Glückwunsch!", ru:"Поздравляю!", cat:"alltag"},
+  {de:"Herzlich willkommen!", ru:"Добро пожаловать!", cat:"alltag"},
+  {de:"Wie bitte?", ru:"Простите, что?", cat:"alltag"},
+
+  {de:"Schade!", ru:"Жаль!", cat:"meinung"},
+  {de:"Kein Wunder.", ru:"Неудивительно.", cat:"meinung"},
+  {de:"Auf jeden Fall.", ru:"В любом случае / Точно.", cat:"meinung"},
+  {de:"Auf keinen Fall.", ru:"Ни в коем случае.", cat:"meinung"},
+  {de:"Es tut mir leid.", ru:"Мне жаль / Извините.", cat:"meinung"},
+  {de:"Ich habe keine Ahnung.", ru:"Понятия не имею.", cat:"meinung"},
+  {de:"Das ist mir egal.", ru:"Мне всё равно.", cat:"meinung"},
+  {de:"Mach dir keine Sorgen.", ru:"Не переживай.", cat:"meinung"},
+  {de:"Ich bin mir nicht sicher.", ru:"Я не уверен(а).", cat:"meinung"},
+  {de:"Es kommt darauf an.", ru:"Это зависит (от обстоятельств).", cat:"meinung"},
+
+  {de:"Die Daumen drücken", ru:"держать кулачки, желать удачи", cat:"idiome", note:"дословно: «прижимать большие пальцы»"},
+  {de:"Unter vier Augen", ru:"с глазу на глаз, наедине", cat:"idiome", note:"дословно: «под четырьмя глазами»"},
+  {de:"Ich verstehe nur Bahnhof.", ru:"Я вообще ничего не понимаю.", cat:"idiome", note:"дословно: «я понимаю только вокзал»"},
+  {de:"Das ist nicht mein Bier.", ru:"Это не моё дело.", cat:"idiome", note:"дословно: «это не моё пиво»"},
+  {de:"Die Nase voll haben", ru:"быть сытым по горло", cat:"idiome", note:"дословно: «иметь полный нос»"},
+  {de:"Auf den Punkt kommen", ru:"переходить к сути", cat:"idiome"},
+  {de:"Zeit totschlagen", ru:"убивать время", cat:"idiome"},
+  {de:"Das ist mir Wurst.", ru:"Мне без разницы (разг.)", cat:"idiome", note:"дословно: «это мне колбаса»"},
+  {de:"Ins Blaue fahren", ru:"ехать неизвестно куда", cat:"idiome", note:"дословно: «ехать в синее»"},
+  {de:"Guten Rutsch (ins neue Jahr)!", ru:"С Новым годом!", cat:"idiome", note:"говорят перед Новым годом"},
+];
+
+let activePhrase = "all";
+const phraseChipsEl = document.getElementById("phraseChips");
+function buildPhraseChips(){
+  const all = [{key:"all",label:"Alle"}].concat(PHRASE_CATS);
+  all.forEach(c=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (c.key==="all" ? " active" : "");
+    b.textContent = c.label;
+    b.dataset.key = c.key;
+    b.addEventListener("click", ()=>{
+      activePhrase = c.key;
+      [...phraseChipsEl.children].forEach(x=>x.classList.toggle("active", x.dataset.key===c.key));
+      renderPhrases();
+    });
+    phraseChipsEl.appendChild(b);
+  });
+}
+let phraseQuery = "";
+document.getElementById("phraseSearch").addEventListener("input", (e)=>{
+  phraseQuery = e.target.value.trim().toLowerCase();
+  renderPhrases();
+});
+function phraseItems(){
+  let items = activePhrase==="all" ? PHRASES : PHRASES.filter(p=>p.cat===activePhrase);
+  if(phraseQuery){
+    items = items.filter(p=> p.de.toLowerCase().includes(phraseQuery) || p.ru.toLowerCase().includes(phraseQuery));
+  }
+  return items;
+}
+function renderPhrases(){
+  const items = phraseItems();
+  const list = document.getElementById("phraseList");
+  const empty = document.getElementById("phraseEmpty");
+  if(items.length===0){ list.innerHTML=""; empty.style.display=""; return; }
+  empty.style.display = "none";
+  list.innerHTML = items.map(p=>`
+    <div class="phrase-item">
+      <div class="de">${p.de}</div>
+      <div class="ru">${p.ru}</div>
+      ${p.note ? `<div class="note">${p.note}</div>` : ""}
+    </div>
+  `).join("");
+}
+buildPhraseChips();
+renderPhrases();
+
+/* ================= VERBEN (module) ================= */
+
+// inf, ru, cat(grund|modal|unreg|reg|trenn|refl), sep(bool),
 // ich,du,er,wir,ihr,sie — Präsens; perf: [Hilfsverb, Partizip] or null
 const VERBS = [
   {inf:"sein", ru:"быть", cat:"grund", sep:false,
@@ -1127,12 +1625,12 @@ CATS.forEach(c=>{
   chipsEl.appendChild(b);
 });
 
-/* ---------------- tabs ---------------- */
-document.querySelectorAll("nav.tabs button").forEach(btn=>{
+/* ---------------- verben tabs ---------------- */
+document.querySelectorAll("#screen-verben nav.tabs button").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll("#screen-verben nav.tabs button").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.querySelectorAll("#screen-verben .view").forEach(v=>v.classList.remove("active"));
     document.getElementById("view-"+btn.dataset.view).classList.add("active");
   });
 });
@@ -1168,7 +1666,7 @@ function renderCard(){
     document.getElementById("frontBadges").innerHTML = "";
     return;
   }
-  document.getElementById("frontWord").textContent = v.sep ? v.inf.slice(0, v.inf.length) : v.inf;
+  document.getElementById("frontWord").textContent = v.inf;
   const catLabel = CATS.find(c=>c.key===v.cat).label;
   let badges = `<span class="badge">${catLabel}</span>`;
   if(v.sep) badges += `<span class="badge sep">trennbar</span>`;
@@ -1250,7 +1748,6 @@ function nextDrill(){
   document.getElementById("drillFeedback").className = "feedback";
   document.getElementById("drillCheck").style.display = "";
   document.getElementById("drillNext").style.display = "none";
-  input.focus();
 }
 function checkDrill(){
   if(!drillCurrent) return;
@@ -1274,7 +1771,6 @@ function checkDrill(){
   }
   document.getElementById("drillCheck").style.display = "none";
   document.getElementById("drillNext").style.display = "";
-  document.getElementById("drillNext").focus();
 }
 document.getElementById("drillCheck").addEventListener("click", checkDrill);
 document.getElementById("drillNext").addEventListener("click", nextDrill);
