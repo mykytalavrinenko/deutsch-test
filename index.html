@@ -241,6 +241,15 @@
   .prep-list{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 10px;}
   .prep-chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;}
 
+  .compare{background:var(--surface-2); border-radius:10px; padding:10px 12px; margin-bottom:8px;}
+  .compare .crow{display:flex; gap:8px; font-size:13.5px; margin-bottom:5px; align-items:flex-start;}
+  .compare .crow:last-child{margin-bottom:0;}
+  .compare .tag{
+    flex:0 0 auto; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px;
+    color:var(--accent-ink); background:var(--accent-soft); border-radius:5px; padding:2px 6px; margin-top:2px;
+  }
+  .compare .txt{flex:1;}
+
   /* ---- List / vocab table (shared) ---- */
   .search{
     width:100%;
@@ -650,10 +659,27 @@
 
       <div class="panel rule-card">
         <h3 class="serif">Futur I — будущее время</h3>
-        <div class="when">Формально для будущего — в разговоре чаще используют Präsens со словом о времени. Также выражает предположение.</div>
+        <div class="when">Формально для будущего — в разговоре чаще используют Präsens со словом о времени. Значение при этом не меняется.</div>
         <div class="formula"><b>werden</b> (в Präsens) + инфинитив в конце предложения</div>
-        <div class="ex-line"><div class="de">Ich werde morgen anrufen.</div><div class="ru">Я позвоню завтра.</div></div>
-        <div class="ex-line"><div class="de">Es wird bald regnen.</div><div class="ru">Скоро пойдёт дождь.</div></div>
+
+        <div class="compare">
+          <div class="crow"><span class="tag">Futur I</span><span class="txt">Ich werde morgen einkaufen gehen.</span></div>
+          <div class="crow"><span class="tag">Präsens</span><span class="txt">Ich gehe morgen einkaufen.</span></div>
+        </div>
+        <div class="ex-line"><div class="ru">Завтра я пойду за покупками. — оба варианта звучат одинаково естественно.</div></div>
+
+        <div class="compare">
+          <div class="crow"><span class="tag">Futur I</span><span class="txt">Wir werden nächstes Jahr nach Spanien reisen.</span></div>
+          <div class="crow"><span class="tag">Präsens</span><span class="txt">Wir reisen nächstes Jahr nach Spanien.</span></div>
+        </div>
+        <div class="ex-line"><div class="ru">В следующем году мы поедем в Испанию.</div></div>
+
+        <div class="when">Разница появляется, когда нет слова о времени: тогда Futur I чаще выражает не будущее, а <b>предположение</b> о настоящем.</div>
+        <div class="compare">
+          <div class="crow"><span class="tag">Futur I</span><span class="txt">Er wird jetzt zu Hause sein.</span></div>
+          <div class="crow"><span class="tag">Präsens</span><span class="txt">Er ist jetzt zu Hause.</span></div>
+        </div>
+        <div class="ex-line"><div class="ru">Futur: «Он, наверное, сейчас дома» (предположение) — Präsens: «Он сейчас дома» (факт).</div></div>
       </div>
     </section>
 
@@ -1114,6 +1140,7 @@ const PHRASE_CATS = [
   {key:"alltag", label:"Alltag & Höflichkeit"},
   {key:"meinung", label:"Gefühle & Meinung"},
   {key:"idiome", label:"Redewendungen"},
+  {key:"slang", label:"Jugendsprache & Slang"},
 ];
 const PHRASES = [
   {de:"Wie geht's?", ru:"Как дела?", cat:"alltag"},
@@ -1148,6 +1175,28 @@ const PHRASES = [
   {de:"Das ist mir Wurst.", ru:"Мне без разницы (разг.)", cat:"idiome", note:"дословно: «это мне колбаса»"},
   {de:"Ins Blaue fahren", ru:"ехать неизвестно куда", cat:"idiome", note:"дословно: «ехать в синее»"},
   {de:"Guten Rutsch (ins neue Jahr)!", ru:"С Новым годом!", cat:"idiome", note:"говорят перед Новым годом"},
+
+  {de:"Genau!", ru:"Точно! Именно!", cat:"slang", note:"словечко-подтверждение, вставляют почти в каждом разговоре"},
+  {de:"Alter!", ru:"Чувак! / Блин!", cat:"slang", note:"обращение к другу или восклицание удивления/досады"},
+  {de:"Digga!", ru:"Братан! Чувак!", cat:"slang", note:"берлинский молодёжный сленг, синоним Alter"},
+  {de:"Krass!", ru:"Жёстко! Офигеть!", cat:"slang", note:"сильная реакция — и в плюс, и в минус"},
+  {de:"Geil!", ru:"Круто!", cat:"slang", note:"очень частое разговорное слово, аналог cool"},
+  {de:"Ich hab keinen Bock.", ru:"Мне неохота. Не хочется.", cat:"slang"},
+  {de:"Lass uns chillen.", ru:"Давай почилим, расслабимся.", cat:"slang"},
+  {de:"Läuft bei dir!", ru:"Красава! У тебя всё ок!", cat:"slang", note:"часто говорят с иронией"},
+  {de:"Was geht?", ru:"Как дела? Что как?", cat:"slang", note:"очень неформальное приветствие"},
+  {de:"Jein.", ru:"И да, и нет.", cat:"slang", note:"смесь ja + nein"},
+  {de:"Boah!", ru:"Ого! Вау!", cat:"slang", note:"восклицание удивления"},
+  {de:"Das ist mega!", ru:"Это супер!", cat:"slang", note:"mega/voll — модные усилители вместо sehr"},
+  {de:"Das ist voll cool.", ru:"Это реально круто.", cat:"slang"},
+  {de:"Gut, ne?", ru:"Хорошо, да?", cat:"slang", note:"ne — короткий разговорный хвостик-вопрос, как «да?»/«не так ли?»"},
+  {de:"Passt.", ru:"Норм. Подходит.", cat:"slang"},
+  {de:"Läuft.", ru:"Всё путём.", cat:"slang"},
+  {de:"Ehrlich?", ru:"Серьёзно? Правда?", cat:"slang"},
+  {de:"Ach so!", ru:"А, вот оно что!", cat:"slang"},
+  {de:"Mann!", ru:"Блин!", cat:"slang", note:"восклицание досады, не буквальное «мужчина»"},
+  {de:"Easy.", ru:"Легко, без проблем.", cat:"slang"},
+  {de:"Nice!", ru:"Классно!", cat:"slang", note:"заимствовано из английского, очень ходовое"},
 ];
 
 let activePhrase = "all";
