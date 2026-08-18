@@ -563,6 +563,27 @@
   @media (prefers-reduced-motion: reduce){
     .card{transition:none;}
   }
+
+  .word-tip{
+    position:fixed;
+    z-index:50;
+    max-width:240px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:8px 12px;
+    font-size:13px;
+    line-height:1.35;
+    pointer-events:none;
+    opacity:0;
+    transform:translate(-50%, -100%);
+    transition:opacity .12s ease;
+  }
+  .word-tip.show{opacity:1;}
+  .word-tip .de{font-weight:700;color:var(--ink);margin-bottom:2px;}
+  .word-tip .ru{color:var(--accent-ink);}
+  .word-tip .miss{color:var(--ink-muted);font-style:italic;}
 </style>
 
 <div class="appbar">
@@ -994,6 +1015,8 @@
   </main>
 </div>
 
+<div class="word-tip" id="wordTip"></div>
+
 <script>
 (function(){
 "use strict";
@@ -1011,6 +1034,7 @@ function showScreen(id){
   document.getElementById("backBtn").hidden = (id==="screen-home");
   document.getElementById("appTitle").textContent = SCREEN_TITLES[id] || "Deutsch";
   window.scrollTo(0,0);
+  hideTip();
 }
 document.querySelectorAll(".home-card").forEach(card=>{
   card.addEventListener("click", ()=> showScreen(card.dataset.target));
@@ -2053,6 +2077,88 @@ resetDeck();
 resetDrill();
 resetQuiz();
 renderList();
+
+/* ================= WORD TRANSLATION ON SELECT ================= */
+const TRANSLATIONS = {};
+function addTrans(de, ru){
+  const key = de.trim().toLowerCase();
+  if(key && !TRANSLATIONS[key]) TRANSLATIONS[key] = ru;
+}
+VERBS.forEach(v=>{
+  addTrans(v.inf, v.ru);
+  if(v.inf.startsWith("sich ")) addTrans(v.inf.slice(5), v.ru);
+});
+LEX_TOPICS.forEach(t=> t.words.forEach(w=>{
+  addTrans(w.de, w.ru);
+  addTrans(w.de.replace(/^(der|die|das)\s+/i, ""), w.ru);
+}));
+PHRASES.forEach(p=> addTrans(p.de.replace(/[!?.]+$/,""), p.ru));
+
+// Служебные слова и лексика из примеров в Grammatik, не входящая в Verben/Wortschatz
+const GRAMMAR_GLOSSARY = {
+  "weil":"потому что", "dass":"что (союз)", "wenn":"если / когда", "obwohl":"хотя",
+  "während":"пока, в то время как / в течение", "bevor":"прежде чем", "nachdem":"после того как",
+  "trotz":"несмотря на", "wegen":"из-за", "statt":"вместо",
+  "für":"для", "ohne":"без", "gegen":"против", "durch":"через, посредством", "um":"вокруг / в (время)",
+  "mit":"с", "nach":"после / в направлении", "bei":"у, при", "seit":"с (какого-то момента)",
+  "von":"от, из", "zu":"к", "aus":"из", "gegenüber":"напротив",
+  "und":"и", "oder":"или", "aber":"но", "denn":"так как", "sondern":"а (после отрицания)",
+  "als":"чем / когда (в прошлом)", "ne":"да? (разговорный хвостик)",
+  "nett":"приятный, милый", "neu":"новый", "tasche":"сумка", "mann":"мужчина",
+  "kind":"ребёнок", "lampe":"лампа", "tisch":"стол", "restaurant":"ресторан",
+  "stadt":"город", "wetter":"погода", "krank":"больной", "müde":"уставший",
+  "reich":"богатый", "schnell":"быстрый", "gut":"хороший", "besser":"лучше",
+  "beste":"лучший", "mehr":"больше", "meisten":"больше всего", "gern":"охотно, с удовольствием",
+  "lieber":"охотнее", "liebsten":"больше всего (нравится)", "hoch":"высокий",
+  "höher":"выше", "höchsten":"выше всего", "alt":"старый", "älter":"старше",
+  "ältesten":"самый старый", "groß":"большой", "größer":"больше",
+  "größten":"самый большой", "jung":"молодой", "jünger":"моложе",
+  "jüngsten":"самый молодой", "wahrheit":"правда", "frage":"вопрос", "zeit":"время",
+  "film":"фильм", "kino":"кино", "recht":"прав(а) (в „recht haben“)", "regnen":"идти (о дожде)",
+  "wichtig":"важный", "rechnung":"счёт",
+};
+Object.keys(GRAMMAR_GLOSSARY).forEach(k=> addTrans(k, GRAMMAR_GLOSSARY[k]));
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function lookupWord(raw){
+  const key = raw.trim().toLowerCase().replace(/^[„"«»(),.!?;:]+|[„"«»(),.!?;:]+$/g, "");
+  if(!key) return undefined;
+  if(TRANSLATIONS[key]) return TRANSLATIONS[key];
+  const bare = key.replace(/^(der|die|das|ein|eine)\s+/, "");
+  return TRANSLATIONS[bare];
+}
+
+const wordTip = document.getElementById("wordTip");
+function hideTip(){ wordTip.classList.remove("show"); }
+function showTip(text, rect){
+  const ru = lookupWord(text);
+  wordTip.innerHTML = ru
+    ? `<div class="de">${escapeHtml(text.trim())}</div><div class="ru">${escapeHtml(ru)}</div>`
+    : `<div class="de">${escapeHtml(text.trim())}</div><div class="miss">нет в словаре</div>`;
+  const x = Math.min(Math.max(rect.left + rect.width/2, 90), window.innerWidth-90);
+  const y = Math.max(rect.top - 8, 46);
+  wordTip.style.left = x+"px";
+  wordTip.style.top = y+"px";
+  wordTip.classList.add("show");
+}
+function handleSelection(){
+  const sel = window.getSelection();
+  if(!sel || sel.isCollapsed || sel.rangeCount===0){ hideTip(); return; }
+  const text = sel.toString();
+  if(!text.trim() || text.trim().length>40 || /\n/.test(text)){ hideTip(); return; }
+  const rect = sel.getRangeAt(0).getBoundingClientRect();
+  if(!rect || (rect.width===0 && rect.height===0)){ hideTip(); return; }
+  showTip(text, rect);
+}
+document.addEventListener("mouseup", ()=> setTimeout(handleSelection, 0));
+document.addEventListener("touchend", ()=> setTimeout(handleSelection, 0));
+document.addEventListener("selectionchange", ()=>{
+  const sel = window.getSelection();
+  if(!sel || sel.isCollapsed) hideTip();
+});
+document.addEventListener("scroll", hideTip, true);
 
 })();
 </script>
