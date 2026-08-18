@@ -610,11 +610,15 @@
   <header class="top">
     <div class="inner">
       <h1 class="serif">Grammatik</h1>
-      <p class="sub">Времена и падежи — с формулами и примерами</p>
-      <nav class="tabs" role="tablist">
-        <button class="active" data-gtab="zeiten">Zeiten</button>
-        <button data-gtab="kasus">Kasus</button>
-      </nav>
+      <p class="sub">Времена, падежи и другие темы — с формулами и примерами</p>
+      <div class="chips" id="grammatikChips">
+        <button class="chip active" data-gtab="zeiten">Zeiten</button>
+        <button class="chip" data-gtab="kasus">Kasus</button>
+        <button class="chip" data-gtab="saetze">Sätze</button>
+        <button class="chip" data-gtab="imperativ">Imperativ</button>
+        <button class="chip" data-gtab="adjektive">Adjektive</button>
+        <button class="chip" data-gtab="negation">Negation</button>
+      </div>
     </div>
   </header>
   <main class="wrap" style="padding-top:0;">
@@ -700,6 +704,118 @@
         </div>
         <div class="ex-line"><div class="de">Das ist das Auto meines Vaters.</div><div class="ru">Это машина моего отца.</div></div>
         <div class="ex-line"><div class="de">Wegen des Wetters bleiben wir zu Hause.</div><div class="ru">Из-за погоды мы останемся дома.</div></div>
+      </div>
+    </section>
+
+    <section class="gtab-view" id="gtab-saetze">
+      <div class="panel rule-card">
+        <h3 class="serif">Hauptsatz — глагол на 2-м месте</h3>
+        <div class="when">В главном предложении спрягаемый глагол всегда стоит на втором месте — независимо от того, что стоит первым.</div>
+        <div class="ex-line"><div class="de">Ich gehe heute ins Kino.</div><div class="ru">Я иду сегодня в кино.</div></div>
+        <div class="ex-line"><div class="de">Heute gehe ich ins Kino.</div><div class="ru">Сегодня я иду в кино. (глагол остаётся вторым!)</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Nebensatz — глагол в конце</h3>
+        <div class="when">После союзов вроде weil, dass, wenn, obwohl спрягаемый глагол уходит в самый конец предложения.</div>
+        <div class="prep-list">
+          <span class="prep-chip">weil</span><span class="prep-chip">dass</span><span class="prep-chip">wenn</span><span class="prep-chip">obwohl</span><span class="prep-chip">während</span><span class="prep-chip">bevor</span><span class="prep-chip">nachdem</span>
+        </div>
+        <div class="ex-line"><div class="de">Ich bleibe zu Hause, weil ich krank bin.</div><div class="ru">Я остаюсь дома, потому что я болен(льна).</div></div>
+        <div class="ex-line"><div class="de">Ich weiß, dass du recht hast.</div><div class="ru">Я знаю, что ты прав(а).</div></div>
+        <div class="when">Союзы und, oder, aber, denn, sondern порядок слов НЕ меняют — после них глагол остаётся на 2-м месте.</div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Konditionalsätze — условные предложения</h3>
+        <div class="when">«Wenn»-предложение — тоже Nebensatz: глагол уходит в конец. Если оно стоит первым, главное предложение сразу начинается с глагола.</div>
+        <div class="formula">
+          <b>Реальное условие:</b> wenn + Präsens, ..., Präsens<br>
+          <b>Нереальное (наст./буд.):</b> wenn + Konjunktiv II, ..., würde + Infinitiv<br>
+          <b>Нереальное (прошедшее):</b> wenn + hätte/wäre + Partizip II, ..., hätte/wäre + Partizip II
+        </div>
+        <table class="gram">
+          <tr><th>Verb</th><th>Konjunktiv II</th></tr>
+          <tr><td>sein</td><td>wäre</td></tr>
+          <tr><td>haben</td><td>hätte</td></tr>
+          <tr><td>werden</td><td>würde</td></tr>
+          <tr><td>können</td><td>könnte</td></tr>
+          <tr><td>müssen</td><td>müsste</td></tr>
+          <tr><td>wissen</td><td>wüsste</td></tr>
+        </table>
+        <div class="when">Для остальных глаголов используют würde + Infinitiv.</div>
+        <div class="ex-line"><div class="de">Wenn ich Zeit habe, gehe ich schwimmen.</div><div class="ru">Если у меня будет время, я пойду плавать.</div></div>
+        <div class="ex-line"><div class="de">Wenn ich reich wäre, würde ich reisen.</div><div class="ru">Если бы я был богат, я бы путешествовал.</div></div>
+        <div class="ex-line"><div class="de">Wenn ich das gewusst hätte, hätte ich es dir gesagt.</div><div class="ru">Если бы я это знал, я бы тебе сказал.</div></div>
+      </div>
+    </section>
+
+    <section class="gtab-view" id="gtab-imperativ">
+      <div class="panel rule-card">
+        <h3 class="serif">Imperativ — повелительное наклонение</h3>
+        <div class="when">Просьбы, советы, команды. Форма зависит от того, к кому обращаешься.</div>
+        <div class="formula">
+          <b>du:</b> основа глагола, без «du» — сильные глаголы e→i/ie сохраняют изменение (nimm!, sprich!), а a→ä НЕ добавляется (fahr!, не führ!)<br>
+          <b>ihr:</b> как ihr-Präsens, без «ihr»<br>
+          <b>Sie:</b> Infinitiv + Sie (порядок как в вопросе)<br>
+          <b>wir:</b> Infinitiv + wir («давай(те)»)
+        </div>
+        <table class="gram">
+          <tr><th></th><th>machen</th><th>fahren</th><th>sein</th></tr>
+          <tr><td>du</td><td>Mach!</td><td>Fahr!</td><td>Sei!</td></tr>
+          <tr><td>ihr</td><td>Macht!</td><td>Fahrt!</td><td>Seid!</td></tr>
+          <tr><td>Sie</td><td>Machen Sie!</td><td>Fahren Sie!</td><td>Seien Sie!</td></tr>
+          <tr><td>wir</td><td>Machen wir!</td><td>Fahren wir!</td><td>Seien wir!</td></tr>
+        </table>
+        <div class="ex-line"><div class="de">Mach die Tür zu!</div><div class="ru">Закрой дверь!</div></div>
+        <div class="ex-line"><div class="de">Kommt bitte pünktlich!</div><div class="ru">Приходите вовремя, пожалуйста!</div></div>
+        <div class="ex-line"><div class="de">Setzen Sie sich, bitte.</div><div class="ru">Присаживайтесь, пожалуйста.</div></div>
+        <div class="ex-line"><div class="de">Gehen wir ins Kino!</div><div class="ru">Пойдём в кино!</div></div>
+        <div class="when">У отделяемых глаголов приставка уходит в конец: aufstehen → Steh auf! / Steht auf! / Stehen Sie auf!</div>
+      </div>
+    </section>
+
+    <section class="gtab-view" id="gtab-adjektive">
+      <div class="panel rule-card">
+        <h3 class="serif">Komparativ & Superlativ — степени сравнения</h3>
+        <div class="formula">Komparativ = прилагательное + <b>-er</b><br>Superlativ = <b>am</b> + прилагательное + <b>-sten</b></div>
+        <div class="when">Короткие прилагательные часто получают умлаут: alt→älter→am ältesten; groß→größer→am größten; jung→jünger→am jüngsten.</div>
+        <table class="gram">
+          <tr><th>Grundform</th><th>Komparativ</th><th>Superlativ</th></tr>
+          <tr><td>gut</td><td>besser</td><td>am besten</td></tr>
+          <tr><td>viel</td><td>mehr</td><td>am meisten</td></tr>
+          <tr><td>gern</td><td>lieber</td><td>am liebsten</td></tr>
+          <tr><td>hoch</td><td>höher</td><td>am höchsten</td></tr>
+        </table>
+        <div class="ex-line"><div class="de">Er ist schneller als ich.</div><div class="ru">Он быстрее меня.</div></div>
+        <div class="ex-line"><div class="de">Das ist das beste Restaurant der Stadt.</div><div class="ru">Это лучший ресторан города.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Adjektivdeklination — окончания прилагательных</h3>
+        <div class="when">Прилагательное перед существительным получает окончание — оно зависит от артикля и падежа. Тема объёмная, вот база для Nominativ.</div>
+        <table class="gram">
+          <tr><th></th><th>der/die/das</th><th>ein/eine/ein</th><th>без артикля</th></tr>
+          <tr><td>m</td><td>der neue Tisch</td><td>ein neuer Tisch</td><td>neuer Tisch</td></tr>
+          <tr><td>f</td><td>die neue Lampe</td><td>eine neue Lampe</td><td>neue Lampe</td></tr>
+          <tr><td>n</td><td>das neue Auto</td><td>ein neues Auto</td><td>neues Auto</td></tr>
+          <tr><td>Pl.</td><td>die neuen Autos</td><td>–</td><td>neue Autos</td></tr>
+        </table>
+        <div class="when">Это только Nominativ — в остальных падежах окончания меняются дальше, это осваивается постепенно на практике.</div>
+      </div>
+    </section>
+
+    <section class="gtab-view" id="gtab-negation">
+      <div class="panel rule-card">
+        <h3 class="serif">nicht vs kein</h3>
+        <div class="formula">
+          <b>kein</b> — отрицает существительное с неопределённым артиклем или без артикля (склоняется как ein)<br>
+          <b>nicht</b> — отрицает всё остальное: глагол, прилагательное, наречие, существительное с определённым артиклем
+        </div>
+        <div class="ex-line"><div class="de">Ich trinke keinen Kaffee.</div><div class="ru">Я не пью кофе.</div></div>
+        <div class="ex-line"><div class="de">Ich komme nicht.</div><div class="ru">Я не приду.</div></div>
+        <div class="ex-line"><div class="de">Das Auto ist nicht neu.</div><div class="ru">Машина не новая.</div></div>
+        <div class="when">Nicht обычно ставится в конец предложения, но переносится перед конкретным словом, если отрицаем именно его.</div>
       </div>
     </section>
 
@@ -876,12 +992,13 @@ document.querySelectorAll(".home-card").forEach(card=>{
 document.getElementById("backBtn").addEventListener("click", ()=> showScreen("screen-home"));
 
 /* ================= GRAMMATIK sub-tabs ================= */
-document.querySelectorAll("#screen-grammatik nav.tabs button").forEach(btn=>{
+document.querySelectorAll("#grammatikChips button").forEach(btn=>{
   btn.addEventListener("click", ()=>{
-    document.querySelectorAll("#screen-grammatik nav.tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll("#grammatikChips button").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
     document.querySelectorAll("#screen-grammatik .gtab-view").forEach(v=>v.classList.remove("active"));
     document.getElementById("gtab-"+btn.dataset.gtab).classList.add("active");
+    document.querySelector("#screen-grammatik main").scrollIntoView({block:"start"});
   });
 });
 
