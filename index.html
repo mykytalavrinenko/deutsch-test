@@ -1,0 +1,1396 @@
+<meta charset="utf-8" />
+<title>Deutsch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --surface-2:#EDEFF3;
+    --border:#DCE0E7;
+    --ink:#1C222E;
+    --ink-muted:#5B6472;
+    --accent:#3457A6;
+    --accent-soft:#E4EAF7;
+    --accent-ink:#25407F;
+    --good:#3F8F5F;
+    --good-soft:#E3F3E8;
+    --bad:#C1503A;
+    --bad-soft:#FBE8E3;
+    --amber:#B8863A;
+    --amber-soft:#F5EBD8;
+    --shadow: 0 1px 2px rgba(28,34,46,.04), 0 8px 24px -12px rgba(28,34,46,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12151C;
+      --surface:#191D26;
+      --surface-2:#232837;
+      --border:#2E3444;
+      --ink:#E7E9EE;
+      --ink-muted:#9AA3B2;
+      --accent:#8CA9EC;
+      --accent-soft:#233152;
+      --accent-ink:#C4D3F5;
+      --good:#6FBF8B;
+      --good-soft:#1D3327;
+      --bad:#E38A75;
+      --bad-soft:#3A2420;
+      --amber:#E0B871;
+      --amber-soft:#3A2F19;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12151C;
+    --surface:#191D26;
+    --surface-2:#232837;
+    --border:#2E3444;
+    --ink:#E7E9EE;
+    --ink-muted:#9AA3B2;
+    --accent:#8CA9EC;
+    --accent-soft:#233152;
+    --accent-ink:#C4D3F5;
+    --good:#6FBF8B;
+    --good-soft:#1D3327;
+    --bad:#E38A75;
+    --bad-soft:#3A2420;
+    --amber:#E0B871;
+    --amber-soft:#3A2F19;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100%;
+  }
+  .serif{
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:28px 20px 64px;
+  }
+  header.top{
+    position:sticky; top:0; z-index:5;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    padding:14px 20px 12px;
+    margin:0 0 22px;
+  }
+  header.top .inner{max-width:680px;margin:0 auto;}
+  h1{
+    font-size:22px;
+    line-height:1.2;
+    margin:0 0 2px;
+    letter-spacing:.2px;
+    text-wrap:balance;
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-muted);
+    margin:0 0 14px;
+  }
+  .sub b{color:var(--ink);font-weight:600;}
+
+  nav.tabs{
+    display:flex;
+    gap:4px;
+    background:var(--surface-2);
+    padding:4px;
+    border-radius:12px;
+    border:1px solid var(--border);
+  }
+  nav.tabs button{
+    flex:1;
+    appearance:none;
+    border:none;
+    background:transparent;
+    color:var(--ink-muted);
+    font-size:13.5px;
+    font-weight:600;
+    padding:9px 6px;
+    border-radius:9px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav.tabs button.active{
+    background:var(--surface);
+    color:var(--accent-ink);
+    box-shadow:var(--shadow);
+  }
+  nav.tabs button:hover:not(.active){color:var(--ink);}
+  nav.tabs button:focus-visible, .chip:focus-visible, .opt:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:2px;
+  }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin:12px 0 0;
+  }
+  .chip{
+    appearance:none;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink-muted);
+    font-size:12.5px;
+    font-weight:600;
+    padding:6px 11px;
+    border-radius:999px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .chip.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  :root[data-theme="dark"] .chip.active, @media (prefers-color-scheme: dark){ .chip.active{color:#111420;} }
+
+  main{max-width:680px;margin:0 auto;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* ---- Flashcards ---- */
+  .deck-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12.5px;
+    color:var(--ink-muted);
+    margin:0 0 10px;
+  }
+  .progress-track{
+    height:5px;
+    background:var(--surface-2);
+    border-radius:99px;
+    overflow:hidden;
+    flex:1;
+    margin:0 12px;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--accent);
+    border-radius:99px;
+    transition:width .3s ease;
+  }
+
+  .card-scene{
+    perspective:1400px;
+    margin-bottom:16px;
+  }
+  .card{
+    position:relative;
+    min-height:400px;
+    width:100%;
+    transform-style:preserve-3d;
+    transition:transform .5s cubic-bezier(.4,.2,.2,1);
+    cursor:pointer;
+  }
+  .card.flipped{transform:rotateY(180deg);}
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:26px 24px;
+    display:flex;
+    flex-direction:column;
+  }
+  .face.back{transform:rotateY(180deg);overflow-y:auto;}
+
+  .badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:auto;}
+  .badge{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.4px;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:6px;
+    background:var(--accent-soft);
+    color:var(--accent-ink);
+  }
+  .badge.sep{background:var(--amber-soft);color:var(--amber);}
+
+  .inf-word{
+    font-size:15px;
+  }
+  .card-front-center{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  .big-inf{
+    font-size:42px;
+    font-weight:500;
+    letter-spacing:.2px;
+  }
+  .hint-tap{
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-muted);
+  }
+
+  .back-inf{
+    font-size:20px;
+    font-weight:600;
+    margin-bottom:2px;
+  }
+  .back-ru{
+    font-size:16px;
+    color:var(--accent-ink);
+    margin-bottom:14px;
+  }
+  .example{
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:13.5px;
+    margin-bottom:14px;
+  }
+  .example .de{margin-bottom:3px;}
+  .example .ru{color:var(--ink-muted);}
+
+  table.conj{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+    font-variant-numeric:tabular-nums;
+    margin-bottom:10px;
+  }
+  table.conj td{
+    padding:3px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  table.conj td.pron{color:var(--ink-muted);width:38%;}
+  table.conj tr:last-child td{border-bottom:none;}
+  .perf-line{
+    font-size:12.5px;
+    color:var(--ink-muted);
+  }
+  .perf-line b{color:var(--ink);font-weight:600;}
+
+  .deck-actions{
+    display:flex;
+    gap:8px;
+  }
+  .deck-actions button, .drill-actions button, .quiz-next{
+    flex:1;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    padding:11px 10px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, transform .05s ease;
+  }
+  .deck-actions button:active, .drill-actions button:active{transform:scale(.98);}
+  .deck-actions .shuffle{flex:0 0 44px;}
+  .deck-actions .again{color:var(--bad);}
+  .deck-actions .again:hover{background:var(--bad-soft);border-color:var(--bad);}
+  .deck-actions .know{color:var(--good);}
+  .deck-actions .know:hover{background:var(--good-soft);border-color:var(--good);}
+
+  /* ---- Drill ---- */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:26px 24px;
+  }
+  .score-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:var(--ink-muted);
+    margin-bottom:16px;
+  }
+  .score-row b{color:var(--ink);}
+  .prompt{
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .prompt .verb{
+    font-size:30px;
+    font-weight:500;
+  }
+  .prompt .pronoun{
+    color:var(--accent-ink);
+    font-weight:600;
+  }
+  .prompt .gloss{
+    font-size:13px;
+    color:var(--ink-muted);
+    margin-top:4px;
+  }
+  input.answer{
+    width:100%;
+    font-family:inherit;
+    font-size:18px;
+    text-align:center;
+    padding:12px 14px;
+    border-radius:11px;
+    border:2px solid var(--border);
+    background:var(--bg);
+    color:var(--ink);
+    margin-bottom:12px;
+  }
+  input.answer:focus{outline:none;border-color:var(--accent);}
+  input.answer.correct{border-color:var(--good);background:var(--good-soft);}
+  input.answer.wrong{border-color:var(--bad);background:var(--bad-soft);}
+  .feedback{
+    min-height:20px;
+    text-align:center;
+    font-size:13.5px;
+    margin-bottom:12px;
+  }
+  .feedback.correct{color:var(--good);}
+  .feedback.wrong{color:var(--bad);}
+  .drill-actions{display:flex;gap:8px;}
+
+  /* ---- Quiz ---- */
+  .quiz-verb{
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .quiz-verb .verb{font-size:32px;font-weight:500;}
+  .options{
+    display:grid;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .opt{
+    text-align:left;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:14.5px;
+    padding:12px 14px;
+    border-radius:11px;
+    cursor:pointer;
+  }
+  .opt:hover:not(:disabled){border-color:var(--accent);}
+  .opt.correct{background:var(--good-soft);border-color:var(--good);color:var(--good);font-weight:600;}
+  .opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);}
+  .opt:disabled{cursor:default;}
+  .quiz-next{display:none;}
+  .quiz-next.show{display:block;}
+
+  /* ---- List ---- */
+  .search{
+    width:100%;
+    font-family:inherit;
+    font-size:14px;
+    padding:10px 13px;
+    border-radius:11px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--ink);
+    margin:12px 0 12px;
+  }
+  .search:focus{outline:none;border-color:var(--accent);}
+  .table-scroll{
+    overflow-x:auto;
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:var(--surface);
+  }
+  table.list{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+    min-width:560px;
+  }
+  table.list th{
+    text-align:left;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    color:var(--ink-muted);
+    padding:10px 10px;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    background:var(--surface);
+  }
+  table.list td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.list tr:last-child td{border-bottom:none;}
+  table.list td.inf{font-weight:600;}
+  table.list td.inf .sep-dot{color:var(--amber);font-weight:700;}
+  table.list td.ru{color:var(--ink-muted);}
+  table.list td.known{width:18px;text-align:center;}
+  .dot-known{color:var(--good);font-size:14px;}
+
+  .empty{
+    text-align:center;
+    color:var(--ink-muted);
+    font-size:13.5px;
+    padding:30px 0;
+  }
+
+  footer{
+    text-align:center;
+    font-size:11.5px;
+    color:var(--ink-muted);
+    margin-top:26px;
+  }
+  footer button{
+    background:none;border:none;color:var(--ink-muted);
+    text-decoration:underline;cursor:pointer;font-size:11.5px;font-family:inherit;
+    padding:0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card{transition:none;}
+  }
+</style>
+
+<header class="top">
+  <div class="inner">
+    <h1 class="serif">Deutsch A2 — Verben für die Konversation</h1>
+    <p class="sub">150 самых нужных глаголов A2–B1 для устной речи · <b id="knownCount">0</b>/150 отмечены как «знаю»</p>
+    <nav class="tabs" role="tablist">
+      <button class="active" data-view="cards">Karten</button>
+      <button data-view="drill">Konjugation</button>
+      <button data-view="quiz">Quiz</button>
+      <button data-view="list">Liste</button>
+    </nav>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:0;">
+
+  <!-- CARDS -->
+  <section class="view active" id="view-cards">
+    <div class="deck-meta">
+      <span id="cardsPos">1 / 150</span>
+      <div class="progress-track"><div class="progress-fill" id="cardsProgress" style="width:0%"></div></div>
+      <span id="cardsKnown">0 знаю</span>
+    </div>
+    <div class="card-scene">
+      <div class="card" id="card">
+        <div class="face front">
+          <div class="badges" id="frontBadges"></div>
+          <div class="card-front-center">
+            <div class="big-inf serif" id="frontWord">—</div>
+          </div>
+          <div class="hint-tap">нажми на карточку, чтобы перевернуть</div>
+        </div>
+        <div class="face back">
+          <div class="back-inf serif" id="backWord">—</div>
+          <div class="back-ru" id="backRu">—</div>
+          <div class="example">
+            <div class="de" id="backEx">—</div>
+            <div class="ru" id="backExRu">—</div>
+          </div>
+          <table class="conj" id="backConj"></table>
+          <div class="perf-line" id="backPerf"></div>
+        </div>
+      </div>
+    </div>
+    <div class="deck-actions">
+      <button class="shuffle" id="btnShuffle" title="Neu mischen">🔀</button>
+      <button class="again" id="btnAgain">✗ Nochmal üben</button>
+      <button class="know" id="btnKnow">✓ Kann ich</button>
+    </div>
+  </section>
+
+  <!-- DRILL -->
+  <section class="view" id="view-drill">
+    <div class="panel">
+      <div class="score-row">
+        <span>Konjugation üben — Präsens</span>
+        <span>Punkte: <b id="drillScore">0/0</b></span>
+      </div>
+      <div class="prompt">
+        <div class="verb serif" id="drillVerb">—</div>
+        <div class="gloss" id="drillGloss">—</div>
+      </div>
+      <input class="answer" id="drillInput" placeholder="Form eingeben, z. B. „mache“" autocomplete="off" autocapitalize="off" spellcheck="false" />
+      <div class="feedback" id="drillFeedback"></div>
+      <div class="drill-actions">
+        <button id="drillCheck">Prüfen</button>
+        <button id="drillNext" style="display:none;">Weiter →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="view" id="view-quiz">
+    <div class="panel">
+      <div class="score-row">
+        <span>Übersetzung erraten</span>
+        <span>Punkte: <b id="quizScore">0/0</b></span>
+      </div>
+      <div class="quiz-verb">
+        <div class="verb serif" id="quizVerb">—</div>
+      </div>
+      <div class="options" id="quizOptions"></div>
+      <button class="quiz-next" id="quizNext">Weiter →</button>
+    </div>
+  </section>
+
+  <!-- LIST -->
+  <section class="view" id="view-list">
+    <input class="search" id="listSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
+    <div class="table-scroll">
+      <table class="list">
+        <thead>
+          <tr><th></th><th>Verb</th><th>Übersetzung</th><th>ich</th><th>du</th><th>er/sie/es</th><th>Perfekt</th></tr>
+        </thead>
+        <tbody id="listBody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="listEmpty" style="display:none;">Nichts gefunden.</div>
+  </section>
+
+  <footer>
+    <span id="footerNote">Fortschritt wird lokal in diesem Browser gespeichert.</span>
+    · <button id="resetProgress">Fortschritt zurücksetzen</button>
+  </footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+// inf, ru, cat(grund|modal|unreg|reg|trenn), sep(bool),
+// ich,du,er,wir,ihr,sie — Präsens; perf: [Hilfsverb, Partizip] or null
+const VERBS = [
+  {inf:"sein", ru:"быть", cat:"grund", sep:false,
+   ich:"bin", du:"bist", er:"ist", wir:"sind", ihr:"seid", sie:"sind",
+   perf:["ist","gewesen"], ex:"Ich bin müde.", exRu:"Я устал(а)."},
+  {inf:"haben", ru:"иметь", cat:"grund", sep:false,
+   ich:"habe", du:"hast", er:"hat", wir:"haben", ihr:"habt", sie:"haben",
+   perf:["hat","gehabt"], ex:"Ich habe eine Frage.", exRu:"У меня есть вопрос."},
+  {inf:"werden", ru:"становиться", cat:"grund", sep:false,
+   ich:"werde", du:"wirst", er:"wird", wir:"werden", ihr:"werdet", sie:"werden",
+   perf:["ist","geworden"], ex:"Es wird kalt.", exRu:"Становится холодно."},
+
+  {inf:"können", ru:"мочь, уметь", cat:"modal", sep:false,
+   ich:"kann", du:"kannst", er:"kann", wir:"können", ihr:"könnt", sie:"können",
+   perf:["hat","gekonnt"], ex:"Kannst du mir helfen?", exRu:"Ты можешь мне помочь?"},
+  {inf:"müssen", ru:"быть должным", cat:"modal", sep:false,
+   ich:"muss", du:"musst", er:"muss", wir:"müssen", ihr:"müsst", sie:"müssen",
+   perf:["hat","gemusst"], ex:"Ich muss jetzt gehen.", exRu:"Мне нужно идти."},
+  {inf:"dürfen", ru:"иметь разрешение", cat:"modal", sep:false,
+   ich:"darf", du:"darfst", er:"darf", wir:"dürfen", ihr:"dürft", sie:"dürfen",
+   perf:["hat","gedurft"], ex:"Darf ich hier rauchen?", exRu:"Можно мне здесь курить?"},
+  {inf:"wollen", ru:"хотеть", cat:"modal", sep:false,
+   ich:"will", du:"willst", er:"will", wir:"wollen", ihr:"wollt", sie:"wollen",
+   perf:["hat","gewollt"], ex:"Ich will das nicht.", exRu:"Я не хочу этого."},
+  {inf:"sollen", ru:"быть должным (по чьей-то воле)", cat:"modal", sep:false,
+   ich:"soll", du:"sollst", er:"soll", wir:"sollen", ihr:"sollt", sie:"sollen",
+   perf:["hat","gesollt"], ex:"Was soll ich tun?", exRu:"Что мне делать?"},
+  {inf:"mögen", ru:"нравиться", cat:"modal", sep:false,
+   ich:"mag", du:"magst", er:"mag", wir:"mögen", ihr:"mögt", sie:"mögen",
+   perf:["hat","gemocht"], ex:"Ich mag klassische Musik.", exRu:"Мне нравится классическая музыка."},
+  {inf:"möchten", ru:"хотел(а) бы", cat:"modal", sep:false,
+   ich:"möchte", du:"möchtest", er:"möchte", wir:"möchten", ihr:"möchtet", sie:"möchten",
+   perf:null, ex:"Ich möchte einen Kaffee, bitte.", exRu:"Я хотел(а) бы кофе, пожалуйста."},
+
+  {inf:"gehen", ru:"идти", cat:"unreg", sep:false,
+   ich:"gehe", du:"gehst", er:"geht", wir:"gehen", ihr:"geht", sie:"gehen",
+   perf:["ist","gegangen"], ex:"Wir gehen ins Kino.", exRu:"Мы идём в кино."},
+  {inf:"kommen", ru:"приходить", cat:"unreg", sep:false,
+   ich:"komme", du:"kommst", er:"kommt", wir:"kommen", ihr:"kommt", sie:"kommen",
+   perf:["ist","gekommen"], ex:"Er kommt später.", exRu:"Он придёт позже."},
+  {inf:"sehen", ru:"видеть", cat:"unreg", sep:false,
+   ich:"sehe", du:"siehst", er:"sieht", wir:"sehen", ihr:"seht", sie:"sehen",
+   perf:["hat","gesehen"], ex:"Ich sehe dich.", exRu:"Я тебя вижу."},
+  {inf:"wissen", ru:"знать (факт)", cat:"unreg", sep:false,
+   ich:"weiß", du:"weißt", er:"weiß", wir:"wissen", ihr:"wisst", sie:"wissen",
+   perf:["hat","gewusst"], ex:"Ich weiß es nicht.", exRu:"Я не знаю."},
+  {inf:"kennen", ru:"быть знакомым", cat:"unreg", sep:false,
+   ich:"kenne", du:"kennst", er:"kennt", wir:"kennen", ihr:"kennt", sie:"kennen",
+   perf:["hat","gekannt"], ex:"Kennst du ihn?", exRu:"Ты его знаешь?"},
+  {inf:"finden", ru:"находить, считать", cat:"unreg", sep:false,
+   ich:"finde", du:"findest", er:"findet", wir:"finden", ihr:"findet", sie:"finden",
+   perf:["hat","gefunden"], ex:"Ich finde das gut.", exRu:"Я считаю, что это хорошо."},
+  {inf:"geben", ru:"давать", cat:"unreg", sep:false,
+   ich:"gebe", du:"gibst", er:"gibt", wir:"geben", ihr:"gebt", sie:"geben",
+   perf:["hat","gegeben"], ex:"Gib mir das Buch, bitte.", exRu:"Дай мне книгу, пожалуйста."},
+  {inf:"nehmen", ru:"брать", cat:"unreg", sep:false,
+   ich:"nehme", du:"nimmst", er:"nimmt", wir:"nehmen", ihr:"nehmt", sie:"nehmen",
+   perf:["hat","genommen"], ex:"Ich nehme den Bus.", exRu:"Я поеду на автобусе."},
+  {inf:"sprechen", ru:"говорить (на языке)", cat:"unreg", sep:false,
+   ich:"spreche", du:"sprichst", er:"spricht", wir:"sprechen", ihr:"sprecht", sie:"sprechen",
+   perf:["hat","gesprochen"], ex:"Sprichst du Deutsch?", exRu:"Ты говоришь по-немецки?"},
+  {inf:"essen", ru:"есть, кушать", cat:"unreg", sep:false,
+   ich:"esse", du:"isst", er:"isst", wir:"essen", ihr:"esst", sie:"essen",
+   perf:["hat","gegessen"], ex:"Wir essen zusammen.", exRu:"Мы едим вместе."},
+  {inf:"trinken", ru:"пить", cat:"unreg", sep:false,
+   ich:"trinke", du:"trinkst", er:"trinkt", wir:"trinken", ihr:"trinkt", sie:"trinken",
+   perf:["hat","getrunken"], ex:"Er trinkt Wasser.", exRu:"Он пьёт воду."},
+  {inf:"lesen", ru:"читать", cat:"unreg", sep:false,
+   ich:"lese", du:"liest", er:"liest", wir:"lesen", ihr:"lest", sie:"lesen",
+   perf:["hat","gelesen"], ex:"Ich lese ein Buch.", exRu:"Я читаю книгу."},
+  {inf:"schreiben", ru:"писать", cat:"unreg", sep:false,
+   ich:"schreibe", du:"schreibst", er:"schreibt", wir:"schreiben", ihr:"schreibt", sie:"schreiben",
+   perf:["hat","geschrieben"], ex:"Sie schreibt eine E-Mail.", exRu:"Она пишет письмо."},
+  {inf:"helfen", ru:"помогать", cat:"unreg", sep:false,
+   ich:"helfe", du:"hilfst", er:"hilft", wir:"helfen", ihr:"helft", sie:"helfen",
+   perf:["hat","geholfen"], ex:"Kannst du mir helfen?", exRu:"Можешь мне помочь?"},
+  {inf:"treffen", ru:"встречать(ся)", cat:"unreg", sep:false,
+   ich:"treffe", du:"triffst", er:"trifft", wir:"treffen", ihr:"trefft", sie:"treffen",
+   perf:["hat","getroffen"], ex:"Ich treffe meine Freundin.", exRu:"Я встречаюсь с подругой."},
+  {inf:"fahren", ru:"ехать", cat:"unreg", sep:false,
+   ich:"fahre", du:"fährst", er:"fährt", wir:"fahren", ihr:"fahrt", sie:"fahren",
+   perf:["ist","gefahren"], ex:"Wir fahren nach Berlin.", exRu:"Мы едем в Берлин."},
+  {inf:"bleiben", ru:"оставаться", cat:"unreg", sep:false,
+   ich:"bleibe", du:"bleibst", er:"bleibt", wir:"bleiben", ihr:"bleibt", sie:"bleiben",
+   perf:["ist","geblieben"], ex:"Bleib bitte hier!", exRu:"Останься, пожалуйста, здесь!"},
+  {inf:"denken", ru:"думать", cat:"unreg", sep:false,
+   ich:"denke", du:"denkst", er:"denkt", wir:"denken", ihr:"denkt", sie:"denken",
+   perf:["hat","gedacht"], ex:"Ich denke an dich.", exRu:"Я думаю о тебе."},
+  {inf:"verstehen", ru:"понимать", cat:"unreg", sep:false,
+   ich:"verstehe", du:"verstehst", er:"versteht", wir:"verstehen", ihr:"versteht", sie:"verstehen",
+   perf:["hat","verstanden"], ex:"Verstehst du mich?", exRu:"Ты меня понимаешь?"},
+
+  {inf:"machen", ru:"делать", cat:"reg", sep:false,
+   ich:"mache", du:"machst", er:"macht", wir:"machen", ihr:"macht", sie:"machen",
+   perf:["hat","gemacht"], ex:"Was machst du gerade?", exRu:"Что ты сейчас делаешь?"},
+  {inf:"sagen", ru:"говорить, сказать", cat:"reg", sep:false,
+   ich:"sage", du:"sagst", er:"sagt", wir:"sagen", ihr:"sagt", sie:"sagen",
+   perf:["hat","gesagt"], ex:"Sag mir die Wahrheit.", exRu:"Скажи мне правду."},
+  {inf:"kaufen", ru:"покупать", cat:"reg", sep:false,
+   ich:"kaufe", du:"kaufst", er:"kauft", wir:"kaufen", ihr:"kauft", sie:"kaufen",
+   perf:["hat","gekauft"], ex:"Ich kaufe Brot.", exRu:"Я покупаю хлеб."},
+  {inf:"arbeiten", ru:"работать", cat:"reg", sep:false,
+   ich:"arbeite", du:"arbeitest", er:"arbeitet", wir:"arbeiten", ihr:"arbeitet", sie:"arbeiten",
+   perf:["hat","gearbeitet"], ex:"Er arbeitet viel.", exRu:"Он много работает."},
+  {inf:"wohnen", ru:"жить (проживать)", cat:"reg", sep:false,
+   ich:"wohne", du:"wohnst", er:"wohnt", wir:"wohnen", ihr:"wohnt", sie:"wohnen",
+   perf:["hat","gewohnt"], ex:"Wo wohnst du?", exRu:"Где ты живёшь?"},
+  {inf:"spielen", ru:"играть", cat:"reg", sep:false,
+   ich:"spiele", du:"spielst", er:"spielt", wir:"spielen", ihr:"spielt", sie:"spielen",
+   perf:["hat","gespielt"], ex:"Die Kinder spielen draußen.", exRu:"Дети играют на улице."},
+  {inf:"brauchen", ru:"нуждаться", cat:"reg", sep:false,
+   ich:"brauche", du:"brauchst", er:"braucht", wir:"brauchen", ihr:"braucht", sie:"brauchen",
+   perf:["hat","gebraucht"], ex:"Ich brauche deine Hilfe.", exRu:"Мне нужна твоя помощь."},
+  {inf:"fragen", ru:"спрашивать", cat:"reg", sep:false,
+   ich:"frage", du:"fragst", er:"fragt", wir:"fragen", ihr:"fragt", sie:"fragen",
+   perf:["hat","gefragt"], ex:"Darf ich dich etwas fragen?", exRu:"Могу я тебя кое-что спросить?"},
+  {inf:"glauben", ru:"думать, верить", cat:"reg", sep:false,
+   ich:"glaube", du:"glaubst", er:"glaubt", wir:"glauben", ihr:"glaubt", sie:"glauben",
+   perf:["hat","geglaubt"], ex:"Ich glaube dir.", exRu:"Я тебе верю."},
+  {inf:"hören", ru:"слышать, слушать", cat:"reg", sep:false,
+   ich:"höre", du:"hörst", er:"hört", wir:"hören", ihr:"hört", sie:"hören",
+   perf:["hat","gehört"], ex:"Hörst du mich?", exRu:"Ты меня слышишь?"},
+  {inf:"warten", ru:"ждать", cat:"reg", sep:false,
+   ich:"warte", du:"wartest", er:"wartet", wir:"warten", ihr:"wartet", sie:"warten",
+   perf:["hat","gewartet"], ex:"Ich warte auf dich.", exRu:"Я жду тебя."},
+  {inf:"suchen", ru:"искать", cat:"reg", sep:false,
+   ich:"suche", du:"suchst", er:"sucht", wir:"suchen", ihr:"sucht", sie:"suchen",
+   perf:["hat","gesucht"], ex:"Was suchst du?", exRu:"Что ты ищешь?"},
+  {inf:"zeigen", ru:"показывать", cat:"reg", sep:false,
+   ich:"zeige", du:"zeigst", er:"zeigt", wir:"zeigen", ihr:"zeigt", sie:"zeigen",
+   perf:["hat","gezeigt"], ex:"Zeig mir das, bitte.", exRu:"Покажи мне это, пожалуйста."},
+
+  {inf:"anrufen", ru:"звонить", cat:"trenn", sep:true,
+   ich:"rufe an", du:"rufst an", er:"ruft an", wir:"rufen an", ihr:"ruft an", sie:"rufen an",
+   perf:["hat","angerufen"], ex:"Ich rufe dich morgen an.", exRu:"Я позвоню тебе завтра."},
+  {inf:"aufstehen", ru:"вставать", cat:"trenn", sep:true,
+   ich:"stehe auf", du:"stehst auf", er:"steht auf", wir:"stehen auf", ihr:"steht auf", sie:"stehen auf",
+   perf:["ist","aufgestanden"], ex:"Ich stehe früh auf.", exRu:"Я рано встаю."},
+  {inf:"einkaufen", ru:"делать покупки", cat:"trenn", sep:true,
+   ich:"kaufe ein", du:"kaufst ein", er:"kauft ein", wir:"kaufen ein", ihr:"kauft ein", sie:"kaufen ein",
+   perf:["hat","eingekauft"], ex:"Wir kaufen samstags ein.", exRu:"Мы делаем покупки по субботам."},
+  {inf:"anfangen", ru:"начинать", cat:"trenn", sep:true,
+   ich:"fange an", du:"fängst an", er:"fängt an", wir:"fangen an", ihr:"fangt an", sie:"fangen an",
+   perf:["hat","angefangen"], ex:"Der Film fängt gleich an.", exRu:"Фильм скоро начинается."},
+
+  // ---- weitere Regelmäßige (A2-B1) ----
+  {inf:"kochen", ru:"готовить (еду)", cat:"reg", sep:false,
+   ich:"koche", du:"kochst", er:"kocht", wir:"kochen", ihr:"kocht", sie:"kochen",
+   perf:["hat","gekocht"], ex:"Ich koche heute Pasta.", exRu:"Сегодня я готовлю пасту."},
+  {inf:"putzen", ru:"убирать, чистить", cat:"reg", sep:false,
+   ich:"putze", du:"putzt", er:"putzt", wir:"putzen", ihr:"putzt", sie:"putzen",
+   perf:["hat","geputzt"], ex:"Ich putze die Wohnung.", exRu:"Я убираю квартиру."},
+  {inf:"bezahlen", ru:"оплачивать", cat:"reg", sep:false,
+   ich:"bezahle", du:"bezahlst", er:"bezahlt", wir:"bezahlen", ihr:"bezahlt", sie:"bezahlen",
+   perf:["hat","bezahlt"], ex:"Kannst du die Rechnung bezahlen?", exRu:"Можешь оплатить счёт?"},
+  {inf:"kosten", ru:"стоить", cat:"reg", sep:false,
+   ich:"koste", du:"kostest", er:"kostet", wir:"kosten", ihr:"kostet", sie:"kosten",
+   perf:["hat","gekostet"], ex:"Was kostet das?", exRu:"Сколько это стоит?"},
+  {inf:"sparen", ru:"копить, экономить", cat:"reg", sep:false,
+   ich:"spare", du:"sparst", er:"spart", wir:"sparen", ihr:"spart", sie:"sparen",
+   perf:["hat","gespart"], ex:"Ich spare für ein neues Handy.", exRu:"Я коплю на новый телефон."},
+  {inf:"verdienen", ru:"зарабатывать", cat:"reg", sep:false,
+   ich:"verdiene", du:"verdienst", er:"verdient", wir:"verdienen", ihr:"verdient", sie:"verdienen",
+   perf:["hat","verdient"], ex:"Er verdient nicht schlecht.", exRu:"Он неплохо зарабатывает."},
+  {inf:"mieten", ru:"снимать (жильё)", cat:"reg", sep:false,
+   ich:"miete", du:"mietest", er:"mietet", wir:"mieten", ihr:"mietet", sie:"mieten",
+   perf:["hat","gemietet"], ex:"Wir mieten eine kleine Wohnung.", exRu:"Мы снимаем небольшую квартиру."},
+  {inf:"reisen", ru:"путешествовать", cat:"reg", sep:false,
+   ich:"reise", du:"reist", er:"reist", wir:"reisen", ihr:"reist", sie:"reisen",
+   perf:["ist","gereist"], ex:"Ich reise sehr gern.", exRu:"Я очень люблю путешествовать."},
+  {inf:"buchen", ru:"бронировать", cat:"reg", sep:false,
+   ich:"buche", du:"buchst", er:"bucht", wir:"buchen", ihr:"bucht", sie:"buchen",
+   perf:["hat","gebucht"], ex:"Ich buche den Flug online.", exRu:"Я бронирую билет онлайн."},
+  {inf:"planen", ru:"планировать", cat:"reg", sep:false,
+   ich:"plane", du:"planst", er:"plant", wir:"planen", ihr:"plant", sie:"planen",
+   perf:["hat","geplant"], ex:"Wir planen unseren Urlaub.", exRu:"Мы планируем отпуск."},
+  {inf:"reparieren", ru:"ремонтировать", cat:"reg", sep:false,
+   ich:"repariere", du:"reparierst", er:"repariert", wir:"reparieren", ihr:"repariert", sie:"reparieren",
+   perf:["hat","repariert"], ex:"Er repariert sein Fahrrad.", exRu:"Он чинит свой велосипед."},
+  {inf:"duschen", ru:"принимать душ", cat:"reg", sep:false,
+   ich:"dusche", du:"duschst", er:"duscht", wir:"duschen", ihr:"duscht", sie:"duschen",
+   perf:["hat","geduscht"], ex:"Ich dusche jeden Morgen.", exRu:"Я принимаю душ каждое утро."},
+  {inf:"tanzen", ru:"танцевать", cat:"reg", sep:false,
+   ich:"tanze", du:"tanzt", er:"tanzt", wir:"tanzen", ihr:"tanzt", sie:"tanzen",
+   perf:["hat","getanzt"], ex:"Wollen wir tanzen?", exRu:"Потанцуем?"},
+  {inf:"lächeln", ru:"улыбаться", cat:"reg", sep:false,
+   ich:"lächle", du:"lächelst", er:"lächelt", wir:"lächeln", ihr:"lächelt", sie:"lächeln",
+   perf:["hat","gelächelt"], ex:"Sie lächelt immer.", exRu:"Она всегда улыбается."},
+  {inf:"weinen", ru:"плакать", cat:"reg", sep:false,
+   ich:"weine", du:"weinst", er:"weint", wir:"weinen", ihr:"weint", sie:"weinen",
+   perf:["hat","geweint"], ex:"Warum weinst du?", exRu:"Почему ты плачешь?"},
+  {inf:"hoffen", ru:"надеяться", cat:"reg", sep:false,
+   ich:"hoffe", du:"hoffst", er:"hofft", wir:"hoffen", ihr:"hofft", sie:"hoffen",
+   perf:["hat","gehofft"], ex:"Ich hoffe auf gutes Wetter.", exRu:"Я надеюсь на хорошую погоду."},
+  {inf:"träumen", ru:"мечтать, видеть сон", cat:"reg", sep:false,
+   ich:"träume", du:"träumst", er:"träumt", wir:"träumen", ihr:"träumt", sie:"träumen",
+   perf:["hat","geträumt"], ex:"Ich träume von einem Haus am Meer.", exRu:"Я мечтаю о доме у моря."},
+  {inf:"funktionieren", ru:"работать (о технике)", cat:"reg", sep:false,
+   ich:"funktioniere", du:"funktionierst", er:"funktioniert", wir:"funktionieren", ihr:"funktioniert", sie:"funktionieren",
+   perf:["hat","funktioniert"], ex:"Der Fernseher funktioniert nicht mehr.", exRu:"Телевизор больше не работает."},
+  {inf:"klappen", ru:"получаться (разг.)", cat:"reg", sep:false,
+   ich:"klappe", du:"klappst", er:"klappt", wir:"klappen", ihr:"klappt", sie:"klappen",
+   perf:["hat","geklappt"], ex:"Hoffentlich klappt alles.", exRu:"Надеюсь, всё получится."},
+  {inf:"benutzen", ru:"использовать", cat:"reg", sep:false,
+   ich:"benutze", du:"benutzt", er:"benutzt", wir:"benutzen", ihr:"benutzt", sie:"benutzen",
+   perf:["hat","benutzt"], ex:"Darf ich dein Handy benutzen?", exRu:"Можно воспользоваться твоим телефоном?"},
+  {inf:"üben", ru:"тренироваться, практиковать", cat:"reg", sep:false,
+   ich:"übe", du:"übst", er:"übt", wir:"üben", ihr:"übt", sie:"üben",
+   perf:["hat","geübt"], ex:"Ich übe jeden Tag Deutsch.", exRu:"Я каждый день практикую немецкий."},
+  {inf:"unterrichten", ru:"преподавать", cat:"reg", sep:false,
+   ich:"unterrichte", du:"unterrichtest", er:"unterrichtet", wir:"unterrichten", ihr:"unterrichtet", sie:"unterrichten",
+   perf:["hat","unterrichtet"], ex:"Sie unterrichtet an einer Schule.", exRu:"Она преподаёт в школе."},
+  {inf:"studieren", ru:"учиться (в вузе)", cat:"reg", sep:false,
+   ich:"studiere", du:"studierst", er:"studiert", wir:"studieren", ihr:"studiert", sie:"studieren",
+   perf:["hat","studiert"], ex:"Ich studiere in Berlin.", exRu:"Я учусь в Берлине."},
+  {inf:"prüfen", ru:"проверять", cat:"reg", sep:false,
+   ich:"prüfe", du:"prüfst", er:"prüft", wir:"prüfen", ihr:"prüft", sie:"prüfen",
+   perf:["hat","geprüft"], ex:"Der Lehrer prüft die Hausaufgaben.", exRu:"Учитель проверяет домашнее задание."},
+  {inf:"rechnen", ru:"считать, рассчитывать", cat:"reg", sep:false,
+   ich:"rechne", du:"rechnest", er:"rechnet", wir:"rechnen", ihr:"rechnet", sie:"rechnen",
+   perf:["hat","gerechnet"], ex:"Ich rechne mit deiner Hilfe.", exRu:"Я рассчитываю на твою помощь."},
+  {inf:"telefonieren", ru:"разговаривать по телефону", cat:"reg", sep:false,
+   ich:"telefoniere", du:"telefonierst", er:"telefoniert", wir:"telefonieren", ihr:"telefoniert", sie:"telefonieren",
+   perf:["hat","telefoniert"], ex:"Ich telefoniere gerade mit meiner Schwester.", exRu:"Я сейчас разговариваю по телефону с сестрой."},
+  {inf:"speichern", ru:"сохранять (файл)", cat:"reg", sep:false,
+   ich:"speichere", du:"speicherst", er:"speichert", wir:"speichern", ihr:"speichert", sie:"speichern",
+   perf:["hat","gespeichert"], ex:"Ich speichere das Dokument.", exRu:"Я сохраняю документ."},
+  {inf:"löschen", ru:"удалять", cat:"reg", sep:false,
+   ich:"lösche", du:"löschst", er:"löscht", wir:"löschen", ihr:"löscht", sie:"löschen",
+   perf:["hat","gelöscht"], ex:"Ich lösche die alte Datei.", exRu:"Я удаляю старый файл."},
+  {inf:"husten", ru:"кашлять", cat:"reg", sep:false,
+   ich:"huste", du:"hustest", er:"hustet", wir:"husten", ihr:"hustet", sie:"husten",
+   perf:["hat","gehustet"], ex:"Er hustet seit Tagen.", exRu:"Он кашляет уже несколько дней."},
+  {inf:"schwitzen", ru:"потеть", cat:"reg", sep:false,
+   ich:"schwitze", du:"schwitzt", er:"schwitzt", wir:"schwitzen", ihr:"schwitzt", sie:"schwitzen",
+   perf:["hat","geschwitzt"], ex:"Bei dieser Hitze schwitze ich stark.", exRu:"В такую жару я сильно потею."},
+  {inf:"atmen", ru:"дышать", cat:"reg", sep:false,
+   ich:"atme", du:"atmest", er:"atmet", wir:"atmen", ihr:"atmet", sie:"atmen",
+   perf:["hat","geatmet"], ex:"Atme ruhig weiter.", exRu:"Дыши спокойно дальше."},
+  {inf:"untersuchen", ru:"обследовать, осматривать", cat:"reg", sep:false,
+   ich:"untersuche", du:"untersuchst", er:"untersucht", wir:"untersuchen", ihr:"untersucht", sie:"untersuchen",
+   perf:["hat","untersucht"], ex:"Der Arzt untersucht mich morgen.", exRu:"Врач осмотрит меня завтра."},
+  {inf:"verkaufen", ru:"продавать", cat:"reg", sep:false,
+   ich:"verkaufe", du:"verkaufst", er:"verkauft", wir:"verkaufen", ihr:"verkauft", sie:"verkaufen",
+   perf:["hat","verkauft"], ex:"Wir verkaufen unser altes Auto.", exRu:"Мы продаём нашу старую машину."},
+  {inf:"erklären", ru:"объяснять", cat:"reg", sep:false,
+   ich:"erkläre", du:"erklärst", er:"erklärt", wir:"erklären", ihr:"erklärt", sie:"erklären",
+   perf:["hat","erklärt"], ex:"Kannst du mir das erklären?", exRu:"Можешь мне это объяснить?"},
+  {inf:"erzählen", ru:"рассказывать", cat:"reg", sep:false,
+   ich:"erzähle", du:"erzählst", er:"erzählt", wir:"erzählen", ihr:"erzählt", sie:"erzählen",
+   perf:["hat","erzählt"], ex:"Erzähl mir von deinem Tag.", exRu:"Расскажи мне о своём дне."},
+  {inf:"antworten", ru:"отвечать", cat:"reg", sep:false,
+   ich:"antworte", du:"antwortest", er:"antwortet", wir:"antworten", ihr:"antwortet", sie:"antworten",
+   perf:["hat","geantwortet"], ex:"Warum antwortest du nicht?", exRu:"Почему ты не отвечаешь?"},
+  {inf:"gehören", ru:"принадлежать", cat:"reg", sep:false,
+   ich:"gehöre", du:"gehörst", er:"gehört", wir:"gehören", ihr:"gehört", sie:"gehören",
+   perf:["hat","gehört"], ex:"Das Buch gehört mir.", exRu:"Эта книга принадлежит мне."},
+  {inf:"schmecken", ru:"быть на вкус", cat:"reg", sep:false,
+   ich:"schmecke", du:"schmeckst", er:"schmeckt", wir:"schmecken", ihr:"schmeckt", sie:"schmecken",
+   perf:["hat","geschmeckt"], ex:"Das Essen schmeckt sehr gut.", exRu:"Эта еда очень вкусная."},
+  {inf:"passieren", ru:"происходить, случаться", cat:"reg", sep:false,
+   ich:"passiere", du:"passierst", er:"passiert", wir:"passieren", ihr:"passiert", sie:"passieren",
+   perf:["ist","passiert"], ex:"Das passiert oft.", exRu:"Это часто случается."},
+  {inf:"bedeuten", ru:"означать", cat:"reg", sep:false,
+   ich:"bedeute", du:"bedeutest", er:"bedeutet", wir:"bedeuten", ihr:"bedeutet", sie:"bedeuten",
+   perf:["hat","bedeutet"], ex:"Was bedeutet dieses Wort?", exRu:"Что означает это слово?"},
+  {inf:"dauern", ru:"длиться", cat:"reg", sep:false,
+   ich:"dauere", du:"dauerst", er:"dauert", wir:"dauern", ihr:"dauert", sie:"dauern",
+   perf:["hat","gedauert"], ex:"Der Film dauert zwei Stunden.", exRu:"Фильм длится два часа."},
+  {inf:"versuchen", ru:"пытаться", cat:"reg", sep:false,
+   ich:"versuche", du:"versuchst", er:"versucht", wir:"versuchen", ihr:"versucht", sie:"versuchen",
+   perf:["hat","versucht"], ex:"Ich versuche es noch einmal.", exRu:"Я попробую ещё раз."},
+  {inf:"schaffen", ru:"успевать, справляться", cat:"reg", sep:false,
+   ich:"schaffe", du:"schaffst", er:"schafft", wir:"schaffen", ihr:"schafft", sie:"schaffen",
+   perf:["hat","geschafft"], ex:"Wir schaffen das!", exRu:"Мы справимся!"},
+
+  // ---- weitere Unregelmäßige (A2-B1) ----
+  {inf:"beginnen", ru:"начинать(ся)", cat:"unreg", sep:false,
+   ich:"beginne", du:"beginnst", er:"beginnt", wir:"beginnen", ihr:"beginnt", sie:"beginnen",
+   perf:["hat","begonnen"], ex:"Der Film beginnt um neun.", exRu:"Фильм начинается в девять."},
+  {inf:"verlieren", ru:"терять, проигрывать", cat:"unreg", sep:false,
+   ich:"verliere", du:"verlierst", er:"verliert", wir:"verlieren", ihr:"verliert", sie:"verlieren",
+   perf:["hat","verloren"], ex:"Ich verliere ständig meine Schlüssel.", exRu:"Я постоянно теряю ключи."},
+  {inf:"gewinnen", ru:"выигрывать", cat:"unreg", sep:false,
+   ich:"gewinne", du:"gewinnst", er:"gewinnt", wir:"gewinnen", ihr:"gewinnt", sie:"gewinnen",
+   perf:["hat","gewonnen"], ex:"Wer gewinnt?", exRu:"Кто выигрывает?"},
+  {inf:"vergessen", ru:"забывать", cat:"unreg", sep:false,
+   ich:"vergesse", du:"vergisst", er:"vergisst", wir:"vergessen", ihr:"vergesst", sie:"vergessen",
+   perf:["hat","vergessen"], ex:"Ich vergesse oft Namen.", exRu:"Я часто забываю имена."},
+  {inf:"schlafen", ru:"спать", cat:"unreg", sep:false,
+   ich:"schlafe", du:"schläfst", er:"schläft", wir:"schlafen", ihr:"schlaft", sie:"schlafen",
+   perf:["hat","geschlafen"], ex:"Ich schlafe meistens acht Stunden.", exRu:"Обычно я сплю восемь часов."},
+  {inf:"laufen", ru:"бегать, идти пешком", cat:"unreg", sep:false,
+   ich:"laufe", du:"läufst", er:"läuft", wir:"laufen", ihr:"lauft", sie:"laufen",
+   perf:["ist","gelaufen"], ex:"Ich laufe jeden Morgen im Park.", exRu:"Я бегаю каждое утро в парке."},
+  {inf:"schwimmen", ru:"плавать", cat:"unreg", sep:false,
+   ich:"schwimme", du:"schwimmst", er:"schwimmt", wir:"schwimmen", ihr:"schwimmt", sie:"schwimmen",
+   perf:["ist","geschwommen"], ex:"Wir schwimmen im Sommer im See.", exRu:"Летом мы плаваем в озере."},
+  {inf:"singen", ru:"петь", cat:"unreg", sep:false,
+   ich:"singe", du:"singst", er:"singt", wir:"singen", ihr:"singt", sie:"singen",
+   perf:["hat","gesungen"], ex:"Sie singt in einem Chor.", exRu:"Она поёт в хоре."},
+  {inf:"fliegen", ru:"летать", cat:"unreg", sep:false,
+   ich:"fliege", du:"fliegst", er:"fliegt", wir:"fliegen", ihr:"fliegt", sie:"fliegen",
+   perf:["ist","geflogen"], ex:"Wir fliegen im Juli nach Italien.", exRu:"В июле мы летим в Италию."},
+  {inf:"tragen", ru:"носить", cat:"unreg", sep:false,
+   ich:"trage", du:"trägst", er:"trägt", wir:"tragen", ihr:"tragt", sie:"tragen",
+   perf:["hat","getragen"], ex:"Er trägt heute einen Anzug.", exRu:"Сегодня он в костюме."},
+  {inf:"waschen", ru:"мыть", cat:"unreg", sep:false,
+   ich:"wasche", du:"wäschst", er:"wäscht", wir:"waschen", ihr:"wascht", sie:"waschen",
+   perf:["hat","gewaschen"], ex:"Ich wasche gerade das Geschirr.", exRu:"Я сейчас мою посуду."},
+  {inf:"fallen", ru:"падать", cat:"unreg", sep:false,
+   ich:"falle", du:"fällst", er:"fällt", wir:"fallen", ihr:"fallt", sie:"fallen",
+   perf:["ist","gefallen"], ex:"Pass auf, du fällst gleich!", exRu:"Осторожно, ты сейчас упадёшь!"},
+  {inf:"sterben", ru:"умирать", cat:"unreg", sep:false,
+   ich:"sterbe", du:"stirbst", er:"stirbt", wir:"sterben", ihr:"sterbt", sie:"sterben",
+   perf:["ist","gestorben"], ex:"Ohne Wasser sterben die Blumen.", exRu:"Без воды цветы умирают."},
+  {inf:"wachsen", ru:"расти", cat:"unreg", sep:false,
+   ich:"wachse", du:"wächst", er:"wächst", wir:"wachsen", ihr:"wachst", sie:"wachsen",
+   perf:["ist","gewachsen"], ex:"Die Kinder wachsen so schnell.", exRu:"Дети растут так быстро."},
+  {inf:"heißen", ru:"зваться, называться", cat:"unreg", sep:false,
+   ich:"heiße", du:"heißt", er:"heißt", wir:"heißen", ihr:"heißt", sie:"heißen",
+   perf:["hat","geheißen"], ex:"Wie heißt du?", exRu:"Как тебя зовут?"},
+  {inf:"tun", ru:"делать", cat:"unreg", sep:false,
+   ich:"tue", du:"tust", er:"tut", wir:"tun", ihr:"tut", sie:"tun",
+   perf:["hat","getan"], ex:"Was tust du gerade?", exRu:"Что ты сейчас делаешь?"},
+  {inf:"bringen", ru:"приносить", cat:"unreg", sep:false,
+   ich:"bringe", du:"bringst", er:"bringt", wir:"bringen", ihr:"bringt", sie:"bringen",
+   perf:["hat","gebracht"], ex:"Kannst du mir bitte Wasser bringen?", exRu:"Можешь принести мне воды, пожалуйста?"},
+  {inf:"beschreiben", ru:"описывать", cat:"unreg", sep:false,
+   ich:"beschreibe", du:"beschreibst", er:"beschreibt", wir:"beschreiben", ihr:"beschreibt", sie:"beschreiben",
+   perf:["hat","beschrieben"], ex:"Beschreib mir bitte den Weg.", exRu:"Опиши мне, пожалуйста, дорогу."},
+  {inf:"gefallen", ru:"нравиться", cat:"unreg", sep:false,
+   ich:"gefalle", du:"gefällst", er:"gefällt", wir:"gefallen", ihr:"gefallt", sie:"gefallen",
+   perf:["hat","gefallen"], ex:"Die Stadt gefällt mir sehr.", exRu:"Мне очень нравится этот город."},
+  {inf:"riechen", ru:"пахнуть, нюхать", cat:"unreg", sep:false,
+   ich:"rieche", du:"riechst", er:"riecht", wir:"riechen", ihr:"riecht", sie:"riechen",
+   perf:["hat","gerochen"], ex:"Es riecht hier nach Kaffee.", exRu:"Здесь пахнет кофе."},
+
+  // ---- weitere Trennbare (A2-B1) ----
+  {inf:"vorschlagen", ru:"предлагать", cat:"trenn", sep:true,
+   ich:"schlage vor", du:"schlägst vor", er:"schlägt vor", wir:"schlagen vor", ihr:"schlagt vor", sie:"schlagen vor",
+   perf:["hat","vorgeschlagen"], ex:"Ich schlage ein Café vor.", exRu:"Я предлагаю кафе."},
+  {inf:"einladen", ru:"приглашать", cat:"trenn", sep:true,
+   ich:"lade ein", du:"lädst ein", er:"lädt ein", wir:"laden ein", ihr:"ladet ein", sie:"laden ein",
+   perf:["hat","eingeladen"], ex:"Ich lade dich zum Essen ein.", exRu:"Я приглашаю тебя на ужин."},
+  {inf:"mitkommen", ru:"идти/ехать вместе", cat:"trenn", sep:true,
+   ich:"komme mit", du:"kommst mit", er:"kommt mit", wir:"kommen mit", ihr:"kommt mit", sie:"kommen mit",
+   perf:["ist","mitgekommen"], ex:"Kommst du mit?", exRu:"Ты идёшь с нами?"},
+  {inf:"weggehen", ru:"уходить", cat:"trenn", sep:true,
+   ich:"gehe weg", du:"gehst weg", er:"geht weg", wir:"gehen weg", ihr:"geht weg", sie:"gehen weg",
+   perf:["ist","weggegangen"], ex:"Ich gehe jetzt weg.", exRu:"Я сейчас ухожу."},
+  {inf:"ankommen", ru:"прибывать", cat:"trenn", sep:true,
+   ich:"komme an", du:"kommst an", er:"kommt an", wir:"kommen an", ihr:"kommt an", sie:"kommen an",
+   perf:["ist","angekommen"], ex:"Der Zug kommt um zehn an.", exRu:"Поезд прибывает в десять."},
+  {inf:"abfahren", ru:"отправляться", cat:"trenn", sep:true,
+   ich:"fahre ab", du:"fährst ab", er:"fährt ab", wir:"fahren ab", ihr:"fahrt ab", sie:"fahren ab",
+   perf:["ist","abgefahren"], ex:"Der Bus fährt gleich ab.", exRu:"Автобус сейчас отправляется."},
+  {inf:"aussehen", ru:"выглядеть", cat:"trenn", sep:true,
+   ich:"sehe aus", du:"siehst aus", er:"sieht aus", wir:"sehen aus", ihr:"seht aus", sie:"sehen aus",
+   perf:["hat","ausgesehen"], ex:"Du siehst müde aus.", exRu:"Ты выглядишь уставшим."},
+  {inf:"fernsehen", ru:"смотреть телевизор", cat:"trenn", sep:true,
+   ich:"sehe fern", du:"siehst fern", er:"sieht fern", wir:"sehen fern", ihr:"seht fern", sie:"sehen fern",
+   perf:["hat","ferngesehen"], ex:"Wir sehen abends fern.", exRu:"Вечером мы смотрим телевизор."},
+  {inf:"umziehen", ru:"переезжать", cat:"trenn", sep:true,
+   ich:"ziehe um", du:"ziehst um", er:"zieht um", wir:"ziehen um", ihr:"zieht um", sie:"ziehen um",
+   perf:["ist","umgezogen"], ex:"Wir ziehen nächsten Monat um.", exRu:"В следующем месяце мы переезжаем."},
+  {inf:"aufräumen", ru:"убираться, наводить порядок", cat:"trenn", sep:true,
+   ich:"räume auf", du:"räumst auf", er:"räumt auf", wir:"räumen auf", ihr:"räumt auf", sie:"räumen auf",
+   perf:["hat","aufgeräumt"], ex:"Ich räume mein Zimmer auf.", exRu:"Я убираю свою комнату."},
+  {inf:"aufwachen", ru:"просыпаться", cat:"trenn", sep:true,
+   ich:"wache auf", du:"wachst auf", er:"wacht auf", wir:"wachen auf", ihr:"wacht auf", sie:"wachen auf",
+   perf:["ist","aufgewacht"], ex:"Ich wache immer früh auf.", exRu:"Я всегда рано просыпаюсь."},
+  {inf:"einschlafen", ru:"засыпать", cat:"trenn", sep:true,
+   ich:"schlafe ein", du:"schläfst ein", er:"schläft ein", wir:"schlafen ein", ihr:"schlaft ein", sie:"schlafen ein",
+   perf:["ist","eingeschlafen"], ex:"Ich schlafe schnell ein.", exRu:"Я быстро засыпаю."},
+  {inf:"vorbereiten", ru:"готовить(ся)", cat:"trenn", sep:true,
+   ich:"bereite vor", du:"bereitest vor", er:"bereitet vor", wir:"bereiten vor", ihr:"bereitet vor", sie:"bereiten vor",
+   perf:["hat","vorbereitet"], ex:"Ich bereite das Abendessen vor.", exRu:"Я готовлю ужин."},
+  {inf:"teilnehmen", ru:"участвовать", cat:"trenn", sep:true,
+   ich:"nehme teil", du:"nimmst teil", er:"nimmt teil", wir:"nehmen teil", ihr:"nehmt teil", sie:"nehmen teil",
+   perf:["hat","teilgenommen"], ex:"Ich nehme an dem Kurs teil.", exRu:"Я участвую в этом курсе."},
+  {inf:"zunehmen", ru:"набирать вес", cat:"trenn", sep:true,
+   ich:"nehme zu", du:"nimmst zu", er:"nimmt zu", wir:"nehmen zu", ihr:"nehmt zu", sie:"nehmen zu",
+   perf:["hat","zugenommen"], ex:"Ich nehme leicht zu.", exRu:"Я легко набираю вес."},
+  {inf:"abnehmen", ru:"худеть", cat:"trenn", sep:true,
+   ich:"nehme ab", du:"nimmst ab", er:"nimmt ab", wir:"nehmen ab", ihr:"nehmt ab", sie:"nehmen ab",
+   perf:["hat","abgenommen"], ex:"Ich nehme langsam ab.", exRu:"Я медленно худею."},
+  {inf:"aufmachen", ru:"открывать", cat:"trenn", sep:true,
+   ich:"mache auf", du:"machst auf", er:"macht auf", wir:"machen auf", ihr:"macht auf", sie:"machen auf",
+   perf:["hat","aufgemacht"], ex:"Kannst du das Fenster aufmachen?", exRu:"Можешь открыть окно?"},
+  {inf:"zumachen", ru:"закрывать", cat:"trenn", sep:true,
+   ich:"mache zu", du:"machst zu", er:"macht zu", wir:"machen zu", ihr:"macht zu", sie:"machen zu",
+   perf:["hat","zugemacht"], ex:"Mach bitte die Tür zu.", exRu:"Закрой, пожалуйста, дверь."},
+  {inf:"ausmachen", ru:"выключать", cat:"trenn", sep:true,
+   ich:"mache aus", du:"machst aus", er:"macht aus", wir:"machen aus", ihr:"macht aus", sie:"machen aus",
+   perf:["hat","ausgemacht"], ex:"Mach bitte das Licht aus.", exRu:"Выключи, пожалуйста, свет."},
+  {inf:"anmachen", ru:"включать", cat:"trenn", sep:true,
+   ich:"mache an", du:"machst an", er:"macht an", wir:"machen an", ihr:"macht an", sie:"machen an",
+   perf:["hat","angemacht"], ex:"Mach bitte das Licht an.", exRu:"Включи, пожалуйста, свет."},
+  {inf:"aufhören", ru:"прекращать, переставать", cat:"trenn", sep:true,
+   ich:"höre auf", du:"hörst auf", er:"hört auf", wir:"hören auf", ihr:"hört auf", sie:"hören auf",
+   perf:["hat","aufgehört"], ex:"Hör auf zu reden!", exRu:"Перестань говорить!"},
+  {inf:"kennenlernen", ru:"знакомиться", cat:"trenn", sep:true,
+   ich:"lerne kennen", du:"lernst kennen", er:"lernt kennen", wir:"lernen kennen", ihr:"lernt kennen", sie:"lernen kennen",
+   perf:["hat","kennengelernt"], ex:"Ich möchte dich gern kennenlernen.", exRu:"Я бы хотел(а) с тобой познакомиться."},
+
+  // ---- Reflexive Verben (A2-B1) ----
+  {inf:"sich freuen", ru:"радоваться", cat:"refl", sep:false, refl:true,
+   ich:"freue mich", du:"freust dich", er:"freut sich", wir:"freuen uns", ihr:"freut euch", sie:"freuen sich",
+   perf:["hat","sich gefreut"], ex:"Ich freue mich auf das Wochenende.", exRu:"Я радуюсь предстоящим выходным."},
+  {inf:"sich interessieren", ru:"интересоваться", cat:"refl", sep:false, refl:true,
+   ich:"interessiere mich", du:"interessierst dich", er:"interessiert sich", wir:"interessieren uns", ihr:"interessiert euch", sie:"interessieren sich",
+   perf:["hat","sich interessiert"], ex:"Ich interessiere mich für Musik.", exRu:"Я интересуюсь музыкой."},
+  {inf:"sich fühlen", ru:"чувствовать себя", cat:"refl", sep:false, refl:true,
+   ich:"fühle mich", du:"fühlst dich", er:"fühlt sich", wir:"fühlen uns", ihr:"fühlt euch", sie:"fühlen sich",
+   perf:["hat","sich gefühlt"], ex:"Ich fühle mich heute gut.", exRu:"Сегодня я чувствую себя хорошо."},
+  {inf:"sich erinnern", ru:"вспоминать", cat:"refl", sep:false, refl:true,
+   ich:"erinnere mich", du:"erinnerst dich", er:"erinnert sich", wir:"erinnern uns", ihr:"erinnert euch", sie:"erinnern sich",
+   perf:["hat","sich erinnert"], ex:"Ich erinnere mich gut an dich.", exRu:"Я хорошо тебя помню."},
+  {inf:"sich entscheiden", ru:"решать(ся)", cat:"refl", sep:false, refl:true,
+   ich:"entscheide mich", du:"entscheidest dich", er:"entscheidet sich", wir:"entscheiden uns", ihr:"entscheidet euch", sie:"entscheiden sich",
+   perf:["hat","sich entschieden"], ex:"Ich kann mich nicht entscheiden.", exRu:"Я не могу решить(ся)."},
+  {inf:"sich beeilen", ru:"торопиться", cat:"refl", sep:false, refl:true,
+   ich:"beeile mich", du:"beeilst dich", er:"beeilt sich", wir:"beeilen uns", ihr:"beeilt euch", sie:"beeilen sich",
+   perf:["hat","sich beeilt"], ex:"Beeil dich, wir sind spät dran!", exRu:"Поторопись, мы опаздываем!"},
+  {inf:"sich ärgern", ru:"злиться, раздражаться", cat:"refl", sep:false, refl:true,
+   ich:"ärgere mich", du:"ärgerst dich", er:"ärgert sich", wir:"ärgern uns", ihr:"ärgert euch", sie:"ärgern sich",
+   perf:["hat","sich geärgert"], ex:"Ich ärgere mich über den Stau.", exRu:"Я злюсь из-за пробки."},
+  {inf:"sich verlieben", ru:"влюбляться", cat:"refl", sep:false, refl:true,
+   ich:"verliebe mich", du:"verliebst dich", er:"verliebt sich", wir:"verlieben uns", ihr:"verliebt euch", sie:"verlieben sich",
+   perf:["hat","sich verliebt"], ex:"Ich verliebe mich schnell.", exRu:"Я быстро влюбляюсь."},
+  {inf:"sich entspannen", ru:"расслабляться", cat:"refl", sep:false, refl:true,
+   ich:"entspanne mich", du:"entspannst dich", er:"entspannt sich", wir:"entspannen uns", ihr:"entspannt euch", sie:"entspannen sich",
+   perf:["hat","sich entspannt"], ex:"Ich entspanne mich am Wochenende.", exRu:"По выходным я расслабляюсь."},
+  {inf:"sich ausruhen", ru:"отдыхать", cat:"refl", sep:true, refl:true,
+   ich:"ruhe mich aus", du:"ruhst dich aus", er:"ruht sich aus", wir:"ruhen uns aus", ihr:"ruht euch aus", sie:"ruhen sich aus",
+   perf:["hat","sich ausgeruht"], ex:"Ich muss mich ausruhen.", exRu:"Мне нужно отдохнуть."},
+  {inf:"sich verabreden", ru:"договариваться о встрече", cat:"refl", sep:false, refl:true,
+   ich:"verabrede mich", du:"verabredest dich", er:"verabredet sich", wir:"verabreden uns", ihr:"verabredet euch", sie:"verabreden sich",
+   perf:["hat","sich verabredet"], ex:"Wir verabreden uns für Samstag.", exRu:"Мы договариваемся на субботу."},
+  {inf:"sich verabschieden", ru:"прощаться", cat:"refl", sep:false, refl:true,
+   ich:"verabschiede mich", du:"verabschiedest dich", er:"verabschiedet sich", wir:"verabschieden uns", ihr:"verabschiedet euch", sie:"verabschieden sich",
+   perf:["hat","sich verabschiedet"], ex:"Ich verabschiede mich jetzt.", exRu:"Я сейчас прощаюсь."},
+  {inf:"sich anziehen", ru:"одеваться", cat:"refl", sep:true, refl:true,
+   ich:"ziehe mich an", du:"ziehst dich an", er:"zieht sich an", wir:"ziehen uns an", ihr:"zieht euch an", sie:"ziehen sich an",
+   perf:["hat","sich angezogen"], ex:"Zieh dich warm an!", exRu:"Одевайся теплее!"},
+  {inf:"sich ausziehen", ru:"раздеваться", cat:"refl", sep:true, refl:true,
+   ich:"ziehe mich aus", du:"ziehst dich aus", er:"zieht sich aus", wir:"ziehen uns aus", ihr:"zieht euch aus", sie:"ziehen sich aus",
+   perf:["hat","sich ausgezogen"], ex:"Ich ziehe mich aus und dusche.", exRu:"Я раздеваюсь и иду в душ."},
+  {inf:"sich waschen", ru:"мыться", cat:"refl", sep:false, refl:true,
+   ich:"wasche mich", du:"wäschst dich", er:"wäscht sich", wir:"waschen uns", ihr:"wascht euch", sie:"waschen sich",
+   perf:["hat","sich gewaschen"], ex:"Ich wasche mich jeden Morgen.", exRu:"Я моюсь каждое утро."},
+  {inf:"sich setzen", ru:"садиться", cat:"refl", sep:false, refl:true,
+   ich:"setze mich", du:"setzt dich", er:"setzt sich", wir:"setzen uns", ihr:"setzt euch", sie:"setzen sich",
+   perf:["hat","sich gesetzt"], ex:"Setz dich bitte.", exRu:"Садись, пожалуйста."},
+  {inf:"sich kümmern", ru:"заботиться", cat:"refl", sep:false, refl:true,
+   ich:"kümmere mich", du:"kümmerst dich", er:"kümmert sich", wir:"kümmern uns", ihr:"kümmert euch", sie:"kümmern sich",
+   perf:["hat","sich gekümmert"], ex:"Ich kümmere mich um die Kinder.", exRu:"Я забочусь о детях."},
+  {inf:"sich bewerben", ru:"подавать заявку (на работу)", cat:"refl", sep:false, refl:true,
+   ich:"bewerbe mich", du:"bewirbst dich", er:"bewirbt sich", wir:"bewerben uns", ihr:"bewerbt euch", sie:"bewerben sich",
+   perf:["hat","sich beworben"], ex:"Ich bewerbe mich um die Stelle.", exRu:"Я подаю заявку на эту должность."},
+  {inf:"sich erkälten", ru:"простужаться", cat:"refl", sep:false, refl:true,
+   ich:"erkälte mich", du:"erkältest dich", er:"erkältet sich", wir:"erkälten uns", ihr:"erkältet euch", sie:"erkälten sich",
+   perf:["hat","sich erkältet"], ex:"Ich erkälte mich schnell im Winter.", exRu:"Зимой я быстро простужаюсь."},
+];
+
+VERBS.forEach((v,i)=>v.id=i);
+
+const CATS = [
+  {key:"all", label:"Alle"},
+  {key:"grund", label:"Grundverben"},
+  {key:"modal", label:"Modalverben"},
+  {key:"unreg", label:"Unregelmäßig"},
+  {key:"reg", label:"Regelmäßig"},
+  {key:"trenn", label:"Trennbar"},
+  {key:"refl", label:"Reflexiv"},
+];
+
+const PERSONS = [
+  {key:"ich", label:"ich"},
+  {key:"du", label:"du"},
+  {key:"er", label:"er/sie/es"},
+  {key:"wir", label:"wir"},
+  {key:"ihr", label:"ihr"},
+  {key:"sie", label:"sie/Sie"},
+];
+
+const LS_KNOWN = "a2verben.known.v1";
+const LS_STATS = "a2verben.stats.v1";
+
+function loadKnown(){
+  try{ return new Set(JSON.parse(localStorage.getItem(LS_KNOWN) || "[]")); }
+  catch(e){ return new Set(); }
+}
+function saveKnown(set){
+  localStorage.setItem(LS_KNOWN, JSON.stringify([...set]));
+}
+function loadStats(){
+  try{ return Object.assign({drillCorrect:0,drillTotal:0,quizCorrect:0,quizTotal:0}, JSON.parse(localStorage.getItem(LS_STATS)||"{}")); }
+  catch(e){ return {drillCorrect:0,drillTotal:0,quizCorrect:0,quizTotal:0}; }
+}
+function saveStats(s){ localStorage.setItem(LS_STATS, JSON.stringify(s)); }
+
+let known = loadKnown();
+let stats = loadStats();
+let activeCat = "all";
+
+function filtered(){
+  return activeCat==="all" ? VERBS.slice() : VERBS.filter(v=>v.cat===activeCat);
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function normalize(s){
+  return s.trim().toLowerCase().replace(/ß/g,"ss").replace(/\s+/g," ");
+}
+function updateKnownHeader(){
+  document.getElementById("knownCount").textContent = known.size;
+}
+
+/* ---------------- chips ---------------- */
+const chipsEl = document.getElementById("chips");
+CATS.forEach(c=>{
+  const b = document.createElement("button");
+  b.className = "chip" + (c.key==="all" ? " active" : "");
+  b.textContent = c.label;
+  b.dataset.cat = c.key;
+  b.addEventListener("click", ()=>{
+    activeCat = c.key;
+    [...chipsEl.children].forEach(x=>x.classList.toggle("active", x.dataset.cat===c.key));
+    resetDeck();
+    resetDrill();
+    resetQuiz();
+    renderList();
+  });
+  chipsEl.appendChild(b);
+});
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll("nav.tabs button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById("view-"+btn.dataset.view).classList.add("active");
+  });
+});
+
+/* ================= CARDS ================= */
+let deck = [];
+let deckPtr = 0;
+let cardFlipped = false;
+
+function resetDeck(){
+  deck = shuffle(filtered()).map(v=>v.id);
+  deckPtr = 0;
+  cardFlipped = false;
+  renderCard();
+}
+function currentVerb(){
+  if(deck.length===0) return null;
+  return VERBS[deck[deckPtr % deck.length]];
+}
+function renderCard(){
+  const card = document.getElementById("card");
+  card.classList.remove("flipped");
+  cardFlipped = false;
+  const v = currentVerb();
+  const total = deck.length;
+  document.getElementById("cardsPos").textContent = total ? ((deckPtr%total)+1)+" / "+total : "0 / 0";
+  const knownInDeck = deck.filter(id=>known.has(id)).length;
+  document.getElementById("cardsKnown").textContent = knownInDeck+" знаю";
+  document.getElementById("cardsProgress").style.width = total ? Math.round(knownInDeck/total*100)+"%" : "0%";
+
+  if(!v){
+    document.getElementById("frontWord").textContent = "—";
+    document.getElementById("frontBadges").innerHTML = "";
+    return;
+  }
+  document.getElementById("frontWord").textContent = v.sep ? v.inf.slice(0, v.inf.length) : v.inf;
+  const catLabel = CATS.find(c=>c.key===v.cat).label;
+  let badges = `<span class="badge">${catLabel}</span>`;
+  if(v.sep) badges += `<span class="badge sep">trennbar</span>`;
+  if(known.has(v.id)) badges += `<span class="badge" style="background:var(--good-soft);color:var(--good);">kenne ich</span>`;
+  document.getElementById("frontBadges").innerHTML = badges;
+
+  document.getElementById("backWord").textContent = v.inf;
+  document.getElementById("backRu").textContent = v.ru;
+  document.getElementById("backEx").textContent = v.ex;
+  document.getElementById("backExRu").textContent = v.exRu;
+
+  const conj = document.getElementById("backConj");
+  conj.innerHTML = PERSONS.map(p=>`<tr><td class="pron">${p.label}</td><td>${v[p.key]}</td></tr>`).join("");
+
+  document.getElementById("backPerf").innerHTML = v.perf
+    ? `Perfekt: <b>${v.perf[0]} ${v.perf[1]}</b>`
+    : `Perfekt: — (im Alltag selten verwendet)`;
+}
+
+document.getElementById("card").addEventListener("click", ()=>{
+  const card = document.getElementById("card");
+  cardFlipped = !cardFlipped;
+  card.classList.toggle("flipped", cardFlipped);
+});
+document.getElementById("btnShuffle").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  resetDeck();
+});
+document.getElementById("btnAgain").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  const v = currentVerb();
+  if(!v) return;
+  known.delete(v.id);
+  saveKnown(known);
+  updateKnownHeader();
+  const reinsertAt = Math.min(deckPtr+4, deck.length);
+  deck.splice(reinsertAt, 0, v.id);
+  deckPtr++;
+  if(deckPtr >= deck.length){ deck = shuffle(filtered()).map(x=>x.id); deckPtr = 0; }
+  renderCard();
+});
+document.getElementById("btnKnow").addEventListener("click", (e)=>{
+  e.stopPropagation();
+  const v = currentVerb();
+  if(!v) return;
+  known.add(v.id);
+  saveKnown(known);
+  updateKnownHeader();
+  deckPtr++;
+  if(deckPtr >= deck.length){ deck = shuffle(filtered()).map(x=>x.id); deckPtr = 0; }
+  renderCard();
+});
+
+/* ================= DRILL ================= */
+let drillCurrent = null;
+
+function resetDrill(){
+  document.getElementById("drillScore").textContent = stats.drillCorrect+"/"+stats.drillTotal;
+  nextDrill();
+}
+function nextDrill(){
+  const pool = filtered();
+  if(pool.length===0){
+    document.getElementById("drillVerb").textContent = "—";
+    document.getElementById("drillGloss").textContent = "keine Verben in diesem Filter";
+    drillCurrent = null;
+    return;
+  }
+  const v = pool[Math.floor(Math.random()*pool.length)];
+  const p = PERSONS[Math.floor(Math.random()*PERSONS.length)];
+  drillCurrent = {v, p};
+  document.getElementById("drillVerb").innerHTML = `${v.inf} <span class="pronoun">(${p.label})</span>`;
+  document.getElementById("drillGloss").textContent = v.ru;
+  const input = document.getElementById("drillInput");
+  input.value = "";
+  input.classList.remove("correct","wrong");
+  input.disabled = false;
+  document.getElementById("drillFeedback").textContent = "";
+  document.getElementById("drillFeedback").className = "feedback";
+  document.getElementById("drillCheck").style.display = "";
+  document.getElementById("drillNext").style.display = "none";
+  input.focus();
+}
+function checkDrill(){
+  if(!drillCurrent) return;
+  const input = document.getElementById("drillInput");
+  const correctRaw = drillCurrent.v[drillCurrent.p.key];
+  const ok = normalize(input.value) === normalize(correctRaw) && input.value.trim().length>0;
+  stats.drillTotal++;
+  if(ok) stats.drillCorrect++;
+  saveStats(stats);
+  document.getElementById("drillScore").textContent = stats.drillCorrect+"/"+stats.drillTotal;
+
+  const fb = document.getElementById("drillFeedback");
+  input.classList.add(ok?"correct":"wrong");
+  input.disabled = true;
+  if(ok){
+    fb.textContent = "Richtig!";
+    fb.className = "feedback correct";
+  } else {
+    fb.textContent = "Richtig wäre: „"+correctRaw+"“";
+    fb.className = "feedback wrong";
+  }
+  document.getElementById("drillCheck").style.display = "none";
+  document.getElementById("drillNext").style.display = "";
+  document.getElementById("drillNext").focus();
+}
+document.getElementById("drillCheck").addEventListener("click", checkDrill);
+document.getElementById("drillNext").addEventListener("click", nextDrill);
+document.getElementById("drillInput").addEventListener("keydown", (e)=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    if(document.getElementById("drillCheck").style.display !== "none") checkDrill();
+    else nextDrill();
+  }
+});
+
+/* ================= QUIZ ================= */
+let quizCurrent = null;
+
+function resetQuiz(){
+  document.getElementById("quizScore").textContent = stats.quizCorrect+"/"+stats.quizTotal;
+  nextQuiz();
+}
+function nextQuiz(){
+  const pool = filtered();
+  const distractorPool = pool.length>=4 ? pool : VERBS;
+  if(pool.length===0){
+    document.getElementById("quizVerb").textContent = "—";
+    document.getElementById("quizOptions").innerHTML = "";
+    quizCurrent = null;
+    return;
+  }
+  const v = pool[Math.floor(Math.random()*pool.length)];
+  const others = shuffle(distractorPool.filter(x=>x.id!==v.id)).slice(0,3);
+  const options = shuffle([v, ...others]);
+  quizCurrent = v;
+
+  document.getElementById("quizVerb").textContent = v.inf;
+  const optWrap = document.getElementById("quizOptions");
+  optWrap.innerHTML = "";
+  options.forEach(o=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = o.ru;
+    btn.addEventListener("click", ()=>answerQuiz(btn, o, v));
+    optWrap.appendChild(btn);
+  });
+  document.getElementById("quizNext").classList.remove("show");
+}
+function answerQuiz(btn, chosen, correctVerb){
+  const allBtns = document.querySelectorAll("#quizOptions .opt");
+  allBtns.forEach(b=>b.disabled = true);
+  const ok = chosen.id === correctVerb.id;
+  stats.quizTotal++;
+  if(ok) stats.quizCorrect++;
+  saveStats(stats);
+  document.getElementById("quizScore").textContent = stats.quizCorrect+"/"+stats.quizTotal;
+
+  if(ok){
+    btn.classList.add("correct");
+  } else {
+    btn.classList.add("wrong");
+    allBtns.forEach(b=>{ if(b.textContent===correctVerb.ru) b.classList.add("correct"); });
+  }
+  document.getElementById("quizNext").classList.add("show");
+}
+document.getElementById("quizNext").addEventListener("click", nextQuiz);
+
+/* ================= LIST ================= */
+let listQuery = "";
+document.getElementById("listSearch").addEventListener("input", (e)=>{
+  listQuery = e.target.value.trim().toLowerCase();
+  renderList();
+});
+function renderList(){
+  const rows = filtered().filter(v=>{
+    if(!listQuery) return true;
+    return v.inf.toLowerCase().includes(listQuery) || v.ru.toLowerCase().includes(listQuery);
+  });
+  const body = document.getElementById("listBody");
+  const empty = document.getElementById("listEmpty");
+  if(rows.length===0){
+    body.innerHTML = "";
+    empty.style.display = "";
+    return;
+  }
+  empty.style.display = "none";
+  body.innerHTML = rows.map(v=>{
+    const perf = v.perf ? `${v.perf[0]} ${v.perf[1]}` : "—";
+    return `<tr>
+      <td class="known">${known.has(v.id) ? '<span class="dot-known">●</span>' : ''}</td>
+      <td class="inf">${v.inf}${v.sep ? ' <span class="sep-dot">·</span>' : ''}</td>
+      <td class="ru">${v.ru}</td>
+      <td>${v.ich}</td>
+      <td>${v.du}</td>
+      <td>${v.er}</td>
+      <td>${perf}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* ================= reset ================= */
+document.getElementById("resetProgress").addEventListener("click", ()=>{
+  if(!confirm("Gesamten Fortschritt (Karten + Punkte) wirklich zurücksetzen?")) return;
+  known = new Set();
+  stats = {drillCorrect:0,drillTotal:0,quizCorrect:0,quizTotal:0};
+  saveKnown(known);
+  saveStats(stats);
+  updateKnownHeader();
+  resetDeck();
+  resetDrill();
+  resetQuiz();
+  renderList();
+});
+
+/* ================= init ================= */
+updateKnownHeader();
+resetDeck();
+resetDrill();
+resetQuiz();
+renderList();
+
+})();
+</script>
