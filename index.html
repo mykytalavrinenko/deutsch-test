@@ -250,6 +250,20 @@
   }
   .compare .txt{flex:1;}
 
+  .case-tag{
+    display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px;
+    padding:2px 7px; border-radius:5px;
+    background:var(--amber-soft); color:var(--amber);
+  }
+  .prep-list-cards{display:flex;flex-direction:column;gap:8px;}
+  .prep-card{border:1px solid var(--border);background:var(--surface);border-radius:12px;padding:12px 14px;}
+  .prep-card .head{display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;}
+  .prep-card .word{font-weight:700;font-size:15.5px;}
+  .prep-card .mean{color:var(--accent-ink);font-size:13.5px;margin-bottom:8px;}
+  .prep-card .pex{font-size:13px;}
+  .prep-card .pex .de{margin-bottom:1px;}
+  .prep-card .pex .ru{color:var(--ink-muted);}
+
   /* ---- List / vocab table (shared) ---- */
   .search{
     width:100%;
@@ -1062,12 +1076,15 @@
   </header>
   <main class="wrap" style="padding-top:0;">
     <input class="search" id="lexSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
-    <div class="table-scroll">
-      <table class="list">
-        <thead><tr><th>Wort</th><th>Übersetzung</th></tr></thead>
-        <tbody id="lexBody"></tbody>
-      </table>
+    <div id="lexTableWrap">
+      <div class="table-scroll">
+        <table class="list">
+          <thead><tr><th>Wort</th><th>Übersetzung</th></tr></thead>
+          <tbody id="lexBody"></tbody>
+        </table>
+      </div>
     </div>
+    <div class="prep-list-cards" id="lexPrepList" style="display:none;"></div>
     <div class="empty" id="lexEmpty" style="display:none;">Nichts gefunden.</div>
   </main>
 </div>
@@ -1191,10 +1208,46 @@ const LEX_TOPICS = [
   ]},
 ];
 
+const PREPOSITIONS = [
+  {de:"für", case:"Akkusativ", ru:"для", ex:"Das Geschenk ist für dich.", exRu:"Этот подарок для тебя."},
+  {de:"ohne", case:"Akkusativ", ru:"без", ex:"Ich trinke Kaffee ohne Zucker.", exRu:"Я пью кофе без сахара."},
+  {de:"gegen", case:"Akkusativ", ru:"против / около (о времени)", ex:"Er ist gegen das Rauchen.", exRu:"Он против курения."},
+  {de:"durch", case:"Akkusativ", ru:"через, посредством", ex:"Wir gehen durch den Park.", exRu:"Мы идём через парк."},
+  {de:"um", case:"Akkusativ", ru:"вокруг / в (время)", ex:"Der Unterricht beginnt um acht Uhr.", exRu:"Урок начинается в восемь часов."},
+  {de:"bis", case:"Akkusativ", ru:"до", ex:"Ich bleibe bis Freitag.", exRu:"Я останусь до пятницы."},
+
+  {de:"mit", case:"Dativ", ru:"с", ex:"Ich fahre mit dem Bus.", exRu:"Я еду на автобусе."},
+  {de:"nach", case:"Dativ", ru:"после / в направлении", ex:"Nach der Arbeit gehe ich nach Hause.", exRu:"После работы я иду домой."},
+  {de:"bei", case:"Dativ", ru:"у, при", ex:"Ich wohne bei meinen Eltern.", exRu:"Я живу у родителей."},
+  {de:"seit", case:"Dativ", ru:"с (какого-то момента)", ex:"Ich lerne seit einem Jahr Deutsch.", exRu:"Я учу немецкий уже год."},
+  {de:"von", case:"Dativ", ru:"от, из", ex:"Das Geschenk ist von meiner Mutter.", exRu:"Этот подарок от моей мамы."},
+  {de:"zu", case:"Dativ", ru:"к", ex:"Ich gehe zu meinem Freund.", exRu:"Я иду к своему другу."},
+  {de:"aus", case:"Dativ", ru:"из", ex:"Ich komme aus Russland.", exRu:"Я из России."},
+  {de:"außer", case:"Dativ", ru:"кроме", ex:"Alle waren da außer ihm.", exRu:"Все были там, кроме него."},
+  {de:"gegenüber", case:"Dativ", ru:"напротив", ex:"Die Bank ist gegenüber dem Bahnhof.", exRu:"Банк напротив вокзала."},
+
+  {de:"während", case:"Genitiv", ru:"во время, пока", ex:"Während des Urlaubs habe ich viel gelesen.", exRu:"Во время отпуска я много читал(а)."},
+  {de:"trotz", case:"Genitiv", ru:"несмотря на", ex:"Trotz des Regens gehen wir spazieren.", exRu:"Несмотря на дождь, мы идём гулять."},
+  {de:"wegen", case:"Genitiv", ru:"из-за", ex:"Wegen des Wetters bleiben wir zu Hause.", exRu:"Из-за погоды мы останемся дома."},
+  {de:"statt", case:"Genitiv", ru:"вместо", ex:"Statt eines Anrufs schreibt er eine SMS.", exRu:"Вместо звонка он пишет смс."},
+
+  {de:"in", case:"Wechsel", ru:"в", exAkk:"Ich gehe in die Schule.", exAkkRu:"Я иду в школу. (куда?)", exDat:"Ich bin in der Schule.", exDatRu:"Я в школе. (где?)"},
+  {de:"an", case:"Wechsel", ru:"у, к, на (вертикальная поверхность)", exAkk:"Ich hänge das Bild an die Wand.", exAkkRu:"Я вешаю картину на стену. (куда?)", exDat:"Das Bild hängt an der Wand.", exDatRu:"Картина висит на стене. (где?)"},
+  {de:"auf", case:"Wechsel", ru:"на (горизонтальная поверхность)", exAkk:"Ich lege das Buch auf den Tisch.", exAkkRu:"Я кладу книгу на стол. (куда?)", exDat:"Das Buch liegt auf dem Tisch.", exDatRu:"Книга лежит на столе. (где?)"},
+  {de:"über", case:"Wechsel", ru:"над, через", exAkk:"Der Vogel fliegt über das Haus.", exAkkRu:"Птица летит над домом. (куда?)", exDat:"Die Lampe hängt über dem Tisch.", exDatRu:"Лампа висит над столом. (где?)"},
+  {de:"unter", case:"Wechsel", ru:"под", exAkk:"Die Katze läuft unter den Tisch.", exAkkRu:"Кошка бежит под стол. (куда?)", exDat:"Die Katze liegt unter dem Tisch.", exDatRu:"Кошка лежит под столом. (где?)"},
+  {de:"vor", case:"Wechsel", ru:"перед", exAkk:"Ich stelle das Auto vor das Haus.", exAkkRu:"Я ставлю машину перед домом. (куда?)", exDat:"Das Auto steht vor dem Haus.", exDatRu:"Машина стоит перед домом. (где?)"},
+  {de:"hinter", case:"Wechsel", ru:"за, позади", exAkk:"Er stellt sich hinter die Tür.", exAkkRu:"Он встаёт за дверью. (куда?)", exDat:"Er steht hinter der Tür.", exDatRu:"Он стоит за дверью. (где?)"},
+  {de:"neben", case:"Wechsel", ru:"рядом, около", exAkk:"Ich setze mich neben dich.", exAkkRu:"Я сажусь рядом с тобой. (куда?)", exDat:"Ich sitze neben dir.", exDatRu:"Я сижу рядом с тобой. (где?)"},
+  {de:"zwischen", case:"Wechsel", ru:"между", exAkk:"Ich stelle den Stuhl zwischen die Tische.", exAkkRu:"Я ставлю стул между столами. (куда?)", exDat:"Der Stuhl steht zwischen den Tischen.", exDatRu:"Стул стоит между столами. (где?)"},
+];
+
 let activeLex = "all";
 const lexChipsEl = document.getElementById("lexChips");
 function buildLexChips(){
-  const all = [{key:"all",label:"Alle"}].concat(LEX_TOPICS.map(t=>({key:t.key,label:t.label})));
+  const all = [{key:"all",label:"Alle"}]
+    .concat(LEX_TOPICS.map(t=>({key:t.key,label:t.label})))
+    .concat([{key:"praep",label:"Präpositionen"}]);
   all.forEach(c=>{
     const b = document.createElement("button");
     b.className = "chip" + (c.key==="all" ? " active" : "");
@@ -1203,7 +1256,7 @@ function buildLexChips(){
     b.addEventListener("click", ()=>{
       activeLex = c.key;
       [...lexChipsEl.children].forEach(x=>x.classList.toggle("active", x.dataset.key===c.key));
-      renderLex();
+      renderLexOrPrep();
     });
     lexChipsEl.appendChild(b);
   });
@@ -1211,7 +1264,7 @@ function buildLexChips(){
 let lexQuery = "";
 document.getElementById("lexSearch").addEventListener("input", (e)=>{
   lexQuery = e.target.value.trim().toLowerCase();
-  renderLex();
+  renderLexOrPrep();
 });
 function lexWords(){
   const topics = activeLex==="all" ? LEX_TOPICS : LEX_TOPICS.filter(t=>t.key===activeLex);
@@ -1229,8 +1282,43 @@ function renderLex(){
   empty.style.display = "none";
   body.innerHTML = words.map(w=>`<tr><td class="inf">${w.de}</td><td class="ru">${w.ru}</td></tr>`).join("");
 }
+function prepItems(){
+  if(!lexQuery) return PREPOSITIONS;
+  return PREPOSITIONS.filter(p=> p.de.toLowerCase().includes(lexQuery) || p.ru.toLowerCase().includes(lexQuery));
+}
+function renderPreps(){
+  const items = prepItems();
+  const list = document.getElementById("lexPrepList");
+  const empty = document.getElementById("lexEmpty");
+  if(items.length===0){ list.innerHTML=""; empty.style.display=""; return; }
+  empty.style.display = "none";
+  list.innerHTML = items.map(p=>{
+    if(p.case === "Wechsel"){
+      return `<div class="prep-card">
+        <div class="head"><span class="word">${p.de}</span><span class="case-tag">Akk. / Dat.</span></div>
+        <div class="mean">${p.ru}</div>
+        <div class="compare">
+          <div class="crow"><span class="tag">Akk.</span><span class="txt">${p.exAkk}</span></div>
+          <div class="crow"><span class="tag">Dat.</span><span class="txt">${p.exDat}</span></div>
+        </div>
+        <div class="pex"><div class="ru">${p.exAkkRu} — ${p.exDatRu}</div></div>
+      </div>`;
+    }
+    return `<div class="prep-card">
+      <div class="head"><span class="word">${p.de}</span><span class="case-tag">${p.case}</span></div>
+      <div class="mean">${p.ru}</div>
+      <div class="pex"><div class="de">${p.ex}</div><div class="ru">${p.exRu}</div></div>
+    </div>`;
+  }).join("");
+}
+function renderLexOrPrep(){
+  const isPrep = activeLex === "praep";
+  document.getElementById("lexTableWrap").style.display = isPrep ? "none" : "";
+  document.getElementById("lexPrepList").style.display = isPrep ? "" : "none";
+  if(isPrep) renderPreps(); else renderLex();
+}
 buildLexChips();
-renderLex();
+renderLexOrPrep();
 
 /* ================= REDEWENDUNGEN data ================= */
 const PHRASE_CATS = [
