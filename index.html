@@ -321,6 +321,9 @@
   .phrase-item .de{font-weight:600;font-size:14.5px;margin-bottom:2px;}
   .phrase-item .ru{color:var(--accent-ink);font-size:13.5px;}
   .phrase-item .note{color:var(--ink-muted);font-size:12px;margin-top:4px;font-style:italic;}
+  .phrase-item .pex{margin-top:6px;font-size:12.5px;}
+  .phrase-item .pex .de{margin-bottom:1px;}
+  .phrase-item .pex .ru{color:var(--ink-muted);}
 
   .empty{
     text-align:center;
@@ -1326,6 +1329,7 @@ const PHRASE_CATS = [
   {key:"meinung", label:"Gefühle & Meinung"},
   {key:"idiome", label:"Redewendungen"},
   {key:"slang", label:"Jugendsprache & Slang"},
+  {key:"konnektoren", label:"Konnektoren"},
 ];
 const PHRASES = [
   {de:"Wie geht's?", ru:"Как дела?", cat:"alltag"},
@@ -1382,6 +1386,27 @@ const PHRASES = [
   {de:"Mann!", ru:"Блин!", cat:"slang", note:"восклицание досады, не буквальное «мужчина»"},
   {de:"Easy.", ru:"Легко, без проблем.", cat:"slang"},
   {de:"Nice!", ru:"Классно!", cat:"slang", note:"заимствовано из английского, очень ходовое"},
+
+  {de:"außerdem", ru:"кроме того, к тому же", cat:"konnektoren", ex:"Ich habe keine Zeit, außerdem bin ich müde.", exRu:"У меня нет времени, к тому же я устал(а)."},
+  {de:"darüber hinaus", ru:"более того, сверх этого", cat:"konnektoren", ex:"Er spricht Englisch und darüber hinaus auch Französisch.", exRu:"Он говорит по-английски, а сверх того ещё и по-французски."},
+  {de:"trotzdem", ru:"тем не менее, всё же", cat:"konnektoren", ex:"Es regnet, trotzdem gehen wir spazieren.", exRu:"Идёт дождь, но мы всё равно идём гулять."},
+  {de:"allerdings", ru:"однако, правда", cat:"konnektoren", ex:"Das Restaurant ist gut, allerdings etwas teuer.", exRu:"Ресторан хороший, правда, немного дорогой."},
+  {de:"jedoch", ru:"однако", cat:"konnektoren", ex:"Ich wollte kommen, jedoch hatte ich keine Zeit.", exRu:"Я хотел(а) прийти, однако у меня не было времени."},
+  {de:"deshalb", ru:"поэтому", cat:"konnektoren", ex:"Ich bin krank, deshalb bleibe ich zu Hause.", exRu:"Я болен, поэтому остаюсь дома."},
+  {de:"daher", ru:"поэтому, отсюда", cat:"konnektoren", ex:"Er hat viel geübt, daher spricht er gut Deutsch.", exRu:"Он много практиковался, поэтому хорошо говорит по-немецки."},
+  {de:"also", ru:"итак, значит", cat:"konnektoren", ex:"Also, fangen wir an!", exRu:"Итак, начнём!"},
+  {de:"sozusagen", ru:"так сказать", cat:"konnektoren", ex:"Er ist sozusagen mein bester Freund.", exRu:"Он, так сказать, мой лучший друг."},
+  {de:"übrigens", ru:"кстати", cat:"konnektoren", ex:"Übrigens, hast du das neue Café gesehen?", exRu:"Кстати, ты видел новое кафе?"},
+  {de:"immerhin", ru:"по крайней мере, всё же", cat:"konnektoren", ex:"Es hat nicht geklappt, aber immerhin haben wir es versucht.", exRu:"Не получилось, но по крайней мере мы попробовали."},
+  {de:"schließlich", ru:"в конце концов, наконец", cat:"konnektoren", ex:"Schließlich haben wir eine Lösung gefunden.", exRu:"В конце концов мы нашли решение."},
+  {de:"insgesamt", ru:"в целом", cat:"konnektoren", ex:"Insgesamt war die Reise sehr schön.", exRu:"В целом поездка была очень хорошей."},
+  {de:"einerseits … andererseits", ru:"с одной стороны … с другой стороны", cat:"konnektoren", ex:"Einerseits will ich reisen, andererseits fehlt mir das Geld.", exRu:"С одной стороны, я хочу путешествовать, с другой — мне не хватает денег."},
+  {de:"zum Beispiel", ru:"например", cat:"konnektoren", ex:"Ich mag viele Sportarten, zum Beispiel Schwimmen.", exRu:"Мне нравится много видов спорта, например плавание."},
+  {de:"das heißt", ru:"то есть", cat:"konnektoren", ex:"Ich bin Frühaufsteher, das heißt, ich stehe um sechs auf.", exRu:"Я жаворонок, то есть встаю в шесть."},
+  {de:"im Gegenteil", ru:"наоборот", cat:"konnektoren", ex:"Ich bin nicht müde, im Gegenteil, ich fühle mich super.", exRu:"Я не устал, наоборот, чувствую себя отлично."},
+  {de:"letztendlich", ru:"в конечном счёте", cat:"konnektoren", ex:"Letztendlich haben wir uns für Berlin entschieden.", exRu:"В конечном счёте мы выбрали Берлин."},
+  {de:"meiner Meinung nach", ru:"по-моему, на мой взгляд", cat:"konnektoren", ex:"Meiner Meinung nach ist das eine gute Idee.", exRu:"По-моему, это хорошая идея."},
+  {de:"sowieso", ru:"так или иначе, всё равно", cat:"konnektoren", ex:"Ich wollte sowieso zu Hause bleiben.", exRu:"Я всё равно хотел(а) остаться дома."},
 ];
 
 let activePhrase = "all";
@@ -1424,6 +1449,7 @@ function renderPhrases(){
       <div class="de">${p.de}</div>
       <div class="ru">${p.ru}</div>
       ${p.note ? `<div class="note">${p.note}</div>` : ""}
+      ${p.ex ? `<div class="pex"><div class="de">${p.ex}</div><div class="ru">${p.exRu}</div></div>` : ""}
     </div>
   `).join("");
 }
