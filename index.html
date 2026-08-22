@@ -1088,6 +1088,7 @@
       </div>
     </div>
     <div class="prep-list-cards" id="lexPrepList" style="display:none;"></div>
+    <div class="prep-list-cards" id="lexVerbPrepList" style="display:none;"></div>
     <div class="empty" id="lexEmpty" style="display:none;">Nichts gefunden.</div>
   </main>
 </div>
@@ -1245,12 +1246,39 @@ const PREPOSITIONS = [
   {de:"zwischen", case:"Wechsel", ru:"между", exAkk:"Ich stelle den Stuhl zwischen die Tische.", exAkkRu:"Я ставлю стул между столами. (куда?)", exDat:"Der Stuhl steht zwischen den Tischen.", exDatRu:"Стул стоит между столами. (где?)"},
 ];
 
+const VERB_PREPS = [
+  {verb:"sich freuen auf", case:"Akkusativ", ru:"радоваться (предстоящему)", ex:"Ich freue mich auf die Ferien.", exRu:"Я радуюсь предстоящим каникулам."},
+  {verb:"sich freuen über", case:"Akkusativ", ru:"радоваться (случившемуся)", ex:"Ich freue mich über das Geschenk.", exRu:"Я рад(а) подарку."},
+  {verb:"sich interessieren für", case:"Akkusativ", ru:"интересоваться", ex:"Ich interessiere mich für Musik.", exRu:"Я интересуюсь музыкой."},
+  {verb:"warten auf", case:"Akkusativ", ru:"ждать", ex:"Ich warte auf den Bus.", exRu:"Я жду автобус."},
+  {verb:"denken an", case:"Akkusativ", ru:"думать о", ex:"Ich denke oft an dich.", exRu:"Я часто думаю о тебе."},
+  {verb:"sich kümmern um", case:"Akkusativ", ru:"заботиться о", ex:"Sie kümmert sich um die Kinder.", exRu:"Она заботится о детях."},
+  {verb:"sich erinnern an", case:"Akkusativ", ru:"вспоминать", ex:"Ich erinnere mich an den Urlaub.", exRu:"Я вспоминаю отпуск."},
+  {verb:"sich ärgern über", case:"Akkusativ", ru:"злиться из-за", ex:"Ich ärgere mich über den Lärm.", exRu:"Я злюсь из-за шума."},
+  {verb:"sich beschäftigen mit", case:"Dativ", ru:"заниматься чем-л.", ex:"Er beschäftigt sich mit Politik.", exRu:"Он занимается политикой."},
+  {verb:"träumen von", case:"Dativ", ru:"мечтать о", ex:"Ich träume von einer Weltreise.", exRu:"Я мечтаю о кругосветном путешествии."},
+  {verb:"sprechen über", case:"Akkusativ", ru:"говорить о", ex:"Wir sprechen über das Wetter.", exRu:"Мы говорим о погоде."},
+  {verb:"sich verlassen auf", case:"Akkusativ", ru:"полагаться на", ex:"Ich verlasse mich auf dich.", exRu:"Я полагаюсь на тебя."},
+  {verb:"teilnehmen an", case:"Dativ", ru:"участвовать в", ex:"Ich nehme an dem Kurs teil.", exRu:"Я участвую в курсе."},
+  {verb:"sich entschuldigen für", case:"Akkusativ", ru:"извиняться за", ex:"Ich entschuldige mich für die Verspätung.", exRu:"Я извиняюсь за опоздание."},
+  {verb:"sich bedanken für", case:"Akkusativ", ru:"благодарить за", ex:"Ich bedanke mich für die Hilfe.", exRu:"Я благодарю за помощь."},
+  {verb:"Angst haben vor", case:"Dativ", ru:"бояться", ex:"Ich habe Angst vor Spinnen.", exRu:"Я боюсь пауков."},
+  {verb:"sich gewöhnen an", case:"Akkusativ", ru:"привыкать к", ex:"Ich gewöhne mich an das Wetter.", exRu:"Я привыкаю к погоде."},
+  {verb:"bestehen aus", case:"Dativ", ru:"состоять из", ex:"Die Gruppe besteht aus zehn Leuten.", exRu:"Группа состоит из десяти человек."},
+  {verb:"bestehen auf", case:"Dativ", ru:"настаивать на", ex:"Er besteht auf seiner Meinung.", exRu:"Он настаивает на своём мнении."},
+  {verb:"sich verabschieden von", case:"Dativ", ru:"прощаться с", ex:"Ich verabschiede mich von meinen Freunden.", exRu:"Я прощаюсь с друзьями."},
+  {verb:"gehören zu", case:"Dativ", ru:"относиться к, входить в", ex:"Das gehört zu meinen Aufgaben.", exRu:"Это входит в мои обязанности."},
+  {verb:"achten auf", case:"Akkusativ", ru:"обращать внимание на, беречь", ex:"Achte auf deine Gesundheit!", exRu:"Береги своё здоровье!"},
+  {verb:"sich bewerben um", case:"Akkusativ", ru:"подавать заявку на", ex:"Ich bewerbe mich um die Stelle.", exRu:"Я подаю заявку на должность."},
+  {verb:"sich vorbereiten auf", case:"Akkusativ", ru:"готовиться к", ex:"Ich bereite mich auf die Prüfung vor.", exRu:"Я готовлюсь к экзамену."},
+];
+
 let activeLex = "all";
 const lexChipsEl = document.getElementById("lexChips");
 function buildLexChips(){
   const all = [{key:"all",label:"Alle"}]
     .concat(LEX_TOPICS.map(t=>({key:t.key,label:t.label})))
-    .concat([{key:"praep",label:"Präpositionen"}]);
+    .concat([{key:"praep",label:"Präpositionen"}, {key:"verbprep",label:"Verben mit Präpositionen"}]);
   all.forEach(c=>{
     const b = document.createElement("button");
     b.className = "chip" + (c.key==="all" ? " active" : "");
@@ -1314,11 +1342,38 @@ function renderPreps(){
     </div>`;
   }).join("");
 }
+function verbPrepItems(){
+  if(!lexQuery) return VERB_PREPS;
+  return VERB_PREPS.filter(v=> v.verb.toLowerCase().includes(lexQuery) || v.ru.toLowerCase().includes(lexQuery));
+}
+function renderVerbPreps(){
+  const items = verbPrepItems();
+  const list = document.getElementById("lexVerbPrepList");
+  const empty = document.getElementById("lexEmpty");
+  const intro = `<div class="panel rule-card">
+    <h3 class="serif">Da- и wo-конструкции</h3>
+    <div class="when">Если после такого глагола нужно сказать «об этом / на это» (без повтора существительного) или ввести придаточное — предлог сливается с da(r)-: auf→darauf, über→darüber, von→davon, mit→damit, für→dafür, an→daran, um→darum.</div>
+    <div class="ex-line"><div class="de">Ich habe mich darauf gefreut, dich zu sehen.</div><div class="ru">Я радовался(ась) тому, что увижу тебя.</div></div>
+  </div>`;
+  if(items.length===0){ list.innerHTML = lexQuery ? "" : intro; empty.style.display = lexQuery ? "" : "none"; return; }
+  empty.style.display = "none";
+  list.innerHTML = intro + items.map(v=>`
+    <div class="prep-card">
+      <div class="head"><span class="word">${v.verb}</span><span class="case-tag">${v.case}</span></div>
+      <div class="mean">${v.ru}</div>
+      <div class="pex"><div class="de">${v.ex}</div><div class="ru">${v.exRu}</div></div>
+    </div>
+  `).join("");
+}
 function renderLexOrPrep(){
   const isPrep = activeLex === "praep";
-  document.getElementById("lexTableWrap").style.display = isPrep ? "none" : "";
+  const isVerbPrep = activeLex === "verbprep";
+  document.getElementById("lexTableWrap").style.display = (isPrep||isVerbPrep) ? "none" : "";
   document.getElementById("lexPrepList").style.display = isPrep ? "" : "none";
-  if(isPrep) renderPreps(); else renderLex();
+  document.getElementById("lexVerbPrepList").style.display = isVerbPrep ? "" : "none";
+  if(isPrep) renderPreps();
+  else if(isVerbPrep) renderVerbPreps();
+  else renderLex();
 }
 buildLexChips();
 renderLexOrPrep();
