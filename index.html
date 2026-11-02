@@ -264,6 +264,14 @@
   .prep-card .pex .de{margin-bottom:1px;}
   .prep-card .pex .ru{color:var(--ink-muted);}
 
+  .u-tag{
+    display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.3px;
+    padding:2px 6px; border-radius:5px; margin-left:6px; vertical-align:middle;
+    background:var(--good-soft); color:var(--good);
+  }
+  table.gram td.ex{text-align:left;font-size:12.5px;}
+  .lex-intro{margin-bottom:12px;}
+
   /* ---- List / vocab table (shared) ---- */
   .search{
     width:100%;
@@ -405,7 +413,8 @@
     text-align:center;
   }
   .big-inf{
-    font-size:42px;
+    font-size:clamp(28px, 9vw, 42px);
+    overflow-wrap:anywhere;
     font-weight:500;
     letter-spacing:.2px;
   }
@@ -628,7 +637,7 @@
         <div class="badge-mono">V</div>
         <div class="txt">
           <div class="t">Verben</div>
-          <div class="d">150 глаголов: карточки, спряжение, квиз</div>
+          <div class="d"><span class="verb-total">150</span> глаголов: карточки, спряжение, квиз</div>
         </div>
         <div class="chevron">›</div>
       </button>
@@ -795,6 +804,61 @@
         </div>
         <div class="ex-line"><div class="de">Das ist das Auto meines Vaters.</div><div class="ru">Это машина моего отца.</div></div>
         <div class="ex-line"><div class="de">Wegen des Wetters bleiben wir zu Hause.</div><div class="ru">Из-за погоды мы останемся дома.</div></div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Akkusativ: личные местоимения <span class="u-tag">Unterricht</span></h3>
+        <div class="when">Кого? — прямое дополнение и после предлогов с Akkusativ (für, ohne, gegen, durch, um).</div>
+        <table class="gram">
+          <tr><th>Nom.</th><th>Akk.</th><th>Beispiel</th></tr>
+          <tr><td>ich</td><td>mich</td><td class="ex">Lenken Sie mich bitte nicht ab!</td></tr>
+          <tr><td>du</td><td>dich</td><td class="ex">Ich will dich nicht stören.</td></tr>
+          <tr><td>er</td><td>ihn</td><td class="ex">Ich sehe ihn mit seinem Hund.</td></tr>
+          <tr><td>sie</td><td>sie</td><td class="ex">Ich lade sie zur Geburtstagsparty ein.</td></tr>
+          <tr><td>es</td><td>es</td><td class="ex">Ich mag dieses Fahrrad. Ich möchte es mieten.</td></tr>
+          <tr><td>wir</td><td>uns</td><td class="ex">Möchtest du uns einmal besuchen?</td></tr>
+          <tr><td>ihr</td><td>euch</td><td class="ex">Ich bin stolz auf euch!</td></tr>
+          <tr><td>sie/Sie</td><td>sie/Sie</td><td class="ex">Ich möchte Sie um einen Gefallen bitten.</td></tr>
+        </table>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Akkusativ: артикли и указатели <span class="u-tag">Unterricht</span></h3>
+        <div class="when">Меняется только мужской род: окончание -er/без окончания → <b>-en</b>. Женский, средний род и множественное число остаются как в Nominativ.</div>
+        <table class="gram">
+          <tr><th></th><th>der</th><th>dieser</th><th>ein</th><th>kein</th></tr>
+          <tr><td>m</td><td>den</td><td>diesen</td><td>einen</td><td>keinen</td></tr>
+          <tr><td>n</td><td>das</td><td>dieses</td><td>ein</td><td>kein</td></tr>
+          <tr><td>f</td><td>die</td><td>diese</td><td>eine</td><td>keine</td></tr>
+          <tr><td>Pl.</td><td>die</td><td>diese</td><td>–</td><td>keine</td></tr>
+        </table>
+        <div class="ex-line"><div class="de">Ich möchte diesen Wagen kaufen. (der Wagen)</div><div class="ru">Я хочу купить эту машину.</div></div>
+        <div class="ex-line"><div class="de">Ich hätte gerne einen Hund. (der Hund)</div><div class="ru">Я бы хотел(а) собаку.</div></div>
+        <div class="ex-line"><div class="de">Ich habe kein Brot bei mir. (das Brot)</div><div class="ru">У меня с собой нет хлеба.</div></div>
+        <div class="ex-line"><div class="de">Ich habe keine Lust. (die Lust)</div><div class="ru">Мне не хочется.</div></div>
+        <div class="ex-line"><div class="de">Ich möchte diese Brettspiele kaufen. (Pl.)</div><div class="ru">Я хочу купить эти настольные игры.</div></div>
+        <div class="when">Притяжательные (mein, dein, sein, unser, euer…) меняются так же, как ein: Kannst du mir <b>deinen</b> Kuli leihen? — но <b>dein</b> Messer (das Messer — средний род, поэтому без -en).</div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Вопросы к падежам <span class="u-tag">Unterricht</span></h3>
+        <table class="gram">
+          <tr><th>Kasus</th><th>Fragen</th></tr>
+          <tr><td>Akkusativ</td><td class="ex"><b>Wen?</b> кого? · <b>Was?</b> что? · <b>Wohin?</b> куда? (с in, auf, an…)</td></tr>
+          <tr><td>Dativ</td><td class="ex"><b>Wem?</b> кому? · <b>Wo?</b> где? (с in, auf, an…) · <b>Woher?</b> откуда? (с aus, von)</td></tr>
+        </table>
+        <div class="when">«Wann?» (когда?) к падежу не привязан: ответ зависит от предлога — <i>am Montag</i> (Dat.), <i>um acht Uhr</i> (Akk.).</div>
+      </div>
+
+      <div class="panel rule-card">
+        <h3 class="serif">Предлоги времени <span class="u-tag">Unterricht</span></h3>
+        <table class="gram">
+          <tr><th></th><th>Значение</th><th>Beispiel</th></tr>
+          <tr><td>seit + Dat.</td><td class="ex">с (и до сих пор)</td><td class="ex">Ich lerne seit zwei Jahren Deutsch.</td></tr>
+          <tr><td>vor + Dat.</td><td class="ex">… назад</td><td class="ex">Ich war vor einem Jahr in Berlin.</td></tr>
+          <tr><td>nach + Dat.</td><td class="ex">после</td><td class="ex">Nach dem Unterricht gehe ich nach Hause.</td></tr>
+          <tr><td>bis + Akk.</td><td class="ex">до</td><td class="ex">Ich arbeite bis Freitag.</td></tr>
+        </table>
       </div>
     </section>
 
@@ -964,7 +1028,7 @@
   <header class="top">
     <div class="inner">
       <h1 class="serif">Verben</h1>
-      <p class="sub">150 самых нужных глаголов A2–B1 для устной речи · <b id="knownCount">0</b>/150 отмечены как «знаю»</p>
+      <p class="sub"><span class="verb-total">150</span> глаголов A2–B1 для устной речи · <b id="knownCount">0</b>/<span class="verb-total">150</span> отмечены как «знаю»</p>
       <nav class="tabs" role="tablist">
         <button class="active" data-view="cards">Karten</button>
         <button data-view="drill">Konjugation</button>
@@ -1079,6 +1143,7 @@
   </header>
   <main class="wrap" style="padding-top:0;">
     <input class="search" id="lexSearch" placeholder="Suchen … (Deutsch oder Russisch)" autocomplete="off" />
+    <div id="lexIntro"></div>
     <div id="lexTableWrap">
       <div class="table-scroll">
         <table class="list">
@@ -1212,6 +1277,151 @@ const LEX_TOPICS = [
   ]},
 ];
 
+/* ---- Слова из урока (u:1 = «Aus dem Unterricht») ---- */
+const LEX_LESSON_ADD = {
+  koerper:[
+    {de:"der Finger", ru:"палец (руки)"}, {de:"der Fuß", ru:"стопа, нога (ниже щиколотки)"},
+    {de:"die Zähne", ru:"зубы (ед. der Zahn)"}, {de:"die Zehen", ru:"пальцы ног (ед. die Zehe)"},
+    {de:"die Haare", ru:"волосы (ед. das Haar)"}, {de:"die Schulter", ru:"плечо"},
+    {de:"das Knie", ru:"колено"}, {de:"der Ellenbogen", ru:"локоть"},
+    {de:"die Stirn", ru:"лоб"}, {de:"der Hals", ru:"шея; горло"},
+    {de:"die Brust", ru:"грудь, грудная клетка"}, {de:"die Wange", ru:"щека"},
+    {de:"der Hausarzt", ru:"семейный врач"}, {de:"der Husten", ru:"кашель"},
+    {de:"das Fieber", ru:"температура, жар"}, {de:"der Schnupfen", ru:"насморк"},
+    {de:"das Rezept", ru:"рецепт (от врача)"}, {de:"der Hustensaft", ru:"сироп от кашля"},
+    {de:"die Salbe", ru:"мазь"}, {de:"die Tropfen", ru:"капли"},
+    {de:"die Tablette", ru:"таблетка"}, {de:"die Verletzung", ru:"травма, ранение"},
+    {de:"die Wunde", ru:"рана"}, {de:"gesund", ru:"здоровый"},
+    {de:"krank", ru:"больной"}, {de:"die Gesundheit", ru:"здоровье"},
+    {de:"blass", ru:"бледный"}, {de:"hartnäckig", ru:"упорный; затяжной (о болезни)"},
+  ],
+  kleidung:[
+    {de:"die Unterwäsche", ru:"нижнее бельё"}, {de:"der Strumpf", ru:"чулок, гольф"},
+    {de:"der Anzug", ru:"(мужской) костюм"}, {de:"die Kapuze", ru:"капюшон"},
+    {de:"der Kragen", ru:"воротник"}, {de:"der Knopf", ru:"пуговица"},
+    {de:"der Ärmel", ru:"рукав"}, {de:"der Reißverschluss", ru:"молния (застёжка)"},
+    {de:"die Schnalle", ru:"пряжка"}, {de:"der Schnürsenkel", ru:"шнурок"},
+    {de:"der Absatz", ru:"каблук"}, {de:"die Sohle", ru:"подошва"},
+    {de:"die Umkleidekabine", ru:"примерочная"}, {de:"eng", ru:"узкий, тесный"},
+    {de:"nackt", ru:"голый"}, {de:"das Muster", ru:"узор"},
+    {de:"kariert", ru:"в клетку"}, {de:"gestreift", ru:"в полоску"},
+    {de:"gepunktet", ru:"в горошек"}, {de:"einfarbig", ru:"однотонный"},
+  ],
+  arbeit:[
+    {de:"die Stelle", ru:"место работы, вакансия"}, {de:"die Erfahrung", ru:"опыт"},
+    {de:"die Kenntnisse", ru:"знания"}, {de:"der Beratungstermin", ru:"консультация (по записи)"},
+    {de:"der Aushilfsjob", ru:"временная подработка"}, {de:"der Verwalter", ru:"управляющий, администратор"},
+    {de:"die Verwaltung", ru:"администрация, управление"}, {de:"verantwortlich", ru:"ответственный"},
+    {de:"die Geschäftsreise", ru:"командировка"}, {de:"die Leistung", ru:"достижение, результат"},
+    {de:"die Veröffentlichung", ru:"публикация"}, {de:"die Zubereitung", ru:"приготовление"},
+    {de:"die Pflege", ru:"уход (за больными, пожилыми)"}, {de:"der Arbeitsanfang", ru:"начало рабочего дня"},
+  ],
+};
+Object.keys(LEX_LESSON_ADD).forEach(k=>{
+  LEX_TOPICS.find(t=>t.key===k).words.push(...LEX_LESSON_ADD[k].map(w=>({...w, u:1})));
+});
+
+const LEX_LESSON_TOPICS = [
+  {key:"geld", label:"Geld & Bank", words:[
+    {de:"ausgeben für", ru:"тратить на"}, {de:"abheben", ru:"снимать (деньги)"},
+    {de:"einzahlen", ru:"вносить (на счёт)"}, {de:"überweisen", ru:"переводить (деньги)"},
+    {de:"wechseln", ru:"менять, обменивать"}, {de:"die Gebühr", ru:"сбор, плата"},
+    {de:"der Gewinn", ru:"выигрыш; прибыль"}, {de:"die Versicherung", ru:"страховка (от sicher — надёжный)"},
+    {de:"reich", ru:"богатый"}, {de:"arm", ru:"бедный"},
+  ]},
+  {key:"schule", label:"Schule & Prüfungen", words:[
+    {de:"die Prüfung", ru:"экзамен"}, {de:"eine Prüfung bestehen", ru:"сдать экзамен"},
+    {de:"die Note", ru:"оценка (в школе)"}, {de:"die Bewertung", ru:"оценка, отзыв"},
+    {de:"das Niveau", ru:"уровень"}, {de:"der Einstufungstest", ru:"тест на определение уровня"},
+    {de:"das Abitur", ru:"выпускные экзамены в гимназии"}, {de:"die Realschule", ru:"реальная школа (5–10 класс)"},
+    {de:"das Studium", ru:"учёба в вузе"}, {de:"die Ausbildung", ru:"профессиональное обучение"},
+    {de:"der Abschluss", ru:"окончание учёбы; диплом"}, {de:"die Zulassung", ru:"допуск, зачисление"},
+    {de:"der Kurs", ru:"курс"}, {de:"der Wortschatz", ru:"словарный запас"},
+  ]},
+  {key:"gefuehle", label:"Gefühle & Beziehungen", words:[
+    {de:"die Beziehung", ru:"отношения"}, {de:"das Vertrauen", ru:"доверие"},
+    {de:"stolz sein auf", ru:"гордиться (кем-то)"}, {de:"treu", ru:"верный"},
+    {de:"zärtlich", ru:"нежный, ласковый"}, {de:"genervt", ru:"раздражённый"},
+    {de:"ehrlich", ru:"честный"}, {de:"der Mut", ru:"смелость"},
+    {de:"die Kraft", ru:"сила"}, {de:"die Schuld", ru:"вина"},
+    {de:"schuldig sein", ru:"быть виноватым"}, {de:"gegenseitig", ru:"взаимный"},
+    {de:"gemeinsam", ru:"вместе, сообща"}, {de:"schmerzhaft", ru:"болезненный"},
+    {de:"das Vergnügen", ru:"удовольствие"}, {de:"die Bedingung", ru:"условие"},
+    {de:"das Gegenteil", ru:"противоположность"}, {de:"das Pech", ru:"невезение, неудача"},
+  ]},
+  {key:"geschichten", label:"Geschichten & Abenteuer", words:[
+    {de:"der Held", ru:"герой"}, {de:"der Bösewicht", ru:"злодей"},
+    {de:"die Figur", ru:"персонаж"}, {de:"der Riese", ru:"великан"},
+    {de:"der Feind", ru:"враг"}, {de:"der Schatz", ru:"сокровище"},
+    {de:"der Wert", ru:"ценность"}, {de:"das Schicksal", ru:"судьба"},
+    {de:"der Tod", ru:"смерть"}, {de:"das Sterben", ru:"умирание, смерть"},
+    {de:"der Frieden", ru:"мир"}, {de:"der Sieg", ru:"победа"},
+    {de:"das Hindernis", ru:"препятствие"}, {de:"die Versuchung", ru:"соблазн"},
+    {de:"das Raubtier", ru:"хищник"}, {de:"die Spur", ru:"след"},
+    {de:"die Schaufel", ru:"лопата"}, {de:"die Falle", ru:"ловушка"},
+    {de:"der Wettbewerb", ru:"соревнование, конкурс"}, {de:"ewig", ru:"вечный"},
+    {de:"böse", ru:"злой"}, {de:"gierig", ru:"жадный"},
+    {de:"begabt", ru:"одарённый"}, {de:"talentiert", ru:"талантливый"},
+    {de:"berühmt", ru:"известный"}, {de:"erfolgreich", ru:"успешный"},
+  ]},
+  {key:"adjektive", label:"Adjektive & Adverbien", words:[
+    {de:"nass", ru:"мокрый"}, {de:"trocken", ru:"сухой"},
+    {de:"ruhig", ru:"спокойный, тихий"}, {de:"regelmäßig", ru:"регулярно"},
+    {de:"tief", ru:"глубокий"}, {de:"riesig", ru:"огромный"},
+    {de:"schlau", ru:"хитрый, сообразительный"}, {de:"seltsam", ru:"странный"},
+    {de:"schlimm", ru:"плохой, тяжёлый"}, {de:"furchtbar", ru:"ужасный, страшный"},
+    {de:"spannend", ru:"захватывающий"}, {de:"kraftvoll", ru:"мощный"},
+    {de:"flauschig", ru:"пушистый"}, {de:"süchtig", ru:"зависимый (от алкоголя, наркотиков)"},
+    {de:"abhängig von", ru:"зависимый от"}, {de:"unabhängig von", ru:"независимый от; независимо от"},
+    {de:"plötzlich", ru:"внезапно"}, {de:"hoffentlich", ru:"надеюсь, что…"},
+    {de:"bald", ru:"скоро"}, {de:"sogar", ru:"даже"},
+    {de:"manche", ru:"некоторые"}, {de:"verschieden", ru:"разный, различный"},
+    {de:"unterschiedlich", ru:"неодинаковый, разный"}, {de:"vielfältig", ru:"разнообразный"},
+    {de:"zweifellos", ru:"несомненно"}, {de:"normalerweise", ru:"обычно"},
+    {de:"gewöhnlich", ru:"обычно; обычный"}, {de:"dazu", ru:"к этому, вдобавок"},
+  ]},
+  {key:"sonstiges", label:"Alltag & Sonstiges", words:[
+    {de:"der Laden", ru:"магазин, лавка"}, {de:"das Geschäft", ru:"магазин; дело, бизнес"},
+    {de:"die Lieferung", ru:"доставка"}, {de:"die Veranstaltung", ru:"мероприятие"},
+    {de:"das Ereignis", ru:"событие"}, {de:"die Umwelt", ru:"окружающая среда"},
+    {de:"die Decke", ru:"потолок; одеяло, покрывало"}, {de:"das Loch", ru:"дыра"},
+    {de:"der Ast", ru:"ветка"}, {de:"der Bahnsteig", ru:"платформа (на вокзале)"},
+    {de:"der Wagen", ru:"машина, автомобиль"}, {de:"das Messer", ru:"нож"},
+    {de:"der Welpe", ru:"щенок"}, {de:"der Schwanz", ru:"хвост"},
+    {de:"das Futter", ru:"корм"}, {de:"die Biene", ru:"пчела"},
+    {de:"der Blumenstrauß", ru:"букет цветов"}, {de:"das Brettspiel", ru:"настольная игра"},
+    {de:"der Sonnenstrahl", ru:"солнечный луч"}, {de:"das Lehrbuch", ru:"учебник"},
+    {de:"der Sänger", ru:"певец"}, {de:"der Komponist", ru:"композитор"},
+    {de:"der Klang", ru:"звучание, звук"}, {de:"die Rede", ru:"речь, выступление"},
+    {de:"die Ansprache", ru:"обращение, речь"}, {de:"der Gefallen", ru:"услуга, одолжение"},
+    {de:"die Lust", ru:"желание, охота"},
+  ]},
+];
+LEX_LESSON_TOPICS.forEach(t=>{ t.words = t.words.map(w=>({...w, u:1})); LEX_TOPICS.push(t); });
+
+// Слова, которые уже были на сайте и тоже звучали на уроке
+const LEX_LESSON_EXISTING = ["der Kopf","der Bauch","das Bein","der Arm","die Hand","das Auge","die Nase","der Mund",
+  "das Ohr","der Rücken","die Erkältung","die Schmerzen","der Arzt","die Bewerbung","der Lebenslauf"];
+LEX_TOPICS.forEach(t=> t.words.forEach(w=>{ if(LEX_LESSON_EXISTING.includes(w.de)) w.u = 1; }));
+
+LEX_TOPICS.find(t=>t.key==="koerper").intro = `
+  <div class="panel rule-card lex-intro">
+    <h3 class="serif">Was tut weh? — Что болит? <span class="u-tag">Unterricht</span></h3>
+    <div class="formula">
+      Mein Kopf <b>tut weh</b> / Meine Zähne <b>tun weh</b> (ед./мн. число)<br>
+      Mein Hals <b>schmerzt</b> / Meine Knie <b>schmerzen</b><br>
+      Ich habe <b>Kopfschmerzen</b> (Kopf + Schmerzen): Bauchschmerzen, Knieschmerzen, Zahnschmerzen…
+    </div>
+    <div class="ex-line"><div class="de">Mein Rücken tut weh. Ich soll nicht lange sitzen.</div><div class="ru">У меня болит спина. Мне нельзя долго сидеть.</div></div>
+    <div class="ex-line"><div class="de">Meine Zähne tun weh. Ich soll nicht so viele Süßigkeiten essen.</div><div class="ru">Болят зубы. Мне не стоит есть столько сладкого.</div></div>
+    <div class="ex-line"><div class="de">Seine Zehen tun weh. Er hat sich die Zehen erfroren.</div><div class="ru">У него болят пальцы ног. Он их отморозил.</div></div>
+    <div class="ex-line"><div class="de">Ihre Knie schmerzen. Sie ist von einem Baum gestürzt.</div><div class="ru">У неё болят колени. Она упала с дерева.</div></div>
+    <div class="ex-line"><div class="de">Ihr Hals tut weh. Sie hat zu viel Eis gegessen.</div><div class="ru">У неё болит горло. Она съела слишком много мороженого.</div></div>
+    <div class="ex-line"><div class="de">Meine Ellenbogen tun weh. Ich habe lange in der Plank-Position gestanden.</div><div class="ru">Болят локти. Я долго стоял(а) в планке.</div></div>
+    <div class="ex-line"><div class="de">Schmerzt deine Brust? Du solltest zum Arzt gehen!</div><div class="ru">Болит грудь? Тебе стоит сходить к врачу!</div></div>
+    <div class="when">Совет звучит мягче через <b>solltest</b> (Konjunktiv II от sollen): Du solltest mehr Wasser trinken. «Du sollst…» — это скорее указание: «тебе велено / тебе нужно».</div>
+  </div>`;
+
 const PREPOSITIONS = [
   {de:"für", case:"Akkusativ", ru:"для", ex:"Das Geschenk ist für dich.", exRu:"Этот подарок для тебя."},
   {de:"ohne", case:"Akkusativ", ru:"без", ex:"Ich trinke Kaffee ohne Zucker.", exRu:"Я пью кофе без сахара."},
@@ -1276,7 +1486,7 @@ const VERB_PREPS = [
 let activeLex = "all";
 const lexChipsEl = document.getElementById("lexChips");
 function buildLexChips(){
-  const all = [{key:"all",label:"Alle"}]
+  const all = [{key:"all",label:"Alle"}, {key:"unterricht",label:"Aus dem Unterricht"}]
     .concat(LEX_TOPICS.map(t=>({key:t.key,label:t.label})))
     .concat([{key:"praep",label:"Präpositionen"}, {key:"verbprep",label:"Verben mit Präpositionen"}]);
   all.forEach(c=>{
@@ -1298,8 +1508,13 @@ document.getElementById("lexSearch").addEventListener("input", (e)=>{
   renderLexOrPrep();
 });
 function lexWords(){
-  const topics = activeLex==="all" ? LEX_TOPICS : LEX_TOPICS.filter(t=>t.key===activeLex);
-  let words = topics.flatMap(t=>t.words);
+  let words;
+  if(activeLex==="unterricht"){
+    words = LEX_TOPICS.flatMap(t=>t.words).filter(w=>w.u);
+  } else {
+    const topics = activeLex==="all" ? LEX_TOPICS : LEX_TOPICS.filter(t=>t.key===activeLex);
+    words = topics.flatMap(t=>t.words);
+  }
   if(lexQuery){
     words = words.filter(w=> w.de.toLowerCase().includes(lexQuery) || w.ru.toLowerCase().includes(lexQuery));
   }
@@ -1311,7 +1526,8 @@ function renderLex(){
   const empty = document.getElementById("lexEmpty");
   if(words.length===0){ body.innerHTML=""; empty.style.display=""; return; }
   empty.style.display = "none";
-  body.innerHTML = words.map(w=>`<tr><td class="inf">${w.de}</td><td class="ru">${w.ru}</td></tr>`).join("");
+  const showTag = activeLex !== "unterricht";
+  body.innerHTML = words.map(w=>`<tr><td class="inf">${w.de}${w.u && showTag ? '<span class="u-tag">Unterricht</span>' : ''}</td><td class="ru">${w.ru}</td></tr>`).join("");
 }
 function prepItems(){
   if(!lexQuery) return PREPOSITIONS;
@@ -1371,6 +1587,8 @@ function renderLexOrPrep(){
   document.getElementById("lexTableWrap").style.display = (isPrep||isVerbPrep) ? "none" : "";
   document.getElementById("lexPrepList").style.display = isPrep ? "" : "none";
   document.getElementById("lexVerbPrepList").style.display = isVerbPrep ? "" : "none";
+  const topic = LEX_TOPICS.find(t=>t.key===activeLex);
+  document.getElementById("lexIntro").innerHTML = (topic && topic.intro && !lexQuery) ? topic.intro : "";
   if(isPrep) renderPreps();
   else if(isVerbPrep) renderVerbPreps();
   else renderLex();
@@ -1385,6 +1603,7 @@ const PHRASE_CATS = [
   {key:"idiome", label:"Redewendungen"},
   {key:"slang", label:"Jugendsprache & Slang"},
   {key:"konnektoren", label:"Konnektoren"},
+  {key:"hoeflich", label:"Höflich & am Telefon"},
 ];
 const PHRASES = [
   {de:"Wie geht's?", ru:"Как дела?", cat:"alltag"},
@@ -1464,10 +1683,34 @@ const PHRASES = [
   {de:"sowieso", ru:"так или иначе, всё равно", cat:"konnektoren", ex:"Ich wollte sowieso zu Hause bleiben.", exRu:"Я всё равно хотел(а) остаться дома."},
 ];
 
+/* ---- Фразы из урока ---- */
+PHRASES.push(...[
+  {de:"Ich rufe Sie an, um mich nach Ihrer Wohnung zu erkundigen.", ru:"Я звоню вам, чтобы узнать о вашей квартире.", cat:"hoeflich", note:"um … zu + Infinitiv — «чтобы»"},
+  {de:"Ich möchte Ihre Wohnung mieten. Könnten Sie mir bitte weitere Informationen geben?", ru:"Я хотел(а) бы снять вашу квартиру. Не могли бы вы дать больше информации?", cat:"hoeflich", note:"Könnten Sie … — вежливая просьба через Konjunktiv II"},
+  {de:"Ich möchte Sie um einen Gefallen bitten.", ru:"Я хотел(а) бы попросить вас об одолжении.", cat:"hoeflich", note:"jemanden um etwas bitten — просить кого-то о чём-то"},
+  {de:"Lenken Sie mich bitte nicht ab!", ru:"Не отвлекайте меня, пожалуйста!", cat:"hoeflich"},
+  {de:"Ich will dich nicht stören.", ru:"Не хочу тебя беспокоить.", cat:"hoeflich"},
+  {de:"Möchtest du mal vorbeikommen?", ru:"Не хочешь как-нибудь зайти?", cat:"hoeflich"},
+  {de:"Kannst du mir dein Handy leihen?", ru:"Можешь одолжить мне свой телефон?", cat:"hoeflich", note:"leihen — давать на время; mir — «мне» (Dativ)"},
+  {de:"Trag bitte meine Tasche.", ru:"Понеси, пожалуйста, мою сумку.", cat:"hoeflich"},
+  {de:"Pass bitte auf meine Blumen auf.", ru:"Присмотри, пожалуйста, за моими цветами.", cat:"hoeflich"},
+  {de:"Kannst du meine Tabletten holen?", ru:"Можешь принести мои таблетки?", cat:"hoeflich"},
+  {de:"Ich bin stolz auf dich!", ru:"Я горжусь тобой!", cat:"meinung", note:"stolz sein auf + Akkusativ"},
+  {de:"Ich habe keine Lust.", ru:"Мне не хочется.", cat:"meinung"},
+  {de:"Es hat sich gelohnt.", ru:"Оно того стоило.", cat:"meinung"},
+  {de:"Es lohnt sich nicht.", ru:"Оно того не стоит.", cat:"meinung"},
+  {de:"Das hängt davon ab.", ru:"Это зависит (от обстоятельств).", cat:"meinung"},
+  {de:"Ich bin gerade beschäftigt.", ru:"Я сейчас занят(а).", cat:"meinung", note:"mit etwas beschäftigt sein — быть занятым чем-то"},
+  {de:"Sei gesund!", ru:"Будь здоров(а)!", cat:"alltag", note:"пожелание; когда чихают, говорят «Gesundheit!»"},
+  {de:"Pech gehabt!", ru:"Не повезло!", cat:"alltag"},
+].map(p=>({...p, u:1})));
+const PHRASE_LESSON_EXISTING = ["außerdem","deshalb","trotzdem","sowieso","im Gegenteil"];
+PHRASES.forEach(p=>{ if(PHRASE_LESSON_EXISTING.includes(p.de)) p.u = 1; });
+
 let activePhrase = "all";
 const phraseChipsEl = document.getElementById("phraseChips");
 function buildPhraseChips(){
-  const all = [{key:"all",label:"Alle"}].concat(PHRASE_CATS);
+  const all = [{key:"all",label:"Alle"}, {key:"unterricht",label:"Aus dem Unterricht"}].concat(PHRASE_CATS);
   all.forEach(c=>{
     const b = document.createElement("button");
     b.className = "chip" + (c.key==="all" ? " active" : "");
@@ -1487,7 +1730,9 @@ document.getElementById("phraseSearch").addEventListener("input", (e)=>{
   renderPhrases();
 });
 function phraseItems(){
-  let items = activePhrase==="all" ? PHRASES : PHRASES.filter(p=>p.cat===activePhrase);
+  let items = activePhrase==="all" ? PHRASES
+    : activePhrase==="unterricht" ? PHRASES.filter(p=>p.u)
+    : PHRASES.filter(p=>p.cat===activePhrase);
   if(phraseQuery){
     items = items.filter(p=> p.de.toLowerCase().includes(phraseQuery) || p.ru.toLowerCase().includes(phraseQuery));
   }
@@ -1501,7 +1746,7 @@ function renderPhrases(){
   empty.style.display = "none";
   list.innerHTML = items.map(p=>`
     <div class="phrase-item">
-      <div class="de">${p.de}</div>
+      <div class="de">${p.de}${p.u && activePhrase!=="unterricht" ? '<span class="u-tag">Unterricht</span>' : ''}</div>
       <div class="ru">${p.ru}</div>
       ${p.note ? `<div class="note">${p.note}</div>` : ""}
       ${p.ex ? `<div class="pex"><div class="de">${p.ex}</div><div class="ru">${p.exRu}</div></div>` : ""}
@@ -1980,6 +2225,269 @@ const VERBS = [
    perf:["hat","sich erkältet"], ex:"Ich erkälte mich schnell im Winter.", exRu:"Зимой я быстро простужаюсь."},
 ];
 
+/* ---- Глаголы из урока (добавлены в конец, чтобы id старых не сдвинулись) ---- */
+const VERBS_LESSON = [
+  // Regelmäßig
+  {inf:"heiraten", ru:"жениться, выходить замуж", cat:"reg", sep:false,
+   ich:"heirate", du:"heiratest", er:"heiratet", wir:"heiraten", ihr:"heiratet", sie:"heiraten",
+   perf:["hat","geheiratet"], ex:"Er will sie heiraten.", exRu:"Он хочет на ней жениться."},
+  {inf:"stürzen", ru:"упасть, рухнуть", cat:"reg", sep:false,
+   ich:"stürze", du:"stürzt", er:"stürzt", wir:"stürzen", ihr:"stürzt", sie:"stürzen",
+   perf:["ist","gestürzt"], ex:"Sie ist vom Fahrrad gestürzt.", exRu:"Она упала с велосипеда."},
+  {inf:"zucken", ru:"дёргать(ся); пожимать (плечами)", cat:"reg", sep:false,
+   ich:"zucke", du:"zuckst", er:"zuckt", wir:"zucken", ihr:"zuckt", sie:"zucken",
+   perf:["hat","gezuckt"], ex:"Maria zuckt mit den Schultern.", exRu:"Мария пожимает плечами."},
+  {inf:"schütteln", ru:"трясти; качать (головой)", cat:"reg", sep:false,
+   ich:"schüttle", du:"schüttelst", er:"schüttelt", wir:"schütteln", ihr:"schüttelt", sie:"schütteln",
+   perf:["hat","geschüttelt"], ex:"Sie schüttelt den Kopf.", exRu:"Она качает головой."},
+  {inf:"stören", ru:"мешать, беспокоить", cat:"reg", sep:false,
+   ich:"störe", du:"störst", er:"stört", wir:"stören", ihr:"stört", sie:"stören",
+   perf:["hat","gestört"], ex:"Ich will dich nicht stören.", exRu:"Не хочу тебя беспокоить."},
+  {inf:"holen", ru:"принести, сходить за", cat:"reg", sep:false,
+   ich:"hole", du:"holst", er:"holt", wir:"holen", ihr:"holt", sie:"holen",
+   perf:["hat","geholt"], ex:"Kannst du meine Tabletten holen?", exRu:"Можешь принести мои таблетки?"},
+  {inf:"begleiten", ru:"сопровождать, провожать", cat:"reg", sep:false,
+   ich:"begleite", du:"begleitest", er:"begleitet", wir:"begleiten", ihr:"begleitet", sie:"begleiten",
+   perf:["hat","begleitet"], ex:"Ich begleite dich nach Hause.", exRu:"Я провожу тебя домой."},
+  {inf:"führen", ru:"вести", cat:"reg", sep:false,
+   ich:"führe", du:"führst", er:"führt", wir:"führen", ihr:"führt", sie:"führen",
+   perf:["hat","geführt"], ex:"Der Weg führt durch den Wald.", exRu:"Дорога ведёт через лес."},
+  {inf:"bedecken", ru:"покрывать, укрывать", cat:"reg", sep:false,
+   ich:"bedecke", du:"bedeckst", er:"bedeckt", wir:"bedecken", ihr:"bedeckt", sie:"bedecken",
+   perf:["hat","bedeckt"], ex:"Schnee bedeckt die Straße.", exRu:"Снег покрывает улицу."},
+  {inf:"entdecken", ru:"открывать, обнаруживать", cat:"reg", sep:false,
+   ich:"entdecke", du:"entdeckst", er:"entdeckt", wir:"entdecken", ihr:"entdeckt", sie:"entdecken",
+   perf:["hat","entdeckt"], ex:"Wir haben ein tolles Café entdeckt.", exRu:"Мы нашли классное кафе."},
+  {inf:"bedauern", ru:"сожалеть", cat:"reg", sep:false,
+   ich:"bedauere", du:"bedauerst", er:"bedauert", wir:"bedauern", ihr:"bedauert", sie:"bedauern",
+   perf:["hat","bedauert"], ex:"Ich bedauere das sehr.", exRu:"Я очень об этом сожалею."},
+  {inf:"trennen", ru:"разделять; (sich) расставаться", cat:"reg", sep:false,
+   ich:"trenne", du:"trennst", er:"trennt", wir:"trennen", ihr:"trennt", sie:"trennen",
+   perf:["hat","getrennt"], ex:"Nichts kann uns trennen.", exRu:"Ничто не может нас разлучить."},
+  {inf:"lösen", ru:"решать (задачу, проблему)", cat:"reg", sep:false,
+   ich:"löse", du:"löst", er:"löst", wir:"lösen", ihr:"löst", sie:"lösen",
+   perf:["hat","gelöst"], ex:"Wir lösen das Problem zusammen.", exRu:"Мы решим проблему вместе."},
+  {inf:"unterstützen", ru:"поддерживать", cat:"reg", sep:false,
+   ich:"unterstütze", du:"unterstützt", er:"unterstützt", wir:"unterstützen", ihr:"unterstützt", sie:"unterstützen",
+   perf:["hat","unterstützt"], ex:"Meine Familie unterstützt mich.", exRu:"Моя семья меня поддерживает."},
+  {inf:"verursachen", ru:"вызывать, причинять", cat:"reg", sep:false,
+   ich:"verursache", du:"verursachst", er:"verursacht", wir:"verursachen", ihr:"verursacht", sie:"verursachen",
+   perf:["hat","verursacht"], ex:"Der Sturm hat große Schäden verursacht.", exRu:"Буря причинила большой ущерб."},
+  {inf:"schätzen", ru:"ценить; оценивать", cat:"reg", sep:false,
+   ich:"schätze", du:"schätzt", er:"schätzt", wir:"schätzen", ihr:"schätzt", sie:"schätzen",
+   perf:["hat","geschätzt"], ex:"Ich schätze deine Hilfe sehr.", exRu:"Я очень ценю твою помощь."},
+  {inf:"beleidigen", ru:"оскорблять, обижать", cat:"reg", sep:false,
+   ich:"beleidige", du:"beleidigst", er:"beleidigt", wir:"beleidigen", ihr:"beleidigt", sie:"beleidigen",
+   perf:["hat","beleidigt"], ex:"Ich wollte dich nicht beleidigen.", exRu:"Я не хотел(а) тебя обидеть."},
+  {inf:"zittern", ru:"дрожать", cat:"reg", sep:false,
+   ich:"zittere", du:"zitterst", er:"zittert", wir:"zittern", ihr:"zittert", sie:"zittern",
+   perf:["hat","gezittert"], ex:"Ich zittere vor Kälte.", exRu:"Я дрожу от холода."},
+  {inf:"dienen", ru:"служить", cat:"reg", sep:false,
+   ich:"diene", du:"dienst", er:"dient", wir:"dienen", ihr:"dient", sie:"dienen",
+   perf:["hat","gedient"], ex:"Wozu dient das?", exRu:"Для чего это служит?"},
+  {inf:"berühren", ru:"касаться, трогать", cat:"reg", sep:false,
+   ich:"berühre", du:"berührst", er:"berührt", wir:"berühren", ihr:"berührt", sie:"berühren",
+   perf:["hat","berührt"], ex:"Bitte berühr das Bild nicht!", exRu:"Пожалуйста, не трогай картину!"},
+  {inf:"versäumen", ru:"упускать, пропускать", cat:"reg", sep:false,
+   ich:"versäume", du:"versäumst", er:"versäumt", wir:"versäumen", ihr:"versäumt", sie:"versäumen",
+   perf:["hat","versäumt"], ex:"Ich habe den Unterricht versäumt.", exRu:"Я пропустил(а) урок."},
+  {inf:"verpassen", ru:"пропускать, опаздывать на", cat:"reg", sep:false,
+   ich:"verpasse", du:"verpasst", er:"verpasst", wir:"verpassen", ihr:"verpasst", sie:"verpassen",
+   perf:["hat","verpasst"], ex:"Ich habe den Bus verpasst.", exRu:"Я опоздал(а) на автобус."},
+  {inf:"wecken", ru:"будить", cat:"reg", sep:false,
+   ich:"wecke", du:"weckst", er:"weckt", wir:"wecken", ihr:"weckt", sie:"wecken",
+   perf:["hat","geweckt"], ex:"Weck mich bitte um sieben.", exRu:"Разбуди меня, пожалуйста, в семь."},
+  {inf:"verstecken", ru:"прятать", cat:"reg", sep:false,
+   ich:"verstecke", du:"versteckst", er:"versteckt", wir:"verstecken", ihr:"versteckt", sie:"verstecken",
+   perf:["hat","versteckt"], ex:"Das Kind versteckt sich hinter dem Baum.", exRu:"Ребёнок прячется за деревом."},
+  {inf:"erreichen", ru:"достигать", cat:"reg", sep:false,
+   ich:"erreiche", du:"erreichst", er:"erreicht", wir:"erreichen", ihr:"erreicht", sie:"erreichen",
+   perf:["hat","erreicht"], ex:"Ich will mein Ziel erreichen.", exRu:"Я хочу достичь своей цели."},
+  {inf:"zerstören", ru:"разрушать, уничтожать", cat:"reg", sep:false,
+   ich:"zerstöre", du:"zerstörst", er:"zerstört", wir:"zerstören", ihr:"zerstört", sie:"zerstören",
+   perf:["hat","zerstört"], ex:"Der Sturm hat das Haus zerstört.", exRu:"Буря разрушила дом."},
+  {inf:"kämpfen", ru:"бороться, сражаться", cat:"reg", sep:false,
+   ich:"kämpfe", du:"kämpfst", er:"kämpft", wir:"kämpfen", ihr:"kämpft", sie:"kämpfen",
+   perf:["hat","gekämpft"], ex:"Wir kämpfen für unsere Freiheit.", exRu:"Мы боремся за свою свободу."},
+  {inf:"begehren", ru:"жаждать, страстно желать", cat:"reg", sep:false,
+   ich:"begehre", du:"begehrst", er:"begehrt", wir:"begehren", ihr:"begehrt", sie:"begehren",
+   perf:["hat","begehrt"], ex:"Der Drache begehrt den Schatz.", exRu:"Дракон жаждет сокровища."},
+  {inf:"wechseln", ru:"менять (на другое), обменивать", cat:"reg", sep:false,
+   ich:"wechsle", du:"wechselst", er:"wechselt", wir:"wechseln", ihr:"wechselt", sie:"wechseln",
+   perf:["hat","gewechselt"], ex:"Ich möchte Geld wechseln.", exRu:"Я хотел(а) бы обменять деньги."},
+  {inf:"tauschen", ru:"меняться, обмениваться", cat:"reg", sep:false,
+   ich:"tausche", du:"tauschst", er:"tauscht", wir:"tauschen", ihr:"tauscht", sie:"tauschen",
+   perf:["hat","getauscht"], ex:"Wollen wir die Plätze tauschen?", exRu:"Поменяемся местами?"},
+  {inf:"ändern", ru:"менять, изменять (что-то)", cat:"reg", sep:false,
+   ich:"ändere", du:"änderst", er:"ändert", wir:"ändern", ihr:"ändert", sie:"ändern",
+   perf:["hat","geändert"], ex:"Ich ändere meinen Plan.", exRu:"Я меняю свой план."},
+  {inf:"verändern", ru:"изменять, преображать", cat:"reg", sep:false,
+   ich:"verändere", du:"veränderst", er:"verändert", wir:"verändern", ihr:"verändert", sie:"verändern",
+   perf:["hat","verändert"], ex:"Die Stadt hat sich sehr verändert.", exRu:"Город очень изменился."},
+  {inf:"übernachten", ru:"переночевать", cat:"reg", sep:false,
+   ich:"übernachte", du:"übernachtest", er:"übernachtet", wir:"übernachten", ihr:"übernachtet", sie:"übernachten",
+   perf:["hat","übernachtet"], ex:"Wir übernachten im Hotel.", exRu:"Мы переночуем в отеле."},
+  {inf:"erstellen", ru:"создавать, составлять (тексты, программы)", cat:"reg", sep:false,
+   ich:"erstelle", du:"erstellst", er:"erstellt", wir:"erstellen", ihr:"erstellt", sie:"erstellen",
+   perf:["hat","erstellt"], ex:"Ich erstelle eine Liste.", exRu:"Я составляю список."},
+  {inf:"entwickeln", ru:"развивать; разрабатывать", cat:"reg", sep:false,
+   ich:"entwickle", du:"entwickelst", er:"entwickelt", wir:"entwickeln", ihr:"entwickelt", sie:"entwickeln",
+   perf:["hat","entwickelt"], ex:"Die Firma entwickelt eine neue App.", exRu:"Фирма разрабатывает новое приложение."},
+  {inf:"erledigen", ru:"выполнять, улаживать (дела)", cat:"reg", sep:false,
+   ich:"erledige", du:"erledigst", er:"erledigt", wir:"erledigen", ihr:"erledigt", sie:"erledigen",
+   perf:["hat","erledigt"], ex:"Ich muss heute noch viel erledigen.", exRu:"Мне сегодня ещё многое нужно сделать."},
+  {inf:"verschütten", ru:"пролить", cat:"reg", sep:false,
+   ich:"verschütte", du:"verschüttest", er:"verschüttet", wir:"verschütten", ihr:"verschüttet", sie:"verschütten",
+   perf:["hat","verschüttet"], ex:"Ich habe den Kaffee verschüttet.", exRu:"Я пролил(а) кофе."},
+  {inf:"schütten", ru:"сыпать, лить", cat:"reg", sep:false,
+   ich:"schütte", du:"schüttest", er:"schüttet", wir:"schütten", ihr:"schüttet", sie:"schütten",
+   perf:["hat","geschüttet"], ex:"Schütte das Wasser in den Topf.", exRu:"Вылей воду в кастрюлю."},
+  {inf:"beschuldigen", ru:"обвинять", cat:"reg", sep:false,
+   ich:"beschuldige", du:"beschuldigst", er:"beschuldigt", wir:"beschuldigen", ihr:"beschuldigt", sie:"beschuldigen",
+   perf:["hat","beschuldigt"], ex:"Er beschuldigt mich, aber ich bin nicht schuld.", exRu:"Он обвиняет меня, но я не виноват(а)."},
+  {inf:"faszinieren", ru:"восхищать, увлекать", cat:"reg", sep:false,
+   ich:"fasziniere", du:"faszinierst", er:"fasziniert", wir:"faszinieren", ihr:"fasziniert", sie:"faszinieren",
+   perf:["hat","fasziniert"], ex:"Die Natur fasziniert mich.", exRu:"Природа меня восхищает."},
+  {inf:"besuchen", ru:"навещать, посещать", cat:"reg", sep:false,
+   ich:"besuche", du:"besuchst", er:"besucht", wir:"besuchen", ihr:"besucht", sie:"besuchen",
+   perf:["hat","besucht"], ex:"Möchtest du uns einmal besuchen?", exRu:"Не хочешь как-нибудь нас навестить?"},
+  {inf:"säumen", ru:"окаймлять, обрамлять", cat:"reg", sep:false,
+   ich:"säume", du:"säumst", er:"säumt", wir:"säumen", ihr:"säumt", sie:"säumen",
+   perf:["hat","gesäumt"], ex:"Bäume säumen die Straße.", exRu:"Деревья обрамляют улицу."},
+
+  // Unregelmäßig
+  {inf:"erfrieren", ru:"замёрзнуть; отморозить", cat:"unreg", sep:false,
+   ich:"erfriere", du:"erfrierst", er:"erfriert", wir:"erfrieren", ihr:"erfriert", sie:"erfrieren",
+   perf:["ist","erfroren"], ex:"Ohne Jacke erfrierst du!", exRu:"Без куртки ты замёрзнешь!"},
+  {inf:"leihen", ru:"одалживать, давать на время", cat:"unreg", sep:false,
+   ich:"leihe", du:"leihst", er:"leiht", wir:"leihen", ihr:"leiht", sie:"leihen",
+   perf:["hat","geliehen"], ex:"Kannst du mir dein Handy leihen?", exRu:"Можешь одолжить мне свой телефон?"},
+  {inf:"graben", ru:"копать", cat:"unreg", sep:false,
+   ich:"grabe", du:"gräbst", er:"gräbt", wir:"graben", ihr:"grabt", sie:"graben",
+   perf:["hat","gegraben"], ex:"Der Hund gräbt ein Loch.", exRu:"Собака роет яму."},
+  {inf:"überwinden", ru:"преодолевать", cat:"unreg", sep:false,
+   ich:"überwinde", du:"überwindest", er:"überwindet", wir:"überwinden", ihr:"überwindet", sie:"überwinden",
+   perf:["hat","überwunden"], ex:"Gemeinsam überwinden wir jedes Hindernis.", exRu:"Вместе мы преодолеем любое препятствие."},
+  {inf:"überstehen", ru:"пережить, выдержать", cat:"unreg", sep:false,
+   ich:"überstehe", du:"überstehst", er:"übersteht", wir:"überstehen", ihr:"übersteht", sie:"überstehen",
+   perf:["hat","überstanden"], ex:"Wir haben die schwere Zeit überstanden.", exRu:"Мы пережили трудное время."},
+  {inf:"lassen", ru:"оставлять; позволять; давай(те)", cat:"unreg", sep:false,
+   ich:"lasse", du:"lässt", er:"lässt", wir:"lassen", ihr:"lasst", sie:"lassen",
+   perf:["hat","gelassen"], ex:"Lass uns gehen!", exRu:"Давай пойдём!"},
+  {inf:"genießen", ru:"наслаждаться", cat:"unreg", sep:false,
+   ich:"genieße", du:"genießt", er:"genießt", wir:"genießen", ihr:"genießt", sie:"genießen",
+   perf:["hat","genossen"], ex:"Wir genießen den Urlaub.", exRu:"Мы наслаждаемся отпуском."},
+  {inf:"leiden", ru:"страдать (unter — от)", cat:"unreg", sep:false,
+   ich:"leide", du:"leidest", er:"leidet", wir:"leiden", ihr:"leidet", sie:"leiden",
+   perf:["hat","gelitten"], ex:"Ich leide unter dem Lärm.", exRu:"Я страдаю от шума."},
+  {inf:"schreien", ru:"кричать", cat:"unreg", sep:false,
+   ich:"schreie", du:"schreist", er:"schreit", wir:"schreien", ihr:"schreit", sie:"schreien",
+   perf:["hat","geschrien"], ex:"Warum schreist du so?", exRu:"Почему ты так кричишь?"},
+  {inf:"schwören", ru:"клясться", cat:"unreg", sep:false,
+   ich:"schwöre", du:"schwörst", er:"schwört", wir:"schwören", ihr:"schwört", sie:"schwören",
+   perf:["hat","geschworen"], ex:"Ich schwöre, ich sage die Wahrheit.", exRu:"Клянусь, я говорю правду."},
+  {inf:"überweisen", ru:"переводить (деньги)", cat:"unreg", sep:false,
+   ich:"überweise", du:"überweist", er:"überweist", wir:"überweisen", ihr:"überweist", sie:"überweisen",
+   perf:["hat","überwiesen"], ex:"Ich überweise dir das Geld morgen.", exRu:"Я переведу тебе деньги завтра."},
+  {inf:"entstehen", ru:"возникать", cat:"unreg", sep:false,
+   ich:"entstehe", du:"entstehst", er:"entsteht", wir:"entstehen", ihr:"entsteht", sie:"entstehen",
+   perf:["ist","entstanden"], ex:"So entsteht ein Problem.", exRu:"Так возникает проблема."},
+  {inf:"gießen", ru:"поливать (цветы); лить", cat:"unreg", sep:false,
+   ich:"gieße", du:"gießt", er:"gießt", wir:"gießen", ihr:"gießt", sie:"gießen",
+   perf:["hat","gegossen"], ex:"Ich gieße die Blumen.", exRu:"Я поливаю цветы."},
+  {inf:"bestehen", ru:"сдать (экзамен); выдержать", cat:"unreg", sep:false,
+   ich:"bestehe", du:"bestehst", er:"besteht", wir:"bestehen", ihr:"besteht", sie:"bestehen",
+   perf:["hat","bestanden"], ex:"Ich habe die Prüfung bestanden!", exRu:"Я сдал(а) экзамен!"},
+  {inf:"bitten", ru:"просить (um — о)", cat:"unreg", sep:false,
+   ich:"bitte", du:"bittest", er:"bittet", wir:"bitten", ihr:"bittet", sie:"bitten",
+   perf:["hat","gebeten"], ex:"Ich möchte Sie um einen Gefallen bitten.", exRu:"Я хотел(а) бы попросить вас об одолжении."},
+  {inf:"schlagen", ru:"бить; биться (о сердце)", cat:"unreg", sep:false,
+   ich:"schlage", du:"schlägst", er:"schlägt", wir:"schlagen", ihr:"schlagt", sie:"schlagen",
+   perf:["hat","geschlagen"], ex:"Mein Herz schlägt schnell.", exRu:"Моё сердце бьётся быстро."},
+
+  // Trennbar
+  {inf:"ablenken", ru:"отвлекать", cat:"trenn", sep:true,
+   ich:"lenke ab", du:"lenkst ab", er:"lenkt ab", wir:"lenken ab", ihr:"lenkt ab", sie:"lenken ab",
+   perf:["hat","abgelenkt"], ex:"Lenken Sie mich bitte nicht ab!", exRu:"Не отвлекайте меня, пожалуйста!"},
+  {inf:"aufpassen", ru:"присматривать (auf — за); быть внимательным", cat:"trenn", sep:true,
+   ich:"passe auf", du:"passt auf", er:"passt auf", wir:"passen auf", ihr:"passt auf", sie:"passen auf",
+   perf:["hat","aufgepasst"], ex:"Pass bitte auf meine Blumen auf!", exRu:"Присмотри, пожалуйста, за моими цветами!"},
+  {inf:"einschätzen", ru:"оценивать (ситуацию)", cat:"trenn", sep:true,
+   ich:"schätze ein", du:"schätzt ein", er:"schätzt ein", wir:"schätzen ein", ihr:"schätzt ein", sie:"schätzen ein",
+   perf:["hat","eingeschätzt"], ex:"Wie schätzt du die Situation ein?", exRu:"Как ты оцениваешь ситуацию?"},
+  {inf:"wegwerfen", ru:"выбрасывать", cat:"trenn", sep:true,
+   ich:"werfe weg", du:"wirfst weg", er:"wirft weg", wir:"werfen weg", ihr:"werft weg", sie:"werfen weg",
+   perf:["hat","weggeworfen"], ex:"Wirf das bitte nicht weg!", exRu:"Пожалуйста, не выбрасывай это!"},
+  {inf:"stattfinden", ru:"состояться, проходить", cat:"trenn", sep:true,
+   ich:"finde statt", du:"findest statt", er:"findet statt", wir:"finden statt", ihr:"findet statt", sie:"finden statt",
+   perf:["hat","stattgefunden"], ex:"Die Veranstaltung findet am Samstag statt.", exRu:"Мероприятие пройдёт в субботу."},
+  {inf:"umtauschen", ru:"обменять (товар)", cat:"trenn", sep:true,
+   ich:"tausche um", du:"tauschst um", er:"tauscht um", wir:"tauschen um", ihr:"tauscht um", sie:"tauschen um",
+   perf:["hat","umgetauscht"], ex:"Ich möchte diese Schuhe umtauschen.", exRu:"Я хотел(а) бы обменять эти туфли."},
+  {inf:"ausgeben", ru:"тратить (für — на)", cat:"trenn", sep:true,
+   ich:"gebe aus", du:"gibst aus", er:"gibt aus", wir:"geben aus", ihr:"gebt aus", sie:"geben aus",
+   perf:["hat","ausgegeben"], ex:"Ich gebe viel Geld für Bücher aus.", exRu:"Я трачу много денег на книги."},
+  {inf:"abheben", ru:"снимать (деньги)", cat:"trenn", sep:true,
+   ich:"hebe ab", du:"hebst ab", er:"hebt ab", wir:"heben ab", ihr:"hebt ab", sie:"heben ab",
+   perf:["hat","abgehoben"], ex:"Ich hebe Geld am Automaten ab.", exRu:"Я снимаю деньги в банкомате."},
+  {inf:"einzahlen", ru:"вносить (на счёт)", cat:"trenn", sep:true,
+   ich:"zahle ein", du:"zahlst ein", er:"zahlt ein", wir:"zahlen ein", ihr:"zahlt ein", sie:"zahlen ein",
+   perf:["hat","eingezahlt"], ex:"Ich zahle Geld auf mein Konto ein.", exRu:"Я вношу деньги на свой счёт."},
+  {inf:"abhängen", ru:"зависеть (von — от)", cat:"trenn", sep:true,
+   ich:"hänge ab", du:"hängst ab", er:"hängt ab", wir:"hängen ab", ihr:"hängt ab", sie:"hängen ab",
+   perf:["hat","abgehangen"], ex:"Das hängt vom Wetter ab.", exRu:"Это зависит от погоды."},
+  {inf:"wiedergutmachen", ru:"исправить, загладить (вину)", cat:"trenn", sep:true,
+   ich:"mache wieder gut", du:"machst wieder gut", er:"macht wieder gut", wir:"machen wieder gut", ihr:"macht wieder gut", sie:"machen wieder gut",
+   perf:["hat","wiedergutgemacht"], ex:"Wie kann ich das wiedergutmachen?", exRu:"Как я могу это исправить?"},
+  {inf:"einschenken", ru:"наливать (напиток)", cat:"trenn", sep:true,
+   ich:"schenke ein", du:"schenkst ein", er:"schenkt ein", wir:"schenken ein", ihr:"schenkt ein", sie:"schenken ein",
+   perf:["hat","eingeschenkt"], ex:"Darf ich dir Tee einschenken?", exRu:"Можно налить тебе чаю?"},
+  {inf:"vorbeikommen", ru:"заходить, заглядывать", cat:"trenn", sep:true,
+   ich:"komme vorbei", du:"kommst vorbei", er:"kommt vorbei", wir:"kommen vorbei", ihr:"kommt vorbei", sie:"kommen vorbei",
+   perf:["ist","vorbeigekommen"], ex:"Möchtest du mal vorbeikommen?", exRu:"Не хочешь как-нибудь зайти?"},
+  {inf:"umbinden", ru:"повязывать (фартук, шарф)", cat:"trenn", sep:true,
+   ich:"binde um", du:"bindest um", er:"bindet um", wir:"binden um", ihr:"bindet um", sie:"binden um",
+   perf:["hat","umgebunden"], ex:"Ich binde mir eine Schürze um.", exRu:"Я повязываю фартук."},
+  {inf:"zulassen", ru:"допускать; оставлять закрытым", cat:"trenn", sep:true,
+   ich:"lasse zu", du:"lässt zu", er:"lässt zu", wir:"lassen zu", ihr:"lasst zu", sie:"lassen zu",
+   perf:["hat","zugelassen"], ex:"Lass bitte die Tür zu!", exRu:"Оставь, пожалуйста, дверь закрытой!"},
+  {inf:"anprobieren", ru:"примерять", cat:"trenn", sep:true,
+   ich:"probiere an", du:"probierst an", er:"probiert an", wir:"probieren an", ihr:"probiert an", sie:"probieren an",
+   perf:["hat","anprobiert"], ex:"Kann ich die Hose anprobieren?", exRu:"Можно примерить брюки?"},
+
+  // Reflexiv
+  {inf:"sich melden", ru:"дать о себе знать; записаться", cat:"refl", sep:false, refl:true,
+   ich:"melde mich", du:"meldest dich", er:"meldet sich", wir:"melden uns", ihr:"meldet euch", sie:"melden sich",
+   perf:["hat","sich gemeldet"], ex:"Ich melde mich morgen bei dir.", exRu:"Я дам о себе знать завтра."},
+  {inf:"sich beschweren", ru:"жаловаться (über — на)", cat:"refl", sep:false, refl:true,
+   ich:"beschwere mich", du:"beschwerst dich", er:"beschwert sich", wir:"beschweren uns", ihr:"beschwert euch", sie:"beschweren sich",
+   perf:["hat","sich beschwert"], ex:"Er beschwert sich über die Lieferung.", exRu:"Он жалуется на доставку."},
+  {inf:"sich blamieren", ru:"опозориться", cat:"refl", sep:false, refl:true,
+   ich:"blamiere mich", du:"blamierst dich", er:"blamiert sich", wir:"blamieren uns", ihr:"blamiert euch", sie:"blamieren sich",
+   perf:["hat","sich blamiert"], ex:"Ich will mich nicht blamieren.", exRu:"Не хочу опозориться."},
+  {inf:"sich anschnallen", ru:"пристёгиваться", cat:"refl", sep:true, refl:true,
+   ich:"schnalle mich an", du:"schnallst dich an", er:"schnallt sich an", wir:"schnallen uns an", ihr:"schnallt euch an", sie:"schnallen sich an",
+   perf:["hat","sich angeschnallt"], ex:"Schnall dich bitte an!", exRu:"Пристегнись, пожалуйста!"},
+  {inf:"sich verwandeln", ru:"превращаться (in — в)", cat:"refl", sep:false, refl:true,
+   ich:"verwandle mich", du:"verwandelst dich", er:"verwandelt sich", wir:"verwandeln uns", ihr:"verwandelt euch", sie:"verwandeln sich",
+   perf:["hat","sich verwandelt"], ex:"Der Frosch verwandelt sich in einen Prinzen.", exRu:"Лягушка превращается в принца."},
+  {inf:"sich erkundigen", ru:"справляться, узнавать (nach — о)", cat:"refl", sep:false, refl:true,
+   ich:"erkundige mich", du:"erkundigst dich", er:"erkundigt sich", wir:"erkundigen uns", ihr:"erkundigt euch", sie:"erkundigen sich",
+   perf:["hat","sich erkundigt"], ex:"Ich möchte mich nach der Wohnung erkundigen.", exRu:"Я хотел(а) бы узнать о квартире."},
+  {inf:"sich vorstellen", ru:"представиться; (sich etwas) представлять себе", cat:"refl", sep:true, refl:true,
+   ich:"stelle mich vor", du:"stellst dich vor", er:"stellt sich vor", wir:"stellen uns vor", ihr:"stellt euch vor", sie:"stellen sich vor",
+   perf:["hat","sich vorgestellt"], ex:"Darf ich mich vorstellen? — Ich kann mir das gut vorstellen.", exRu:"Позвольте представиться. — Я хорошо могу себе это представить."},
+];
+VERBS.push(...VERBS_LESSON.map(v=>({...v, u:1})));
+
+// Глаголы, которые уже были на сайте и звучали на уроке
+const VERBS_LESSON_EXISTING = ["atmen","verlieren","sich beeilen","sich bewerben","versuchen","sich ausruhen",
+  "sich entspannen","husten","schaffen","dauern","denken","verdienen","anfangen","mieten","einladen",
+  "tragen","fallen","putzen","sterben","gewinnen","kaufen"];
+VERBS.forEach(v=>{ if(VERBS_LESSON_EXISTING.includes(v.inf)) v.u = 1; });
+VERBS.find(v=>v.inf==="verdienen").ru = "зарабатывать; заслуживать";
+VERBS.find(v=>v.inf==="schaffen").ru = "справляться, успевать; создавать (schuf, geschaffen)";
+
 VERBS.forEach((v,i)=>v.id=i);
 
 const CATS = [
@@ -1990,6 +2498,7 @@ const CATS = [
   {key:"reg", label:"Regelmäßig"},
   {key:"trenn", label:"Trennbar"},
   {key:"refl", label:"Reflexiv"},
+  {key:"unterricht", label:"Aus dem Unterricht"},
 ];
 
 const PERSONS = [
@@ -2022,7 +2531,9 @@ let stats = loadStats();
 let activeCat = "all";
 
 function filtered(){
-  return activeCat==="all" ? VERBS.slice() : VERBS.filter(v=>v.cat===activeCat);
+  if(activeCat==="all") return VERBS.slice();
+  if(activeCat==="unterricht") return VERBS.filter(v=>v.u);
+  return VERBS.filter(v=>v.cat===activeCat);
 }
 function shuffle(arr){
   const a = arr.slice();
@@ -2101,7 +2612,8 @@ function renderCard(){
   document.getElementById("frontWord").textContent = v.inf;
   const catLabel = CATS.find(c=>c.key===v.cat).label;
   let badges = `<span class="badge">${catLabel}</span>`;
-  if(v.sep) badges += `<span class="badge sep">trennbar</span>`;
+  if(v.sep && v.cat!=="trenn") badges += `<span class="badge sep">trennbar</span>`;
+  if(v.u) badges += `<span class="badge" style="background:var(--good-soft);color:var(--good);">Unterricht</span>`;
   if(known.has(v.id)) badges += `<span class="badge" style="background:var(--good-soft);color:var(--good);">kenne ich</span>`;
   document.getElementById("frontBadges").innerHTML = badges;
 
@@ -2289,7 +2801,7 @@ function renderList(){
     const perf = v.perf ? `${v.perf[0]} ${v.perf[1]}` : "—";
     return `<tr>
       <td class="known">${known.has(v.id) ? '<span class="dot-known">●</span>' : ''}</td>
-      <td class="inf">${v.inf}${v.sep ? ' <span class="sep-dot">·</span>' : ''}</td>
+      <td class="inf">${v.inf}${v.sep ? ' <span class="sep-dot">·</span>' : ''}${v.u && activeCat!=="unterricht" ? '<span class="u-tag">Unterricht</span>' : ''}</td>
       <td class="ru">${v.ru}</td>
       <td>${v.ich}</td>
       <td>${v.du}</td>
@@ -2314,6 +2826,7 @@ document.getElementById("resetProgress").addEventListener("click", ()=>{
 });
 
 /* ================= init ================= */
+document.querySelectorAll(".verb-total").forEach(el=> el.textContent = VERBS.length);
 updateKnownHeader();
 resetDeck();
 resetDrill();
