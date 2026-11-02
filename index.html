@@ -4572,17 +4572,14 @@ let aLog = dLoad(A_KEY, {});
 function aTrack(){ const d = dToday(); aLog[d] = (aLog[d]||0) + 1; dSave(A_KEY, aLog); }
 function aRender(){
   const todayN = aLog[dToday()] || 0;
-  // Серия: сколько дней подряд были занятия (сегодняшний день ещё может быть пустым)
-  let run = 0;
-  const c = new Date(dToday()+"T12:00:00");
-  if(!todayN) c.setDate(c.getDate()-1);
-  while(aLog[c.toLocaleDateString("sv-SE")]){ run++; c.setDate(c.getDate()-1); }
-  const m10 = run%10, m100 = run%100;
+  // Всего дней, когда были занятия (не обязательно подряд)
+  const days = Object.values(aLog).filter(n=> n>0).length;
+  const m10 = days%10, m100 = days%100;
   const word = m10===1 && m100!==11 ? "день" : m10>=2 && m10<=4 && (m100<12 || m100>14) ? "дня" : "дней";
   const el = dEl("activity");
   el.classList.toggle("off", !todayN);
-  el.innerHTML = `<span class="ac-fire">🔥</span><span class="ac-num">${run}</span>
-    <span class="ac-cap"><b>${word} подряд</b>${todayN ? `сегодня ${todayN} заданий` : "сегодня ещё не занимались"}</span>`;
+  el.innerHTML = `<span class="ac-fire">🔥</span><span class="ac-num">${days}</span>
+    <span class="ac-cap"><b>${word} занятий</b>${todayN ? `сегодня ${todayN} заданий` : "сегодня ещё не занимались"}</span>`;
 }
 
 /* ================= БЛИЦ 60 СЕКУНД ================= */
