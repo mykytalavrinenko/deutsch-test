@@ -349,6 +349,33 @@
   .built .tile{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);}
   .play-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .play-btn{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink);border-radius:11px;padding:11px 18px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
+  .home-card.blitz-card .badge-mono{background:var(--bad-soft);color:var(--bad);font-size:15px;}
+
+  .activity{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
+  .ac-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;}
+  .ac-head b{color:var(--ink);font-size:13.5px;}
+  .ac-grid{display:grid;grid-template-rows:repeat(7,11px);grid-auto-columns:11px;grid-auto-flow:column;gap:3px;justify-content:end;overflow-x:auto;}
+  .ac{display:block;width:11px;height:11px;border-radius:3px;background:var(--surface-2);}
+  .ac.l1{background:color-mix(in srgb, var(--accent) 28%, var(--surface-2));}
+  .ac.l2{background:color-mix(in srgb, var(--accent) 52%, var(--surface-2));}
+  .ac.l3{background:color-mix(in srgb, var(--accent) 76%, var(--surface-2));}
+  .ac.l4{background:var(--accent);}
+  .ac.lx{background:transparent;}
+  .ac.today{outline:1.5px solid var(--ink-muted);outline-offset:1px;}
+  .ac-legend{display:flex;align-items:center;justify-content:flex-end;gap:3px;font-size:11px;color:var(--ink-muted);margin-top:6px;}
+  .ac-legend .ac{width:9px;height:9px;}
+
+  .practice-btn{display:block;width:100%;margin:0 0 14px;padding:13px;border-radius:12px;border:1px solid var(--accent);
+    background:var(--accent-soft);color:var(--accent-ink);font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;}
+
+  .chat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .bub{max-width:86%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.4;animation:bubIn .2s ease;}
+  .bub.npc{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:5px;}
+  .bub.me{align-self:flex-end;background:var(--accent);color:var(--surface);border-bottom-right-radius:5px;}
+  .bub .tr-btn{display:block;border:none;background:none;color:var(--accent-ink);font-size:12px;padding:0;margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:inherit;}
+  .bub .tr{display:block;font-size:12.5px;color:var(--ink-muted);margin-top:4px;}
+  @keyframes bubIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+  @media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
   .end-score{font-size:48px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;margin:4px 0 2px;}
 
   /* ---- List / vocab table (shared) ---- */
@@ -703,6 +730,7 @@
       <h1 class="serif">Deutsch</h1>
       <p>Выбери раздел, который сегодня учим</p>
     </div>
+    <div class="activity" id="activity"></div>
     <div class="home-grid">
       <button class="home-card daily-card" data-target="screen-daily">
         <div class="badge-mono">D</div>
@@ -717,6 +745,22 @@
         <div class="txt">
           <div class="t">Горячая десятка</div>
           <div class="d" id="hotHomeSub">10 новых слов: выучить и сразу применить</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card blitz-card" data-target="screen-daily" data-mode="blitz">
+        <div class="badge-mono">60</div>
+        <div class="txt">
+          <div class="t">Блиц 60 секунд</div>
+          <div class="d" id="blitzHomeSub">Сколько правильных ответов успеешь за минуту?</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card" data-target="screen-dialog">
+        <div class="badge-mono">Di</div>
+        <div class="txt">
+          <div class="t">Интерактивный диалог</div>
+          <div class="d">Врач, кафе, вокзал, звонок арендодателю…</div>
         </div>
         <div class="chevron">›</div>
       </button>
@@ -1282,6 +1326,18 @@
   </main>
 </div>
 
+<!-- ================= ИНТЕРАКТИВНЫЙ ДИАЛОГ ================= -->
+<div class="screen" id="screen-dialog">
+  <main class="wrap">
+    <section id="dlgList"></section>
+    <section id="dlgRun" hidden>
+      <div class="daily-top"><span class="daily-block" id="dlgTitle"></span><span id="dlgStepCount"></span></div>
+      <div class="chat" id="dlgChat"></div>
+      <div class="panel daily-task" id="dlgTask"></div>
+    </section>
+  </main>
+</div>
+
 <div class="word-tip" id="wordTip"></div>
 
 <script>
@@ -1296,15 +1352,24 @@ const SCREEN_TITLES = {
   "screen-wortschatz": "Wortschatz",
   "screen-redewendungen": "Redewendungen",
   "screen-daily": "Daily Challenge",
+  "screen-dialog": "Интерактивный диалог",
 };
+const MODE_TITLES = {hot:"Горячая десятка", blitz:"Блиц 60 секунд", gram:"Тренировка грамматики"};
 // mode="hot" открывает на экране сессий «Горячую десятку» вместо Daily Challenge
+// mode переключает экран сессий: hot — Горячая десятка, blitz — Блиц, gram — тренировка темы (запускает вызывающий код)
 function showScreen(id, mode){
+  bStop();
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active", s.id===id));
   document.getElementById("backBtn").hidden = (id==="screen-home");
-  document.getElementById("appTitle").textContent = (id==="screen-daily" && mode==="hot") ? "Горячая десятка" : (SCREEN_TITLES[id] || "Deutsch");
+  document.getElementById("appTitle").textContent = (id==="screen-daily" && MODE_TITLES[mode]) || SCREEN_TITLES[id] || "Deutsch";
   window.scrollTo(0,0);
   hideTip();
-  if(id==="screen-daily") (mode==="hot" ? hRenderStart() : dRenderStart());
+  if(id==="screen-daily"){
+    if(mode==="hot") hRenderStart();
+    else if(mode==="blitz") bRenderStart();
+    else if(mode!=="gram") dRenderStart();
+  }
+  if(id==="screen-dialog") dlgRenderList();
   if(id==="screen-home") dUpdateHome();
 }
 document.querySelectorAll(".home-card").forEach(card=>{
@@ -3066,15 +3131,38 @@ const D_PERF_VERBS = D_VERBS.filter(i=> i.verb.perf);
 // Daily: ровно 20 заданий = разминка 3 + повторение 9 (из них ≥2 грамматика) + грамматика дня 5 + работа над ошибками 2 + финал 1
 const D_PLAN = {warm:3, review:9, bonus:2, slots:2};
 const D_GRAM_TYPES = [
-  {type:"conj",  label:"Präsens — спряжение"},
-  {type:"case",  label:"Артикль и падеж"},
-  {type:"perf",  label:"Perfekt"},
-  {type:"gap",   label:"Вставь слово: предлоги и связки"},
-  {type:"art",   label:"Артикли der / die / das"},
-  {type:"vgap",  label:"Глагол в предложении"},
-  {type:"order", label:"Порядок слов"},
-  {type:"error", label:"Найди ошибку"},
+  {type:"conj",     label:"Präsens — спряжение"},
+  {type:"case",     label:"Артикль и падеж"},
+  {type:"toPerf",   label:"Перепиши в Perfekt"},
+  {type:"gap",      label:"Вставь слово: предлоги и связки"},
+  {type:"join",     label:"Сложные предложения: weil, dass…"},
+  {type:"art",      label:"Артикли der / die / das"},
+  {type:"praet",    label:"Präteritum: sein, haben, модальные"},
+  {type:"neg",      label:"nicht или kein"},
+  {type:"vgap",     label:"Глагол в предложении"},
+  {type:"pastPick", label:"Прошедшее время"},
+  {type:"imp",      label:"Imperativ"},
+  {type:"order",    label:"Порядок слов"},
+  {type:"adjDecl",  label:"Окончания прилагательных"},
+  {type:"perf",     label:"Perfekt: hat или ist"},
+  {type:"konj2",    label:"Konjunktiv II"},
+  {type:"komp",     label:"Komparativ и Superlativ"},
+  {type:"error",    label:"Найди ошибку"},
+  {type:"passiv",   label:"Passiv"},
 ];
+// Грамматика без привязки к словам: подмешивается в повторение и бонусы
+const D_BONUS_TYPES = ["case","gap","error","order","vgap","toPerf","join","neg","adjDecl","imp","komp","praet"];
+// Тренировка по темам раздела Grammatik
+const G_TOPICS = {
+  zeiten:     {label:"Zeiten",       types:["toPerf","conj","pastPick","perf","praet","vgap"]},
+  kasus:      {label:"Kasus",        types:["case","gap","art"]},
+  saetze:     {label:"Sätze",        types:["join","order","error","konj2"]},
+  imperativ:  {label:"Imperativ",    types:["imp"]},
+  adjektive:  {label:"Adjektive",    types:["komp","adjDecl"]},
+  negation:   {label:"Negation",     types:["neg"]},
+  konjunktiv: {label:"Konjunktiv I", types:["konj1","konj2"]},
+  passiv:     {label:"Passiv",       types:["passiv"]},
+};
 function dGramOfDay(date){ return D_GRAM_TYPES[Math.floor(new Date(date+"T12:00:00").getTime()/86400000) % D_GRAM_TYPES.length]; }
 function dDueKeys(today){ return Object.keys(dSrs).filter(k=> D_BYKEY[k] && dSrs[k].due <= today); }
 function dNewItems(){ return D_POOL.filter(i=> !dSrs[i.key]); }
@@ -3226,7 +3314,10 @@ const D_ART_FORMS = {
 // Глагол в нужной форме: ищем спрягаемую форму в примере к глаголу
 const D_MODAL_TOK = new Set(["kann","kannst","können","könnt","muss","musst","müssen","müsst","will","willst","wollen","wollt",
   "soll","sollst","sollen","sollt","darf","darfst","dürfen","dürft","möchte","möchtest","möchten","möchtet","mag","magst","mögen",
-  "mögt","werde","wirst","wird","werden","werdet","zu","lass","lasst"]);
+  "mögt","werde","wirst","wird","werden","werdet","zu","lass","lasst",
+  // прошедшие и Konjunktiv II формы модальных: после них стоит инфинитив
+  "konnte","konntest","konnten","musste","musstest","mussten","wollte","wolltest","wollten","sollte","solltest","sollten",
+  "durfte","durften","mochte","mochten","könnte","könntest","könnten","müsste","müssten","würde","würdest","würden"]);
 const D_VGAPS = new Map();
 VERBS.forEach(v=>{
   if(v.sep || !v.ex || v.ex.includes("—")) return;
@@ -3449,6 +3540,232 @@ function dMakeSituation(it, block, rnd){
   return {type:"situation", item:it, sit:s.sit, opts:dShuffle([it, ...others], rnd), block};
 }
 // Задание на грамматику без привязки к карточке (используется в «Грамматике дня» и как бонус в повторении)
+/* ---- Тренажёр грамматики: времена, построение предложений, формы ---- */
+const D_FUTURE_TOK = new Set(["morgen","später","gleich","bald","nächste","nächsten","nächstes","nächster","jetzt","gerade"]);
+// Слова о времени и привычке, которые спорят с «gestern» — такие предложения не берём в «Прошедшее время»
+const D_HABIT_TOK = new Set(["seit","immer","oft","jeden","jede","meistens","manchmal","samstags","abends","morgens","nie","heute",
+  "wochenende","sommer","winter","juli","samstag","ständig","hoffentlich","gern","so","ohne"]);
+const D_AUX_FORMS = {
+  hat:{ich:"habe", du:"hast", er:"hat", wir:"haben", ihr:"habt", sie:"haben"},
+  ist:{ich:"bin",  du:"bist", er:"ist", wir:"sind",  ihr:"seid", sie:"sind"},
+};
+const D_WERDEN = {ich:"werde", du:"wirst", er:"wird", wir:"werden", ihr:"werdet", sie:"werden"};
+const D_OBJ_PRON = new Set(["mich","dich","sich","ihn","uns","euch","es","mir","dir","ihm","ihnen"]);
+// Примеры в Präsens, которые можно перевести в Perfekt: простое утверждение без модальных и слов о будущем
+const D_PERF_SENTS = [];
+VERBS.forEach(v=>{
+  if(v.sep || !v.perf || ["grund","modal"].includes(v.cat) || !v.ex || !/[a-zäöüß]\.$/i.test(v.ex) || v.ex.includes(",")) return;
+  const g = D_VGAPS.get("v:"+v.inf);
+  if(!g || !g.before.trim()) return;
+  const toks = v.ex.toLowerCase().split(/[^\p{L}]+/u).filter(Boolean);
+  if(toks.some(w=> D_FUTURE_TOK.has(w) || D_MODAL_TOK.has(w) || D_HABEN.has(w) || D_SEIN.has(w))) return;
+  // Лицо определяем по форме глагола; при совпадении форм — по местоимению в предложении
+  const persons = PERSONS.filter(p=> v[p.key].toLowerCase()===g.form.toLowerCase()).map(p=> p.key);
+  if(!persons.length) return;
+  const pk = persons.length===1 ? persons[0]
+    : (persons.find(p=> ["ich","du","wir","ihr"].includes(p) && toks.includes(p)) || (persons.includes("er") ? "er" : persons[0]));
+  const fam = v.perf[0], refl = g.form.split(" ").slice(1).join(" ");
+  const part = v.perf[1].split(" ").pop();
+  const rest = g.after.replace(/\.$/, "").trim();
+  const head = g.before + D_AUX_FORMS[fam][pk] + (refl ? " "+refl : "");
+  D_PERF_SENTS.push({v, pk, fam, refl, part, rest, before:g.before, form:g.form, orig:v.ex, ru:v.exRu,
+    target:`${head} ${rest} ${part}.`.replace(/\s+/g, " ").replace(" .", "."),
+    wrongAux:D_AUX_FORMS[fam==="hat" ? "ist" : "hat"][pk], habit:toks.some(w=> D_HABIT_TOK.has(w))});
+});
+function dMakeToPerf(rnd, block, used){
+  const s = dPickUnused(D_PERF_SENTS, rnd, used, s=> "tp:"+s.orig);
+  const words = s.target.replace(/\.$/, "").split(" ");
+  const lower = words.map(w=> w.toLowerCase());
+  // Лишние плитки: вспомогательный глагол «не того» типа и исходная форма Präsens
+  const extras = [s.wrongAux, s.form.split(" ")[0]].filter(x=> !lower.includes(x.toLowerCase()));
+  const all = words.concat(extras);
+  return {type:"order", label:"Перепиши в Perfekt", item:D_BYKEY["v:"+s.v.inf], words:all, target:words, extra:true,
+    order:dShuffle(all.map((_,i)=>i), rnd), sent:s.target, ru:s.ru,
+    promptHTML:`<div class="q-sent">${escapeHtml(s.orig)}</div><div class="q-sub">${escapeHtml(s.ru)} · не все слова нужны</div>`,
+    note:`${s.v.inf} → ${s.v.perf.join(" ")}`, block};
+}
+// «gestern» встаёт после спрягаемого глагола (и после местоимения-дополнения, если оно там есть)
+function dWithGestern(rest){
+  const t = rest ? rest.split(" ") : [];
+  let k = 0;
+  // «das» как местоимение (дальше не существительное с большой буквы) тоже стоит до gestern
+  const pron = i=> { const w = t[i].toLowerCase(), nx = t[i+1];
+    return D_OBJ_PRON.has(w) || D_PRON.has(w) || (w==="das" && (!nx || nx[0]===nx[0].toLowerCase())); };
+  while(k < t.length && pron(k)) k++;
+  return t.slice(0,k).concat(["gestern"], t.slice(k)).join(" ");
+}
+function dMakePastPick(rnd, block, used){
+  const pool = D_PERF_SENTS.filter(s=> !s.habit);
+  const s = dPickUnused(pool, rnd, used, s=> "pp:"+s.orig);
+  const reflPart = s.refl ? " "+s.refl : "";
+  const tail = dWithGestern(s.rest);
+  const mk = parts=> parts.join(" ").replace(/\s+/g, " ").trim() + ".";
+  const right = mk([s.before + D_AUX_FORMS[s.fam][s.pk] + reflPart, tail, s.part]);
+  const opts = [right,
+    mk([s.before + s.wrongAux + reflPart, tail, s.part]),
+    mk([s.before + s.form, tail]),
+    mk([s.before + D_WERDEN[s.pk] + reflPart, tail, s.v.inf.replace(/^sich\s+/, "")])];
+  const shuffled = dShuffle(opts, rnd);
+  return {type:"pick", label:"Как правильно сказать о прошлом?", prompt:`Подсказка: gestern — вчера. ${s.ru}`, opts:shuffled,
+    ans:shuffled.indexOf(right), note:`О прошлом в разговоре — Perfekt: ${s.v.inf} → ${s.v.perf.join(" ")}`, block};
+}
+
+// Готовые предложения с пропуском: Präteritum, Konjunktiv II, Passiv, Konjunktiv I
+const D_PRAET = [
+  {b:"Gestern ", a:" ich sehr müde.", ans:"war", o:["war","bin","wäre","wurde"], ru:"Вчера я был(а) очень уставшим(ей)."},
+  {b:"Letztes Jahr ", a:" wir in Spanien.", ans:"waren", o:["waren","sind","wären","hatten"], ru:"В прошлом году мы были в Испании."},
+  {b:"Als Kind ", a:" er einen Hund.", ans:"hatte", o:["hatte","hat","hätte","war"], ru:"В детстве у него была собака."},
+  {b:"Gestern ", a:" ich keine Zeit.", ans:"hatte", o:["hatte","habe","hätte","hast"], ru:"Вчера у меня не было времени."},
+  {b:"Ich ", a:" gestern nicht kommen.", ans:"konnte", o:["konnte","kann","könnte","kannte"], ru:"Я вчера не смог(ла) прийти."},
+  {b:"Gestern ", a:" wir lange warten.", ans:"mussten", o:["mussten","müssen","müssten","musste"], ru:"Вчера нам пришлось долго ждать."},
+  {b:"Gestern ", a:" er früh nach Hause gehen.", ans:"wollte", o:["wollte","will","wollten","wolle"], ru:"Вчера он хотел рано пойти домой."},
+  {b:"Du ", a:" gestern krank.", ans:"warst", o:["warst","bist","wart","wärst"], ru:"Ты вчера был(а) болен(льна)."},
+  {b:"Ihr ", a:" gestern sehr laut.", ans:"wart", o:["wart","seid","wärt","war"], ru:"Вы вчера были очень шумными."},
+  {b:"Gestern ", a:" ein schöner Abend.", ans:"war", o:["war","ist","wäre","wird"], ru:"Вчера был прекрасный вечер."},
+  {b:"Früher ", a:" ich oft Kopfschmerzen.", ans:"hatte", o:["hatte","habe","hätte","hatten"], ru:"Раньше у меня часто болела голова."},
+  {b:"Letzte Nacht ", a:" ich nicht schlafen.", ans:"konnte", o:["konnte","kann","könnte","konnten"], ru:"Прошлой ночью я не мог(ла) уснуть."},
+];
+const D_KONJ2 = [
+  {b:"Wenn ich Zeit ", a:", würde ich kommen.", ans:"hätte", o:["hätte","habe","hatte","hättest"], ru:"Если бы у меня было время, я бы пришёл/пришла."},
+  {b:"Wenn ich reich ", a:", würde ich reisen.", ans:"wäre", o:["wäre","bin","war","wärst"], ru:"Если бы я был(а) богат(а), я бы путешествовал(а)."},
+  {b:"Ich ", a:" gern einen Kaffee.", ans:"hätte", o:["hätte","hatte","hättest","haben"], ru:"Я бы хотел(а) кофе."},
+  {b:"", a:" Sie mir bitte helfen?", ans:"Könnten", o:["Könnten","Konnten","Könnte","Kannten"], ru:"Не могли бы вы мне помочь?"},
+  {b:"An deiner Stelle ", a:" ich zum Arzt gehen.", ans:"würde", o:["würde","wurde","werde","würdest"], ru:"На твоём месте я бы пошёл/пошла к врачу."},
+  {b:"Wenn ich du ", a:", würde ich das nicht machen.", ans:"wäre", o:["wäre","bin","war","sei"], ru:"Будь я на твоём месте, я бы этого не делал(а)."},
+  {b:"Wenn wir mehr Geld ", a:", würden wir ein Haus kaufen.", ans:"hätten", o:["hätten","haben","hatten","hätte"], ru:"Если бы у нас было больше денег, мы бы купили дом."},
+  {b:"Es ", a:" schön, wenn du mitkommst.", ans:"wäre", o:["wäre","war","sei","würde"], ru:"Было бы здорово, если бы ты пошёл/пошла с нами."},
+];
+const D_PASSIV = [
+  {b:"Das Auto ", a:" gerade repariert.", ans:"wird", o:["wird","hat","werden","haben"], ru:"Машину сейчас ремонтируют."},
+  {b:"Das Paket ", a:" gestern geliefert.", ans:"wurde", o:["wurde","wird","hat","werden"], ru:"Посылку доставили вчера."},
+  {b:"Die Rechnung ist schon bezahlt ", a:".", ans:"worden", o:["worden","geworden","wurde","werden"], ru:"Счёт уже оплачен."},
+  {b:"Hier ", a:" nicht geraucht.", ans:"wird", o:["wird","hat","werden","raucht"], ru:"Здесь не курят."},
+  {b:"Der Brief ", a:" gestern geschrieben.", ans:"wurde", o:["wurde","wird","hat","werden"], ru:"Письмо написали вчера."},
+  {b:"Die Fenster ", a:" jeden Samstag geputzt.", ans:"werden", o:["werden","wird","haben","hat"], ru:"Окна моют каждую субботу."},
+  {b:"Das Haus ", a:" im Jahr 1990 gebaut.", ans:"wurde", o:["wurde","wird","hat","haben"], ru:"Дом построили в 1990 году."},
+  {b:"Die Kinder ", a:" um acht Uhr abgeholt.", ans:"werden", o:["werden","wird","haben","holen"], ru:"Детей забирают в восемь часов."},
+];
+const D_KONJ1 = [
+  {b:"Er sagt, er ", a:" müde.", ans:"sei", o:["sei","bin","seien","sein"], ru:"Он говорит, что устал."},
+  {b:"Sie sagt, sie ", a:" keine Zeit.", ans:"habe", o:["habe","hast","haben","habt"], ru:"Она говорит, что у неё нет времени."},
+  {b:"Der Minister sagt, er ", a:" morgen nach Berlin.", ans:"fahre", o:["fahre","fährst","fahren","fahrt"], ru:"Министр говорит, что завтра едет в Берлин."},
+  {b:"Er erzählt, er ", a:" Deutsch lernen.", ans:"wolle", o:["wolle","willst","wollen","wollt"], ru:"Он рассказывает, что хочет учить немецкий."},
+  {b:"Sie berichtet, das Wetter ", a:" schön.", ans:"sei", o:["sei","bist","sein","seid"], ru:"Она сообщает, что погода хорошая."},
+  {b:"Er meint, er ", a:" das nicht.", ans:"wisse", o:["wisse","weißt","wissen","wisst"], ru:"Он считает, что не знает этого."},
+];
+function dCurGap(list, label, note, rnd, block, used, tag){
+  const s = dPickUnused(list, rnd, used, s=> tag+s.b+s.a);
+  return {type:"gap", label, before:s.b, after:s.a, ans:s.ans, opts:dShuffle(s.o, rnd), sub:s.ru, note, block};
+}
+
+// Сложные предложения: соединить два простых через союз
+const D_JOIN = [
+  {a:"Ich bleibe zu Hause.", b:"Ich bin krank.", c:"weil", t:"Ich bleibe zu Hause, weil ich krank bin.", ru:"Я остаюсь дома, потому что я болен(льна)."},
+  {a:"Ich weiß.", b:"Du hast recht.", c:"dass", t:"Ich weiß, dass du recht hast.", ru:"Я знаю, что ты прав(а)."},
+  {a:"Er kommt nicht.", b:"Er muss arbeiten.", c:"weil", t:"Er kommt nicht, weil er arbeiten muss.", ru:"Он не придёт, потому что должен работать."},
+  {a:"Ich glaube.", b:"Der Film ist gut.", c:"dass", t:"Ich glaube, dass der Film gut ist.", ru:"Я думаю, что фильм хороший."},
+  {a:"Wir gehen spazieren.", b:"Es regnet.", c:"obwohl", t:"Wir gehen spazieren, obwohl es regnet.", ru:"Мы идём гулять, хотя идёт дождь."},
+  {a:"Ich lerne Deutsch.", b:"Ich wohne in Deutschland.", c:"weil", t:"Ich lerne Deutsch, weil ich in Deutschland wohne.", ru:"Я учу немецкий, потому что живу в Германии."},
+  {a:"Ruf mich an.", b:"Du hast Zeit.", c:"wenn", t:"Ruf mich an, wenn du Zeit hast.", ru:"Позвони мне, когда у тебя будет время."},
+  {a:"Ich trinke Kaffee.", b:"Ich gehe zur Arbeit.", c:"bevor", t:"Ich trinke Kaffee, bevor ich zur Arbeit gehe.", ru:"Я пью кофе, прежде чем пойти на работу."},
+  {a:"Sie sagt.", b:"Sie kommt morgen.", c:"dass", t:"Sie sagt, dass sie morgen kommt.", ru:"Она говорит, что придёт завтра."},
+  {a:"Ich bin müde.", b:"Ich habe schlecht geschlafen.", c:"weil", t:"Ich bin müde, weil ich schlecht geschlafen habe.", ru:"Я устал(а), потому что плохо спал(а)."},
+  {a:"Wir fahren ans Meer.", b:"Das Wetter ist gut.", c:"wenn", t:"Wir fahren ans Meer, wenn das Wetter gut ist.", ru:"Мы поедем на море, если будет хорошая погода."},
+  {a:"Ich kann nicht kommen.", b:"Ich muss lange arbeiten.", c:"weil", t:"Ich kann nicht kommen, weil ich lange arbeiten muss.", ru:"Я не смогу прийти, потому что мне надо долго работать."},
+  {a:"Er sagt.", b:"Er hat keine Zeit.", c:"dass", t:"Er sagt, dass er keine Zeit hat.", ru:"Он говорит, что у него нет времени."},
+];
+function dMakeJoin(rnd, block, used){
+  const s = dPickUnused(D_JOIN, rnd, used, s=> "j:"+s.t);
+  const words = s.t.replace(/[.!?]$/, "").split(" ").map(w=> w.replace(/,$/, ""));
+  let order = dShuffle(words.map((_,i)=>i), rnd);
+  for(let a=0; a<5 && order.every((v,i)=> v===i); a++) order = dShuffle(order, rnd);
+  return {type:"order", label:`Соедини через «${s.c}»`, words, order, sent:s.t, ru:s.ru,
+    promptHTML:`<div class="q-sit">${escapeHtml(s.a)} + ${escapeHtml(s.b)}</div><div class="q-sub">${escapeHtml(s.ru)}</div>`,
+    note:`После «${s.c}» спрягаемый глагол уходит в конец придаточного`, block};
+}
+
+// Imperativ: формы для du / ihr / Sie строим из спряжения
+const D_IMP_VERBS = VERBS.filter(v=> !["grund","modal"].includes(v.cat) && !v.refl && v.inf!=="wissen"
+  && (!v.sep || v.ich.split(" ").length===2));
+function dImpForms(v){
+  const prefix = v.sep ? v.ich.split(" ")[1] : "";
+  const baseInf = v.sep ? v.inf.slice(prefix.length) : v.inf;
+  const stem = baseInf.replace(/e?n$/, "");
+  const du0 = v.du.split(" ")[0];
+  let du = /[sßzx]$/.test(stem) ? du0.replace(/t$/, "") : du0.replace(/st$/, "");
+  if(!stem.includes("ä")) du = du.replace(/ä/g, "a");   // fahren → fahr! (а не fähr!)
+  if(!stem.includes("ö")) du = du.replace(/ö/g, "o");
+  const add = prefix ? " "+prefix : "";
+  const duAlt = /e[lr]$/.test(du) ? [du.slice(0,-2) + du.slice(-1) + "e", du + "e"] : [];
+  return {du:[du+add, ...duAlt.map(x=> x+add)], ihr:[v.ihr], sie:[baseInf+" Sie"+add]};
+}
+function dMakeImp(rnd, block, used){
+  const v = dPickUnused(D_IMP_VERBS, rnd, used, v=> "imp:"+v.inf);
+  const who = dPick(["du","ihr","sie"], rnd);
+  const forms = dImpForms(v)[who];
+  const show = dCap1(forms[0]) + "!";
+  const rule = {du:"du: основа глагола без окончания (e→i сохраняется, a→ä — нет)", ihr:"ihr: как форма ihr в Präsens", sie:"Sie: инфинитив + Sie"}[who];
+  return {type:"text", label:`Imperativ · обращение на «${who==="sie" ? "Sie" : who}»`, prompt:v.inf, sub:v.ru,
+    answers:forms, show, note:`${rule} → ${show}`, block};
+}
+
+// Komparativ и Superlativ
+const D_KOMP = [
+  {a:"schnell",k:"schneller",s:"am schnellsten",ru:"быстрый"}, {a:"langsam",k:"langsamer",s:"am langsamsten",ru:"медленный"},
+  {a:"klein",k:"kleiner",s:"am kleinsten",ru:"маленький"}, {a:"schön",k:"schöner",s:"am schönsten",ru:"красивый"},
+  {a:"teuer",k:"teurer",s:"am teuersten",ru:"дорогой"}, {a:"billig",k:"billiger",s:"am billigsten",ru:"дешёвый"},
+  {a:"alt",k:"älter",s:"am ältesten",ru:"старый"}, {a:"jung",k:"jünger",s:"am jüngsten",ru:"молодой"},
+  {a:"groß",k:"größer",s:"am größten",ru:"большой"}, {a:"warm",k:"wärmer",s:"am wärmsten",ru:"тёплый"},
+  {a:"kalt",k:"kälter",s:"am kältesten",ru:"холодный"}, {a:"lang",k:"länger",s:"am längsten",ru:"длинный"},
+  {a:"kurz",k:"kürzer",s:"am kürzesten",ru:"короткий"}, {a:"gut",k:"besser",s:"am besten",ru:"хороший"},
+  {a:"viel",k:"mehr",s:"am meisten",ru:"много"}, {a:"gern",k:"lieber",s:"am liebsten",ru:"охотно"},
+  {a:"hoch",k:"höher",s:"am höchsten",ru:"высокий"}, {a:"nah",k:"näher",s:"am nächsten",ru:"близкий"},
+  {a:"interessant",k:"interessanter",s:"am interessantesten",ru:"интересный"},
+];
+function dMakeKomp(rnd, block, used){
+  const x = dPickUnused(D_KOMP, rnd, used, x=> "k:"+x.a);
+  const sup = rnd()<0.5;
+  return {type:"text", label:sup ? "Superlativ (am …sten)" : "Komparativ (…er)", prompt:x.a, sub:x.ru,
+    answers:sup ? [x.s, x.s.replace(/^am /, "")] : [x.k], show:sup ? x.s : x.k,
+    note:`${x.a} → ${x.k} → ${x.s}`, block};
+}
+
+// Окончания прилагательных (Nominativ) и nicht / kein
+const D_ADJ = [{a:"neu",ru:"новый"},{a:"alt",ru:"старый"},{a:"groß",ru:"большой"},{a:"klein",ru:"маленький"},{a:"schön",ru:"красивый"}];
+function dMakeAdjDecl(rnd, block){
+  const adj = dPick(D_ADJ, rnd), n = dPick(D_CASE_NOUNS, rnd), def = rnd()<0.5;
+  const end = def ? "e" : {der:"er", die:"e", das:"es"}[n.art];
+  const opts = dShuffle(["e","er","es","en"].map(e=> adj.a+e), rnd);
+  return def
+    ? {type:"gap", label:"Выбери окончание прилагательного", before:dCap1(n.art)+" ", after:` ${n.bare} ist hier.`, ans:adj.a+end, opts,
+       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:"После der / die / das (Nominativ) — окончание -e", block}
+    : {type:"gap", label:"Выбери окончание прилагательного", before:`Das ist ${n.art==="die" ? "eine" : "ein"} `, after:` ${n.bare}.`, ans:adj.a+end, opts,
+       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:`ein + ${n.art==="der" ? "der-слово → -er" : n.art==="die" ? "eine → -e" : "das-слово → -es"}`, block};
+}
+const D_NEG_NICHT = [
+  {b:"Ich komme heute ", a:".", ru:"Я сегодня не приду."},
+  {b:"Das Wetter ist ", a:" gut.", ru:"Погода не хорошая."},
+  {b:"Ich verstehe dich ", a:".", ru:"Я тебя не понимаю."},
+  {b:"Er arbeitet ", a:" viel.", ru:"Он работает не много."},
+  {b:"Der Film ist ", a:" spannend.", ru:"Фильм не захватывающий."},
+  {b:"Ich habe den Film ", a:" gesehen.", ru:"Я не смотрел(а) этот фильм."},
+  {b:"Sie wohnt ", a:" in Berlin.", ru:"Она живёт не в Берлине."},
+  {b:"Wir fahren heute ", a:" nach Hause.", ru:"Сегодня мы не едем домой."},
+];
+function dMakeNeg(rnd, block){
+  const opts = dShuffle(["nicht","kein","keine","keinen"], rnd);
+  if(rnd()<0.5){
+    const n = dPick(D_CASE_NOUNS, rnd), akk = rnd()<0.5;
+    const ans = akk ? {der:"keinen", die:"keine", das:"kein"}[n.art] : {der:"kein", die:"keine", das:"kein"}[n.art];
+    return {type:"gap", label:"nicht или kein?", before:akk ? "Ich habe " : "Das ist ", after:` ${n.bare}.`, ans, opts, sub:`${n.bare} — ${n.ru}`,
+      note:`Существительное без артикля отрицаем через kein (${n.de}, ${akk ? "Akkusativ" : "Nominativ"} → ${ans})`, block};
+  }
+  const s = dPick(D_NEG_NICHT, rnd);
+  return {type:"gap", label:"nicht или kein?", before:s.b, after:s.a, ans:"nicht", opts, sub:s.ru,
+    note:"nicht отрицает глагол, прилагательное или существительное с определённым артиклем", block};
+}
+
+// Задание на грамматику без привязки к карточке (используется в «Грамматике дня», тренировке и как бонус в повторении)
 function dGramTask(type, rnd, block, used){
   switch(type){
     case "conj":  return {type:"conj", item:dPickUnused(D_VERBS, rnd, used, i=>i.key), person:dPick(PERSONS, rnd), block};
@@ -3459,6 +3776,17 @@ function dGramTask(type, rnd, block, used){
     case "gap":   return dMakeGap(rnd, block, used);
     case "order": return dMakeOrder(rnd, block, used);
     case "error": return dMakeError(rnd, block, used);
+    case "toPerf":   return dMakeToPerf(rnd, block, used);
+    case "pastPick": return dMakePastPick(rnd, block, used);
+    case "join":     return dMakeJoin(rnd, block, used);
+    case "imp":      return dMakeImp(rnd, block, used);
+    case "komp":     return dMakeKomp(rnd, block, used);
+    case "adjDecl":  return dMakeAdjDecl(rnd, block);
+    case "neg":      return dMakeNeg(rnd, block);
+    case "praet":    return dCurGap(D_PRAET, "Präteritum: вставь форму", "Präteritum от sein, haben и модальных — так говорят и в разговоре", rnd, block, used, "pr:");
+    case "konj2":    return dCurGap(D_KONJ2, "Konjunktiv II: вставь форму", "Konjunktiv II: hätte, wäre, würde, könnte — желание, вежливость, «если бы»", rnd, block, used, "k2:");
+    case "passiv":   return dCurGap(D_PASSIV, "Passiv: вставь форму", "Passiv: werden + Partizip II (сейчас wird/werden, в прошлом wurde/wurden, Perfekt ist … worden)", rnd, block, used, "pa:");
+    case "konj1":    return dCurGap(D_KONJ1, "Konjunktiv I: косвенная речь", "Konjunktiv I: er sei, er habe, er fahre — пересказ чужих слов", rnd, block, used, "k1:");
   }
 }
 
@@ -3528,7 +3856,7 @@ function dBuildSession(){
 
   // Если изученных слов мало, пустые места занимает грамматика
   const used = new Set();
-  const fillTypes = dShuffle(["case","gap","error","order","vgap"].filter(t=> t!==shared.g.type), rnd);
+  const fillTypes = dShuffle(D_BONUS_TYPES.filter(t=> t!==shared.g.type), rnd);
   let fi = 0;
   const filler = block=> dGramTask(fillTypes[fi++ % fillTypes.length], rnd, block, used);
 
@@ -3581,8 +3909,14 @@ function dSrsUpdate(it, ok, hinted){
   dSave(D_SRS_KEY, dSrs);
 }
 function dAnswer(t, ok, hinted){
+  aTrack();
   dS.scored++;
   if(ok) dS.correct++;
+  if(dS.mode==="gram") return;
+  if(dS.mode==="blitz"){
+    if(!ok) dS.mistakes.push(t.item ? {de:t.item.de, ru:t.item.ru} : {de:(t.before||"")+(t.ans||"")+(t.after||""), ru:t.sub||""});
+    return;
+  }
   if(dS.mode==="hot"){
     if(!ok && t.item) dS.hotErr[t.item.key] = (dS.hotErr[t.item.key]||0) + 1;
     return;
@@ -3605,7 +3939,7 @@ function dFillSlot(){
   for(const t of dS.wrongTasks){
     if(!dS.retried.has(t.item.key)){ dS.retried.add(t.item.key); return dMakeRetry(t); }
   }
-  return dGramTask(dPick(["case","gap","error","order","vgap"], Math.random), Math.random, "extra", dS.used);
+  return dGramTask(dPick(D_BONUS_TYPES, Math.random), Math.random, "extra", dS.used);
 }
 
 function dView(v){ ["dailyStart","dailyRun","dailyEnd"].forEach(id=> dEl(id).hidden = (id!==v)); window.scrollTo(0,0); }
@@ -3614,7 +3948,7 @@ function dBlockLabel(t){
     retry:"Работа над ошибками", extra:"Бонус · ошибок не было",
     learn1:"Знакомство · слова 1–5", pairs1:"Пары · слова 1–5", recog1:"Узнавание · слова 1–5",
     learn2:"Знакомство · слова 6–10", pairs2:"Пары · слова 6–10", recog2:"Узнавание · слова 6–10",
-    use:"В предложениях", recall:"Вспомни и напиши"}[t.block];
+    use:"В предложениях", recall:"Вспомни и напиши", topic:dS.topicLabel, blitz:"Блиц"}[t.block];
 }
 function dNewSession(mode, tasks, extra){
   return Object.assign({mode, tasks, i:0, correct:0, scored:0, wrongTasks:[], retried:new Set(), touched:new Set(),
@@ -3627,19 +3961,25 @@ function dStart(){
   dRenderTask();
 }
 function dNext(){
+  if(dS.mode==="blitz"){ bNext(); return; }
   dS.i++;
-  if(dS.i >= dS.tasks.length){ dS.mode==="hot" ? hFinish() : dFinish(); return; }
+  if(dS.i >= dS.tasks.length){ ({hot:hFinish, gram:gFinish, daily:dFinish})[dS.mode](); return; }
   dRenderTask();
 }
 function dRenderTask(){
   if(dS.tasks[dS.i].type==="slot") dS.tasks[dS.i] = dFillSlot();
   const t = dS.tasks[dS.i], total = dS.tasks.length;
-  dEl("dCount").textContent = (dS.i+1)+" / "+total;
-  dEl("dProg").style.width = Math.round(dS.i/total*100)+"%";
-  dEl("dBlock").textContent = dBlockLabel(t);
+  if(dS.mode==="blitz"){
+    dEl("dCount").textContent = "✓ " + dS.correct;   // время и полоса обновляются таймером
+  } else {
+    dEl("dCount").textContent = (dS.i+1)+" / "+total;
+    dEl("dProg").style.width = Math.round(dS.i/total*100)+"%";
+    dEl("dBlock").textContent = dBlockLabel(t);
+  }
   const box = dEl("dTask");
   ({intro:dRIntro, mc:dRMC, input:dRInput, conj:dRConj, perf:dRPerf, art:dRArt, match:dRMatch,
-    gap:dRGapMC, case:dRGapMC, vgap:dRVGap, order:dROrder, error:dRError, audio:dRAudio, situation:dRSituation})[t.type](t, box);
+    gap:dRGapMC, case:dRGapMC, vgap:dRVGap, order:dROrder, error:dRError, audio:dRAudio, situation:dRSituation,
+    text:dRText, pick:dRPick})[t.type](t, box);
   window.scrollTo(0,0);
 }
 
@@ -3661,6 +4001,13 @@ function dAfter(box, ok, correctText, it, wrongMsg, note){
   const fb = box.querySelector(".d-fb");
   fb.className = "d-fb feedback " + (ok ? "correct" : "wrong");
   fb.textContent = ok ? "Richtig!" : (wrongMsg || (correctText ? "Richtig wäre: „"+correctText+"“" : "Не совсем — правильный ответ выделен"));
+  if(dS.mode==="blitz"){
+    // В блице без кнопки «Weiter»: короткая пауза и сразу следующее задание
+    const c = box.querySelector(".d-check"); if(c) c.style.display = "none";
+    clearTimeout(dS.pending);
+    dS.pending = setTimeout(bNext, ok ? 280 : 900);
+    return;
+  }
   fb.insertAdjacentHTML("afterend", (note ? `<div class="d-ex">${escapeHtml(note)}</div>` : "") + dExample(it));
   const c = box.querySelector(".d-check"); if(c) c.style.display = "none";
   const nb = box.querySelector(".d-next"); nb.style.display = ""; nb.onclick = dNext; nb.focus();
@@ -3685,7 +4032,7 @@ function dWireOptions(box, isRight, onDone){
 }
 function dRGapMC(t, box){
   box.innerHTML = `
-    <div class="q-label">${t.type==="case" ? "Выбери артикль в нужном падеже" : "Вставь пропущенное слово"}</div>
+    <div class="q-label">${escapeHtml(t.label || (t.type==="case" ? "Выбери артикль в нужном падеже" : "Вставь пропущенное слово"))}</div>
     <div class="q-sent">${escapeHtml(t.before)}<span class="gap">___</span>${escapeHtml(t.after)}</div>
     <div class="q-sub">${escapeHtml(t.sub)}</div>
     ${dOptionsHTML(t.opts)}${D_ACTIONS}`;
@@ -3711,10 +4058,12 @@ function dRVGap(t, box){
     dAfter(box, ok, g.form, null);
   });
 }
+// Сборка предложения из плиток. t.target — правильная последовательность; t.extra — среди плиток есть лишние
 function dROrder(t, box){
+  const target = t.target || t.words;
   box.innerHTML = `
-    <div class="q-label">Собери предложение</div>
-    <div class="q-sit">${escapeHtml(t.ru)}</div>
+    <div class="q-label">${escapeHtml(t.label || "Собери предложение")}</div>
+    ${t.promptHTML || `<div class="q-sit">${escapeHtml(t.ru)}</div>`}
     <div class="built"></div>
     <div class="tiles">${t.order.map(i=>`<button class="tile" data-i="${i}">${escapeHtml(t.words[i])}</button>`).join("")}</div>
     ${D_ACTIONS}`;
@@ -3737,13 +4086,40 @@ function dROrder(t, box){
   });
   box.querySelector(".d-check").onclick = ()=>{
     const fb = box.querySelector(".d-fb");
-    if(built.length < t.words.length){ fb.className = "d-fb feedback wrong"; fb.textContent = "Используй все слова"; return; }
+    if(!t.extra && built.length < t.words.length){ fb.className = "d-fb feedback wrong"; fb.textContent = "Используй все слова"; return; }
+    if(!built.length) return;
     done = true;
-    const ok = built.map(i=> t.words[i]).join(" ").toLowerCase() === t.words.join(" ").toLowerCase();
+    const ok = built.map(i=> t.words[i]).join(" ").toLowerCase() === target.join(" ").toLowerCase();
     bEl.classList.add(ok ? "ok" : "bad");
     dAnswer(t, ok);
-    dAfter(box, ok, t.sent, null);
+    dAfter(box, ok, t.sent, null, null, t.note);
   };
+}
+// Ввод формы (Imperativ, Komparativ…): «!» и «bitte» в ответе не мешают
+function dRText(t, box){
+  box.innerHTML = `
+    <div class="q-label">${escapeHtml(t.label)}</div>
+    <div class="q-word serif">${escapeHtml(t.prompt)}</div>
+    ${t.sub ? `<div class="q-sub">${escapeHtml(t.sub)}</div>` : ""}
+    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+  const clean = s=> normalize(s.replace(/[!.?,]/g, " ").replace(/(^|\s)bitte(\s|$)/gi, " "));
+  dWireInputCheck(box, inp=>{
+    const ok = t.answers.map(clean).includes(clean(inp.value));
+    inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
+    dAnswer(t, ok);
+    dAfter(box, ok, t.show, null, null, t.note);
+  });
+}
+// Выбор целого предложения из вариантов
+function dRPick(t, box){
+  box.innerHTML = `
+    <div class="q-label">${escapeHtml(t.label)}</div>
+    ${t.prompt ? `<div class="q-sit">${escapeHtml(t.prompt)}</div>` : ""}
+    ${dOptionsHTML(t.opts)}${D_ACTIONS}`;
+  dWireOptions(box, i=> i===t.ans, ok=>{
+    dAnswer(t, ok);
+    dAfter(box, ok, null, null, null, t.note);
+  });
 }
 function dRError(t, box){
   box.innerHTML = `
@@ -4041,6 +4417,8 @@ function dUpdateHome(){
   const hotToday = hStats.byDate[dToday()] || 0, studied = dStudied().length;
   dEl("hotHomeSub").textContent = hotToday ? `Сегодня +${hotToday} · изучено слов: ${studied}`
     : studied ? `Изучено слов: ${studied} · выучи ещё 10` : "10 новых слов: выучить и сразу применить";
+  dEl("blitzHomeSub").textContent = bStats.best ? `Рекорд: ${bStats.best} правильных за минуту` : "Сколько правильных ответов успеешь за минуту?";
+  aRender();
 }
 
 /* ================= ГОРЯЧАЯ ДЕСЯТКА ================= */
@@ -4192,6 +4570,409 @@ function hRenderStart(){
   dEl("hGo").onclick = hStart;
   dView("dailyStart");
 }
+/* ================= КАЛЕНДАРЬ АКТИВНОСТИ ================= */
+// Сколько заданий выполнено за день — во всех режимах
+const A_KEY = "activity.v1";
+let aLog = dLoad(A_KEY, {});
+function aTrack(){ const d = dToday(); aLog[d] = (aLog[d]||0) + 1; dSave(A_KEY, aLog); }
+function aRender(){
+  const weeks = 17, today = new Date(dToday()+"T12:00:00");
+  const start = new Date(today);
+  start.setDate(today.getDate() - (today.getDay()+6)%7 - (weeks-1)*7);   // понедельник 17 недель назад
+  let cells = "", days = 0;
+  for(let w=0; w<weeks; w++) for(let d=0; d<7; d++){
+    const dt = new Date(start); dt.setDate(start.getDate() + w*7 + d);
+    const key = dt.toLocaleDateString("sv-SE"), n = aLog[key] || 0;
+    if(n) days++;
+    const lvl = dt > today ? "x" : n===0 ? 0 : n<10 ? 1 : n<25 ? 2 : n<50 ? 3 : 4;
+    cells += `<i class="ac l${lvl}${key===dToday() ? " today" : ""}" style="grid-column:${w+1};grid-row:${d+1}" title="${dt.toLocaleDateString("ru-RU")}: ${n} заданий"></i>`;
+  }
+  const todayN = aLog[dToday()] || 0;
+  dEl("activity").innerHTML = `
+    <div class="ac-head"><span><b>Активность</b> · сегодня ${todayN} заданий</span><span>${days} дн. за 4 месяца · 🔥 ${dStreakNow()}</span></div>
+    <div class="ac-grid">${cells}</div>
+    <div class="ac-legend">меньше <i class="ac l0"></i><i class="ac l1"></i><i class="ac l2"></i><i class="ac l3"></i><i class="ac l4"></i> больше</div>`;
+}
+
+/* ================= БЛИЦ 60 СЕКУНД ================= */
+// Быстрые задания с выбором ответа; после ответа сразу следующее. Повторение (SRS) не затрагивает.
+const B_KEY = "blitz.v1";
+let bStats = dLoad(B_KEY, {best:0, runs:0});
+function bPool(){
+  const studied = dStudied().map(k=> D_BYKEY[k]).filter(i=> i.kind!=="phrase");
+  if(studied.length >= 15) return studied;
+  const all = D_POOL.filter(i=> i.kind!=="phrase");
+  return dPref.focusU ? all.filter(i=> i.u) : all;
+}
+function bMakeTask(){
+  const r = Math.random(), pool = dS.bpool;
+  if(r < 0.2){
+    const nouns = pool.filter(i=> D_NOUNS.includes(i));
+    if(nouns.length) return {type:"art", item:dPick(nouns, Math.random), block:"blitz"};
+  }
+  if(r < 0.35) return dGramTask(dPick(["case","neg","praet","adjDecl"], Math.random), Math.random, "blitz", dS.used);
+  return dMakeMC(dPick(pool, Math.random), Math.random()<0.5 ? "de-ru" : "ru-de", "blitz", Math.random);
+}
+function bStart(){
+  bStop();
+  dS = dNewSession("blitz", [], {bpool:bPool(), mistakes:[], t0:Date.now(), dur:60000});
+  dS.tasks.push(bMakeTask());
+  dView("dailyRun");
+  dRenderTask();
+  bTick();
+  dS.timer = setInterval(bTick, 100);
+}
+function bTick(){
+  if(!dS || dS.mode!=="blitz" || dS.over) return;
+  const left = Math.max(0, dS.dur - (Date.now() - dS.t0));
+  dEl("dProg").style.width = (left/dS.dur*100) + "%";
+  dEl("dBlock").textContent = "Блиц · осталось " + Math.ceil(left/1000) + " с";
+  if(left <= 0) bFinish();
+}
+function bNext(){
+  if(!dS || dS.mode!=="blitz" || dS.over) return;
+  dS.tasks.push(bMakeTask()); dS.i++;
+  dRenderTask();
+}
+function bStop(){
+  if(dS && dS.mode==="blitz"){ clearInterval(dS.timer); clearTimeout(dS.pending); dS.over = true; }
+}
+function bFinish(){
+  bStop();
+  const score = dS.correct, rec = score > bStats.best && score > 0;
+  if(rec) bStats.best = score;
+  bStats.runs = (bStats.runs||0) + 1;
+  dSave(B_KEY, bStats);
+  const seen = new Set(), miss = dS.mistakes.filter(m=> !seen.has(m.de) && seen.add(m.de)).slice(0, 8);
+  const pct = dS.scored ? Math.round(dS.correct/dS.scored*100) : 0;
+  dEl("dailyEnd").innerHTML = `
+    <div class="panel">
+      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Время вышло</div>
+      <div class="end-score serif">${score}</div>
+      <p class="sub" style="text-align:center;">${rec ? "🏆 Новый рекорд! " : `Рекорд: ${bStats.best} · `}правильных из ${dS.scored} (${pct}%)</p>
+      ${miss.length ? `<p class="sub">Ошибки — стоит повторить:</p><div class="hot-list">${miss.map(m=>`<div class="hot-row"><span class="de">${escapeHtml(m.de)}</span><span class="ru">${escapeHtml(m.ru)}</span></div>`).join("")}</div>` : ""}
+      <div class="daily-actions stack">
+        <button class="primary" id="bAgainBtn">Ещё раз</button>
+        <button id="bHomeBtn">На главную</button>
+      </div>
+    </div>`;
+  dEl("bAgainBtn").onclick = bStart;
+  dEl("bHomeBtn").onclick = ()=> showScreen("screen-home");
+  dView("dailyEnd");
+  dUpdateHome();
+}
+function bRenderStart(){
+  dS = null;
+  const studied = dStudied().length;
+  dEl("dailyStart").innerHTML = `
+    <h1 class="serif">Блиц 60 секунд</h1>
+    <p class="sub">Переводы, артикли и быстрая грамматика — отвечай как можно быстрее, следующее задание появляется сразу. ${studied>=15 ? "Слова — из уже изученных." : "Пока изученных слов мало, поэтому слова берутся из всего словаря."}</p>
+    <div class="daily-stats">
+      <div class="daily-stat"><div class="n">🏆 ${bStats.best||0}</div><div class="k">рекорд</div></div>
+      <div class="daily-stat"><div class="n">${bStats.runs||0}</div><div class="k">попыток</div></div>
+    </div>
+    <div class="daily-actions stack"><button class="primary" id="bGo">Старт</button></div>`;
+  dEl("bGo").onclick = bStart;
+  dView("dailyStart");
+}
+
+/* ================= ТРЕНИРОВКА ТЕМЫ ИЗ РАЗДЕЛА GRAMMATIK ================= */
+function gStart(topic){
+  const T = G_TOPICS[topic], rnd = Math.random, used = new Set(), tasks = [];
+  let types = dShuffle(T.types, rnd);
+  for(let k=0; k<10; k++){
+    if(k && k % types.length === 0) types = dShuffle(T.types, rnd);
+    tasks.push(dGramTask(types[k % types.length], rnd, "topic", used));
+  }
+  dS = dNewSession("gram", tasks, {topic, topicLabel:"Тренировка · "+T.label, used});
+  dView("dailyRun");
+  dRenderTask();
+}
+function gFinish(){
+  const topic = dS.topic, pct = dS.scored ? Math.round(dS.correct/dS.scored*100) : 0;
+  dEl("dProg").style.width = "100%";
+  dEl("dailyEnd").innerHTML = `
+    <div class="panel">
+      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Тренировка · ${escapeHtml(G_TOPICS[topic].label)}</div>
+      <div class="end-score serif">${dS.correct}/${dS.scored}</div>
+      <p class="sub" style="text-align:center;">${pct}% правильных ответов</p>
+      <div class="daily-actions stack">
+        <button class="primary" id="gAgainBtn">Ещё 10 заданий</button>
+        <button id="gRulesBtn">К правилам</button>
+        <button id="gHomeBtn">На главную</button>
+      </div>
+    </div>`;
+  dEl("gAgainBtn").onclick = ()=> gStart(topic);
+  dEl("gRulesBtn").onclick = ()=>{ showScreen("screen-grammatik"); document.querySelector(`#grammatikChips button[data-gtab="${topic}"]`).click(); };
+  dEl("gHomeBtn").onclick = ()=> showScreen("screen-home");
+  dView("dailyEnd");
+  dUpdateHome();
+}
+document.querySelectorAll("#screen-grammatik .gtab-view").forEach(sec=>{
+  const topic = sec.id.replace("gtab-", "");
+  if(!G_TOPICS[topic]) return;
+  sec.insertAdjacentHTML("afterbegin", `<button class="practice-btn" type="button">Потренировать эту тему · 10 заданий</button>`);
+  sec.querySelector(".practice-btn").onclick = ()=>{ showScreen("screen-daily", "gram"); gStart(topic); };
+});
+
+/* ================= ИНТЕРАКТИВНЫЙ ДИАЛОГ ================= */
+// Узел: реплика собеседника (npc) и шаг игрока. Шаги: choice — выбор реплики (развилка или вежливый/невежливый вариант),
+// gap — вставить слово в свою реплику, order — собрать реплику из слов, input — вписать слово. ok:false — вариант не подходит, можно выбрать снова.
+const DIALOGS = [
+  {id:"arzt", mono:"A", title:"Beim Hausarzt", ru:"У семейного врача", start:"n1", nodes:{
+    n1:{npc:"Guten Tag! Was fehlt Ihnen?", npcRu:"Здравствуйте! Что вас беспокоит?", step:{kind:"choice", q:"Опишите симптомы", opts:[
+      {de:"Ich habe seit drei Tagen Halsschmerzen und Fieber.", next:"n2"},
+      {de:"Ich habe gestern Halsschmerzen.", ok:false, fb:"Смешение времён: с «gestern» так не говорят. Лучше: «Ich habe seit gestern Halsschmerzen»."},
+      {de:"Mir geht es super, danke!", ok:false, fb:"Вы же пришли к врачу 🙂 Опишите, что болит."}]}},
+    n2:{npc:"Seit drei Tagen? Haben Sie auch Husten?", npcRu:"Уже три дня? А кашель тоже есть?", step:{kind:"gap", q:"Ответьте: да, и голова тоже болит",
+      before:"Ja, und mein Kopf ", after:" auch weh.", opts:["tut","tun","ist","hat"], ans:"tut", fb:"Kopf — один, значит «tut weh».", next:"n3"}},
+    n3:{npc:"Ich untersuche Sie kurz. Atmen Sie bitte tief ein.", npcRu:"Я вас коротко осмотрю. Сделайте, пожалуйста, глубокий вдох.",
+      step:{kind:"order", q:"Спросите, нужно ли вам оставаться дома", target:"Muss ich zu Hause bleiben?", next:"n4"}},
+    n4:{npc:"Ja, Sie haben eine Erkältung. Bleiben Sie drei Tage zu Hause und trinken Sie viel Tee.", npcRu:"Да, у вас простуда. Побудьте три дня дома и пейте много чая.",
+      step:{kind:"choice", q:"Попросите выписать сироп от кашля", opts:[
+      {de:"Können Sie mir einen Hustensaft verschreiben?", next:"n5"},
+      {de:"Geben Sie Hustensaft!", ok:false, fb:"Слишком резко. Вежливо: «Können Sie mir … verschreiben?»"},
+      {de:"Ich möchte einen Hustensaft kaufen.", ok:false, fb:"Покупают в аптеке, а у врача просят рецепт — verschreiben."}]}},
+    n5:{npc:"Natürlich. Hier ist Ihr Rezept. Nehmen Sie die Tropfen dreimal am Tag.", npcRu:"Конечно. Вот ваш рецепт. Капли принимайте три раза в день.",
+      step:{kind:"input", q:"Спросите, где ближайшая аптека", prompt:"Wo ist die nächste ___?", ans:["Apotheke"], say:"Wo ist die nächste Apotheke?", next:"n6"}},
+    n6:{npc:"Gleich um die Ecke. Gute Besserung!", npcRu:"Прямо за углом. Выздоравливайте!", step:{kind:"choice", q:"Попрощайтесь", opts:[
+      {de:"Vielen Dank! Auf Wiedersehen!", next:"end"},
+      {de:"Gute Besserung!", ok:false, fb:"Это желают больному, а болеете вы 🙂"},
+      {de:"Tschüss, Alter!", ok:false, fb:"Слишком фамильярно для врача."}]}},
+    end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
+
+  {id:"wohnung", mono:"W", title:"Wohnung mieten", ru:"Звонок арендодателю", start:"n1", nodes:{
+    n1:{npc:"Schmidt, guten Tag.", npcRu:"Шмидт, добрый день. (В Германии по телефону отвечают фамилией.)", step:{kind:"choice", q:"Представьтесь и скажите, зачем звоните", opts:[
+      {de:"Guten Tag, hier ist Anna Petrova. Ich rufe Sie an, um mich nach Ihrer Wohnung zu erkundigen.", next:"n2"},
+      {de:"Hallo, was geht? Ich will die Wohnung.", ok:false, fb:"Слишком неформально для разговора с арендодателем."},
+      {de:"Guten Tag, ich möchte meine Wohnung verkaufen.", ok:false, fb:"Вы хотите снять квартиру — mieten, а не продать."}]}},
+    n2:{npc:"Ah, die Wohnung in der Lindenstraße. Was möchten Sie wissen?", npcRu:"А, квартира на Линденштрассе. Что вы хотите узнать?",
+      step:{kind:"gap", q:"Спросите, сколько стоит аренда", before:"Wie viel ", after:" die Miete?", opts:["kostet","kosten","kauft","bezahlt"], ans:"kostet", fb:"die Miete — одна, значит «kostet».", next:"n3"}},
+    n3:{npc:"Die Miete ist 850 Euro warm, also mit Heizung.", npcRu:"Аренда — 850 евро «тёплая», то есть с отоплением.",
+      step:{kind:"order", q:"Спросите, есть ли в квартире балкон", target:"Hat die Wohnung einen Balkon?", next:"n4"}},
+    n4:{npc:"Ja, einen kleinen Balkon und eine neue Küche.", npcRu:"Да, небольшой балкон и новая кухня.", step:{kind:"choice", q:"Попросите о просмотре", opts:[
+      {de:"Könnte ich die Wohnung besichtigen?", next:"n5"},
+      {de:"Ich habe die Wohnung besichtigt.", ok:false, fb:"Это прошедшее время, а просмотр ещё впереди."},
+      {de:"Könnten Sie meine Wohnung besichtigen?", ok:false, fb:"Посмотреть нужно его квартиру, а не вашу."}]}},
+    n5:{npc:"Gern. Passt Ihnen Samstag um zehn Uhr?", npcRu:"Конечно. Вам удобно в субботу в десять?", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Ja, Samstag um zehn passt mir gut.", next:"n6a"},
+      {de:"Leider nicht. Geht es auch am Sonntag?", next:"n6b"}]}},
+    n6a:{npc:"Prima, dann bis Samstag!", npcRu:"Отлично, тогда до субботы!", step:{kind:"choice", q:"Попрощайтесь по телефону", opts:[
+      {de:"Vielen Dank, auf Wiederhören!", next:"end"},
+      {de:"Vielen Dank, auf Wiedersehen!", ok:false, fb:"По телефону прощаются «Auf Wiederhören» — «до следующего разговора»."}]}},
+    n6b:{npc:"Sonntag geht leider nicht, aber Montag um 18 Uhr.", npcRu:"В воскресенье, к сожалению, нельзя, но в понедельник в 18 часов.",
+      step:{kind:"gap", q:"Скажите, что понедельник вам подходит", before:"Montag um 18 Uhr ", after:" mir gut.", opts:["passt","passen","geht","gefällt"], ans:"passt", fb:"«Das passt mir» — мне подходит.", next:"n7b"}},
+    n7b:{npc:"Gut, dann bis Montag!", npcRu:"Хорошо, тогда до понедельника!", step:{kind:"choice", q:"Попрощайтесь по телефону", opts:[
+      {de:"Vielen Dank, auf Wiederhören!", next:"end"},
+      {de:"Vielen Dank, auf Wiedersehen!", ok:false, fb:"По телефону прощаются «Auf Wiederhören»."}]}},
+    end:{npc:"Auf Wiederhören!", npcRu:"До свидания!", end:true}}},
+
+  {id:"cafe", mono:"C", title:"Im Café", ru:"Заказ в кафе", start:"n1", nodes:{
+    n1:{npc:"Hallo! Was darf es sein?", npcRu:"Здравствуйте! Что для вас?", step:{kind:"choice", q:"Закажите напиток", opts:[
+      {de:"Ich hätte gern einen Kaffee, bitte.", next:"n2k"},
+      {de:"Ich möchte einen Tee, bitte.", next:"n2t"},
+      {de:"Kaffee. Schnell!", ok:false, fb:"Невежливо. Лучше: «Ich hätte gern …, bitte»."}]}},
+    n2k:{npc:"Gern. Mit Milch und Zucker?", npcRu:"Конечно. С молоком и сахаром?",
+      step:{kind:"gap", q:"С молоком, но без сахара", before:"Mit Milch, aber ", after:" Zucker, bitte.", opts:["ohne","mit","kein","nicht"], ans:"ohne", fb:"«без» — ohne.", next:"n3"}},
+    n2t:{npc:"Schwarztee oder Pfefferminztee?", npcRu:"Чёрный или мятный?", step:{kind:"choice", q:"Выберите чай", opts:[
+      {de:"Pfefferminztee, bitte.", next:"n3"}, {de:"Schwarztee, bitte.", next:"n3"}]}},
+    n3:{npc:"Möchten Sie auch etwas essen? Wir haben frischen Apfelkuchen.", npcRu:"Хотите что-нибудь поесть? У нас свежий яблочный пирог.",
+      step:{kind:"order", q:"Ответьте: да, кусочек пирога, пожалуйста", target:"Ja, ein Stück Kuchen, bitte.", next:"n4"}},
+    n4:{npc:"Gern. Zum Mitnehmen oder zum Hieressen?", npcRu:"Конечно. С собой или здесь?", step:{kind:"choice", q:"Ответьте", opts:[
+      {de:"Hier, bitte.", next:"n5"}, {de:"Zum Mitnehmen, bitte.", next:"n5"}]}},
+    n5:{npc:"Das macht zusammen 7,40 Euro.", npcRu:"С вас 7,40 евро.", step:{kind:"choice", q:"Спросите, можно ли заплатить картой", opts:[
+      {de:"Kann ich mit Karte bezahlen?", next:"n6"},
+      {de:"Kann ich mit Karte kaufen?", ok:false, fb:"Платить — bezahlen."},
+      {de:"Ich bezahle mit dem Karte.", ok:false, fb:"die Karte → mit der Karte (Dativ)."}]}},
+    n6:{npc:"Ja, natürlich. Schönen Tag noch!", npcRu:"Да, конечно. Хорошего дня!", step:{kind:"choice", q:"Ответьте", opts:[
+      {de:"Danke, Ihnen auch!", next:"end"},
+      {de:"Danke, dir auch!", ok:false, fb:"С незнакомым официантом на «вы»: Ihnen auch."}]}},
+    end:{npc:"Tschüss!", npcRu:"Пока!", end:true}}},
+
+  {id:"bahnhof", mono:"B", title:"Am Bahnhof", ru:"Покупка билета на поезд", start:"n1", nodes:{
+    n1:{npc:"Guten Tag, wohin möchten Sie fahren?", npcRu:"Добрый день, куда вы хотите поехать?",
+      step:{kind:"gap", q:"Скажите, что хотите поехать в Гамбург", before:"Ich möchte ", after:" Hamburg fahren.", opts:["nach","zu","in","bei"], ans:"nach", fb:"В города и страны без артикля — nach.", next:"n2"}},
+    n2:{npc:"Einfach oder hin und zurück?", npcRu:"В одну сторону или туда и обратно?", step:{kind:"choice", q:"Выберите билет", opts:[
+      {de:"Hin und zurück, bitte.", next:"n3"}, {de:"Einfach, bitte.", next:"n3"}]}},
+    n3:{npc:"Wann möchten Sie fahren?", npcRu:"Когда вы хотите поехать?",
+      step:{kind:"order", q:"Скажите, что хотите поехать завтра утром", target:"Ich möchte morgen früh fahren.", next:"n4"}},
+    n4:{npc:"Der Zug fährt um 8:15 Uhr ab. Sie müssen in Hannover umsteigen.", npcRu:"Поезд отправляется в 8:15. Пересадка в Ганновере.",
+      step:{kind:"choice", q:"Спросите, с какого пути отправляется поезд", opts:[
+      {de:"Von welchem Gleis fährt der Zug ab?", next:"n5"},
+      {de:"Von welcher Gleis fährt der Zug ab?", ok:false, fb:"das Gleis → von welchem Gleis (Dativ, средний род)."},
+      {de:"Wo ist der Zug gestern abgefahren?", ok:false, fb:"Поезд ещё не ушёл — прошедшее время не подходит."}]}},
+    n5:{npc:"Von Gleis 7. Das macht 89 Euro.", npcRu:"С седьмого пути. С вас 89 евро.",
+      step:{kind:"input", q:"Отдайте деньги за билет (проездной билет — ?)", prompt:"Hier ist das Geld für die ___.", ans:["Fahrkarte"], say:"Hier ist das Geld für die Fahrkarte.", next:"n6"}},
+    n6:{npc:"Vielen Dank. Gute Reise!", npcRu:"Спасибо. Счастливого пути!", step:{kind:"choice", q:"Ответьте", opts:[
+      {de:"Danke, schönen Tag noch!", next:"end"},
+      {de:"Gute Reise!", ok:false, fb:"Это желают тому, кто едет, то есть вам 🙂"}]}},
+    end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
+
+  {id:"schuhe", mono:"S", title:"Schuhe umtauschen", ru:"Обмен обуви в магазине", start:"n1", nodes:{
+    n1:{npc:"Guten Tag! Kann ich Ihnen helfen?", npcRu:"Добрый день! Чем могу помочь?", step:{kind:"choice", q:"Ответьте продавцу", opts:[
+      {de:"Ja, ich möchte diese Schuhe umtauschen.", next:"n2"},
+      {de:"Nein danke, ich schaue nur.", next:"n1b"},
+      {de:"Ja, ich möchte diese Schuhe anrufen.", ok:false, fb:"anrufen — звонить. Обменять — umtauschen."}]}},
+    n1b:{npc:"Kein Problem. Sagen Sie Bescheid, wenn Sie Hilfe brauchen.", npcRu:"Без проблем. Скажите, если понадобится помощь.",
+      step:{kind:"choice", q:"Всё-таки попросите помочь с обменом", opts:[
+      {de:"Eigentlich möchte ich diese Schuhe umtauschen.", next:"n2"},
+      {de:"Eigentlich möchte ich diese Schuhe kaufen.", ok:false, fb:"Вы же хотите обменять — umtauschen."}]}},
+    n2:{npc:"Was ist denn das Problem mit den Schuhen?", npcRu:"А в чём проблема с обувью?",
+      step:{kind:"gap", q:"Скажите, что они вам тесные", before:"Sie sind mir zu ", after:".", opts:["eng","nass","tief","laut"], ans:"eng", fb:"«тесный» — eng.", next:"n3"}},
+    n3:{npc:"Möchten Sie eine Nummer größer anprobieren?", npcRu:"Хотите примерить на размер больше?",
+      step:{kind:"order", q:"Ответьте: да, с удовольствием примерю", target:"Ja, ich probiere sie gern an.", next:"n4"}},
+    n4:{npc:"Hier, bitte. Passen sie jetzt?", npcRu:"Вот, пожалуйста. Теперь подходят?", step:{kind:"choice", q:"Ответьте", opts:[
+      {de:"Ja, die passen perfekt!", next:"n5"},
+      {de:"Ja, die passt perfekt!", ok:false, fb:"die Schuhe — множественное число, значит «passen»."}]}},
+    n5:{npc:"Super. Haben Sie den Kassenbon dabei?", npcRu:"Отлично. У вас с собой чек?",
+      step:{kind:"input", q:"Скажите: «Да, вот чек»", prompt:"Ja, hier ist der ___.", ans:["Kassenbon","Bon"], say:"Ja, hier ist der Kassenbon.", next:"n6"}},
+    n6:{npc:"Danke. Der Umtausch ist erledigt. Schönen Tag noch!", npcRu:"Спасибо. Обмен оформлен. Хорошего дня!", step:{kind:"choice", q:"Попрощайтесь", opts:[
+      {de:"Danke, Ihnen auch!", next:"end"},
+      {de:"Danke, gleichfalls, Digga!", ok:false, fb:"«Digga» — сленг для друзей, не для продавца."}]}},
+    end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
+];
+const DLG_KEY = "dialog.v1";
+let dlgStats = dLoad(DLG_KEY, {});
+let gD = null;
+function dlgRenderList(){
+  gD = null;
+  dEl("dlgRun").hidden = true; dEl("dlgList").hidden = false;
+  dEl("dlgList").innerHTML = `
+    <h1 class="serif">Интерактивный диалог</h1>
+    <p class="sub">Разговор в реальной ситуации: выбирай реплики, вставляй слова и собирай фразы по ходу беседы. Перевод реплики собеседника — по кнопке под ней.</p>
+    <div class="home-grid">${DIALOGS.map(d=>{
+      const s = dlgStats[d.id];
+      return `<button class="home-card" data-dlg="${d.id}"><div class="badge-mono">${d.mono}</div><div class="txt"><div class="t">${escapeHtml(d.title)}</div>
+        <div class="d">${escapeHtml(d.ru)}${s ? ` · лучший результат ${s.best}/${s.total}` : ""}</div></div><div class="chevron">›</div></button>`;
+    }).join("")}</div>`;
+  dEl("dlgList").querySelectorAll("[data-dlg]").forEach(b=> b.onclick = ()=> dlgStart(b.dataset.dlg));
+  window.scrollTo(0,0);
+}
+function dlgStart(id){
+  const d = DIALOGS.find(x=> x.id===id);
+  gD = {d, node:d.start, correct:0, total:0, missed:false};
+  dEl("dlgList").hidden = true; dEl("dlgRun").hidden = false;
+  dEl("dlgTitle").textContent = d.title;
+  dEl("dlgStepCount").textContent = "";
+  dEl("dlgChat").innerHTML = "";
+  dlgShowNode();
+}
+function dlgBubble(who, de, ru){
+  const el = document.createElement("div");
+  el.className = "bub " + who;
+  el.innerHTML = `<span class="de">${escapeHtml(de)}</span>` + (ru ? `<button class="tr-btn" type="button">перевод</button><span class="tr" hidden>${escapeHtml(ru)}</span>` : "");
+  const b = el.querySelector(".tr-btn");
+  if(b) b.onclick = ()=>{ el.querySelector(".tr").hidden = false; b.remove(); };
+  dEl("dlgChat").appendChild(el);
+}
+function dlgScroll(){ setTimeout(()=> window.scrollTo({top:document.body.scrollHeight, behavior:"smooth"}), 60); }
+function dlgShowNode(){
+  const n = gD.d.nodes[gD.node];
+  dlgBubble("npc", n.npc, n.npcRu);
+  if(n.end){ dlgFinish(); return; }
+  gD.missed = false;
+  dEl("dlgStepCount").textContent = `верно с первой попытки: ${gD.correct}/${gD.total}`;
+  dlgRenderStep(n.step);
+  dlgScroll();
+}
+function dlgAdvance(say, next){
+  aTrack();
+  gD.total++;
+  if(!gD.missed) gD.correct++;
+  dlgBubble("me", say);
+  dEl("dlgTask").innerHTML = "";
+  gD.node = next;
+  setTimeout(dlgShowNode, 450);
+}
+function dlgMiss(box, text){
+  gD.missed = true;
+  const fb = box.querySelector(".d-fb");
+  fb.className = "d-fb feedback wrong";
+  fb.textContent = text;
+}
+function dlgRenderStep(s){
+  const box = dEl("dlgTask"), q = `<div class="q-label">${escapeHtml(s.q)}</div>`;
+  if(s.kind==="choice" || s.kind==="gap"){
+    const labels = dShuffle(s.kind==="choice" ? s.opts.map(o=> o.de) : s.opts, Math.random);
+    box.innerHTML = q + (s.kind==="gap" ? `<div class="q-sent">${escapeHtml(s.before)}<span class="gap">___</span>${escapeHtml(s.after)}</div>` : "")
+      + dOptionsHTML(labels) + `<div class="d-fb feedback"></div>`;
+    box.querySelectorAll(".opt").forEach(b=> b.onclick = ()=>{
+      const label = labels[+b.dataset.i];
+      const opt = s.kind==="choice" ? s.opts.find(o=> o.de===label) : null;
+      const ok = s.kind==="choice" ? opt.ok!==false : label===s.ans;
+      if(!ok){ b.classList.add("wrong"); b.disabled = true; dlgMiss(box, (opt && opt.fb) || s.fb || "Не подходит — попробуй другой вариант"); return; }
+      b.classList.add("correct");
+      box.querySelectorAll(".opt").forEach(x=> x.disabled = true);
+      if(s.kind==="gap"){ const g = box.querySelector(".gap"); g.textContent = s.ans; g.classList.add("ok"); }
+      setTimeout(()=> dlgAdvance(s.kind==="choice" ? opt.de : s.before+s.ans+s.after, s.kind==="choice" ? opt.next : s.next), 350);
+    });
+  } else if(s.kind==="order"){
+    const words = s.target.replace(/[.!?]$/, "").split(" ").map(w=> w.replace(/,$/, ""));
+    let order = dShuffle(words.map((_,i)=>i), Math.random);
+    for(let a=0; a<5 && order.every((v,i)=> v===i); a++) order = dShuffle(order, Math.random);
+    box.innerHTML = q + `<div class="built"></div><div class="tiles">${order.map(i=>`<button class="tile" data-i="${i}">${escapeHtml(words[i])}</button>`).join("")}</div>
+      <div class="d-fb feedback"></div><div class="daily-actions"><button class="primary d-check">Prüfen</button></div>`;
+    const built = [], bEl = box.querySelector(".built");
+    const redraw = ()=>{
+      bEl.innerHTML = built.length ? built.map((i,pos)=>`<button class="tile" data-pos="${pos}">${escapeHtml(words[i])}</button>`).join("")
+        : `<span class="built-hint">нажимай на слова по порядку</span>`;
+      bEl.querySelectorAll(".tile").forEach(b=> b.onclick = ()=>{
+        const i = built.splice(+b.dataset.pos, 1)[0];
+        box.querySelector(`.tiles .tile[data-i="${i}"]`).classList.remove("used");
+        redraw();
+      });
+    };
+    redraw();
+    box.querySelectorAll(".tiles .tile").forEach(b=> b.onclick = ()=>{
+      if(b.classList.contains("used")) return;
+      b.classList.add("used"); built.push(+b.dataset.i); redraw();
+    });
+    box.querySelector(".d-check").onclick = ()=>{
+      if(built.length < words.length){ dlgMiss(box, "Используй все слова"); gD.missed = false; return; }
+      if(built.map(i=> words[i]).join(" ").toLowerCase() === words.join(" ").toLowerCase()){ dlgAdvance(s.target, s.next); return; }
+      // Неверный порядок: показываем правильный и идём дальше
+      dlgMiss(box, `Правильно: «${s.target}»`);
+      const btn = box.querySelector(".d-check");
+      btn.textContent = "Дальше →";
+      btn.onclick = ()=> dlgAdvance(s.target, s.next);
+    };
+  } else if(s.kind==="input"){
+    box.innerHTML = q + `<div class="q-sent">${escapeHtml(s.prompt)}</div>${D_INPUT}${D_UMLAUTS}
+      <div class="d-fb feedback"></div><div class="daily-actions"><button class="primary d-check">Prüfen</button></div>`;
+    dWireUmlauts(box);
+    const inp = box.querySelector(".d-in"), btn = box.querySelector(".d-check");
+    const check = ()=>{
+      if(!inp.value.trim()) return;
+      if(s.ans.map(normalize).includes(normalize(inp.value))){ dlgAdvance(s.say, s.next); return; }
+      dlgMiss(box, `Правильно: «${s.say}»`);
+      inp.disabled = true;
+      btn.textContent = "Дальше →";
+      btn.onclick = ()=> dlgAdvance(s.say, s.next);
+    };
+    btn.onclick = check;
+    inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); btn.click(); } });
+    inp.focus();
+  }
+}
+function dlgFinish(){
+  const d = gD.d, prev = dlgStats[d.id];
+  if(!prev || gD.correct/gD.total >= prev.best/prev.total) dlgStats[d.id] = {best:gD.correct, total:gD.total};
+  dSave(DLG_KEY, dlgStats);
+  dEl("dlgStepCount").textContent = "";
+  dEl("dlgTask").innerHTML = `
+    <div class="q-label" style="text-align:center;">Диалог завершён</div>
+    <div class="end-score serif">${gD.correct}/${gD.total}</div>
+    <p class="sub" style="text-align:center;">реплик верно с первой попытки</p>
+    <div class="daily-actions stack">
+      <button class="primary" id="dlgAgain">Пройти ещё раз</button>
+      <button id="dlgOthers">Другие диалоги</button>
+    </div>`;
+  dEl("dlgAgain").onclick = ()=> dlgStart(d.id);
+  dEl("dlgOthers").onclick = dlgRenderList;
+  dlgScroll();
+  dUpdateHome();
+}
+
 document.addEventListener("keydown", e=>{
   if(e.key!=="Enter" || !dS || dEl("dailyRun").hidden || !dEl("screen-daily").classList.contains("active")) return;
   const box = dEl("dTask"), nb = box.querySelector(".d-next"), ch = box.querySelector(".d-check");
