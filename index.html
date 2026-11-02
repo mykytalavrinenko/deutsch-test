@@ -197,6 +197,7 @@
   .home-card{
     display:flex; align-items:center; gap:14px;
     text-align:left;
+    color:var(--ink);
     border:1px solid var(--border);
     background:var(--surface);
     border-radius:16px;
@@ -271,6 +272,56 @@
   }
   table.gram td.ex{text-align:left;font-size:12.5px;}
   .lex-intro{margin-bottom:12px;}
+
+  /* ---- Daily Challenge ---- */
+  .home-card.daily-card{background:var(--accent);border-color:var(--accent);color:var(--surface);}
+  .home-card.daily-card:hover{border-color:var(--accent-ink);}
+  .home-card.daily-card .badge-mono{background:color-mix(in srgb, var(--surface) 22%, transparent);color:var(--surface);}
+  .home-card.daily-card .txt .d, .home-card.daily-card .chevron{color:color-mix(in srgb, var(--surface) 82%, transparent);}
+
+  .daily-top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;font-variant-numeric:tabular-nums;}
+  .daily-block{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-ink);}
+  .progress-track.daily-progress{margin:0 0 16px;}
+  .daily-task .q-label{font-size:12.5px;color:var(--ink-muted);text-align:center;margin-bottom:6px;}
+  .daily-task .q-word{font-size:clamp(22px,7vw,32px);font-weight:500;text-align:center;margin-bottom:18px;overflow-wrap:anywhere;text-wrap:balance;}
+  .daily-task .q-sub{font-size:13px;color:var(--ink-muted);text-align:center;margin:-12px 0 16px;}
+  .daily-task .pronoun{color:var(--accent-ink);font-weight:600;}
+  .d-ex{background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:13px;margin:0 0 12px;line-height:1.45;}
+  .d-ex span{color:var(--ink-muted);}
+  .umlauts{display:flex;gap:6px;justify-content:center;margin:-4px 0 12px;}
+  .umlauts button{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:8px;width:42px;height:36px;font-size:16px;cursor:pointer;font-family:inherit;}
+  .aux-toggle{display:flex;gap:8px;justify-content:center;margin-bottom:12px;}
+  .aux-toggle button{min-width:96px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:11px;padding:10px 14px;font-size:15px;font-family:inherit;cursor:pointer;}
+  .aux-toggle button.sel{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);font-weight:700;}
+  .art-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .art-btns .opt{text-align:center;font-weight:600;font-size:16px;}
+  .match-time{text-align:center;font-size:13px;color:var(--ink-muted);margin:-4px 0 12px;font-variant-numeric:tabular-nums;}
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .match-col{display:flex;flex-direction:column;gap:8px;}
+  .match-btn{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:11px;padding:10px 8px;font-size:13.5px;font-family:inherit;cursor:pointer;min-height:48px;overflow-wrap:anywhere;transition:background .15s ease,border-color .15s ease,opacity .2s ease;}
+  .match-btn.serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:15px;}
+  .match-btn.sel{border-color:var(--accent);background:var(--accent-soft);}
+  .match-btn.err{border-color:var(--bad);background:var(--bad-soft);}
+  .match-btn.done{opacity:.35;pointer-events:none;border-color:var(--good);background:var(--good-soft);}
+  .daily-actions{display:flex;gap:8px;}
+  .daily-actions button{flex:1;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-family:inherit;font-size:14px;font-weight:600;padding:12px 10px;border-radius:11px;cursor:pointer;}
+  .daily-actions button.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);}
+  .daily-actions.stack{flex-direction:column;}
+  .daily-stats{display:flex;gap:8px;margin:14px 0;}
+  .daily-stat{flex:1;background:var(--surface-2);border-radius:12px;padding:10px 12px;}
+  .daily-stat .n{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .daily-stat .k{font-size:11.5px;color:var(--ink-muted);}
+  .daily-gram{font-size:13px;color:var(--ink-muted);margin:0 0 10px;}
+  .daily-gram b{color:var(--ink);}
+  .daily-toggle{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 0 16px;cursor:pointer;}
+  .daily-toggle input{width:18px;height:18px;accent-color:var(--accent);}
+  .daily-done{background:var(--good-soft);color:var(--good);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;}
+  .daily-len{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .daily-len button{border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:14px 6px;cursor:pointer;font-family:inherit;color:var(--ink);box-shadow:var(--shadow);}
+  .daily-len button:hover{border-color:var(--accent);}
+  .daily-len .m{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .daily-len .l{display:block;font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
+  .end-score{font-size:48px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;margin:4px 0 2px;}
 
   /* ---- List / vocab table (shared) ---- */
   .search{
@@ -625,6 +676,14 @@
       <p>Выбери раздел, который сегодня учим</p>
     </div>
     <div class="home-grid">
+      <button class="home-card daily-card" data-target="screen-daily">
+        <div class="badge-mono">D</div>
+        <div class="txt">
+          <div class="t">Daily Challenge</div>
+          <div class="d" id="dailyHomeSub">Новое и повторение · 5–20 минут</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
       <button class="home-card" data-target="screen-grammatik">
         <div class="badge-mono">G</div>
         <div class="txt">
@@ -1174,6 +1233,19 @@
   </main>
 </div>
 
+<!-- ================= DAILY CHALLENGE ================= -->
+<div class="screen" id="screen-daily">
+  <main class="wrap">
+    <section id="dailyStart"></section>
+    <section id="dailyRun" hidden>
+      <div class="daily-top"><span class="daily-block" id="dBlock"></span><span id="dCount"></span></div>
+      <div class="progress-track daily-progress"><div class="progress-fill" id="dProg" style="width:0%"></div></div>
+      <div class="panel daily-task" id="dTask"></div>
+    </section>
+    <section id="dailyEnd" hidden></section>
+  </main>
+</div>
+
 <div class="word-tip" id="wordTip"></div>
 
 <script>
@@ -1187,6 +1259,7 @@ const SCREEN_TITLES = {
   "screen-verben": "Verben",
   "screen-wortschatz": "Wortschatz",
   "screen-redewendungen": "Redewendungen",
+  "screen-daily": "Daily Challenge",
 };
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active", s.id===id));
@@ -1194,6 +1267,8 @@ function showScreen(id){
   document.getElementById("appTitle").textContent = SCREEN_TITLES[id] || "Deutsch";
   window.scrollTo(0,0);
   hideTip();
+  if(id==="screen-daily") dRenderStart();
+  if(id==="screen-home") dUpdateHome();
 }
 document.querySelectorAll(".home-card").forEach(card=>{
   card.addEventListener("click", ()=> showScreen(card.dataset.target));
@@ -2914,6 +2989,480 @@ document.addEventListener("selectionchange", ()=>{
   if(!sel || sel.isCollapsed) hideTip();
 });
 document.addEventListener("scroll", hideTip, true);
+
+/* ================= DAILY CHALLENGE ================= */
+// Интервальное повторение: уровень 1–5, после верного ответа элемент возвращается через D_INTERVALS[уровень] дней.
+const D_SRS_KEY = "daily.srs.v1", D_STATS_KEY = "daily.stats.v1", D_PREF_KEY = "daily.pref.v1";
+const D_INTERVALS = [0, 1, 3, 7, 14, 30];
+function dLoad(key, def){ try{ return Object.assign(def, JSON.parse(localStorage.getItem(key) || "{}")); } catch(e){ return def; } }
+function dSave(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+let dSrs = dLoad(D_SRS_KEY, {});
+let dStats = dLoad(D_STATS_KEY, {lastDone:null, streak:0, history:{}});
+let dPref = dLoad(D_PREF_KEY, {focusU:false});
+let dS = null; // текущая сессия
+
+function dEl(id){ return document.getElementById(id); }
+function dToday(){ return new Date().toLocaleDateString("sv-SE"); }
+function dAddDays(date, n){ const d = new Date(date+"T12:00:00"); d.setDate(d.getDate()+n); return d.toLocaleDateString("sv-SE"); }
+function dStreakNow(){
+  const t = dToday();
+  return (dStats.lastDone===t || dStats.lastDone===dAddDays(t,-1)) ? dStats.streak : 0;
+}
+
+// Детерминированный генератор: у всех в один день одинаковые «Грамматика дня» и «Финал»
+function dHash(s){ let h = 2166136261; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h>>>0; }
+function dRng(seed){ let a = seed; return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1 | a); t = t + Math.imul(t ^ t>>>7, 61 | t) ^ t; return ((t ^ t>>>14)>>>0) / 4294967296; }; }
+function dShuffle(arr, rnd){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function dPick(arr, rnd){ return arr[Math.floor(rnd()*arr.length)]; }
+
+const D_PLURALS = new Set(["die Eltern","die Geschwister","die Nudeln","die Schuhe","die Socken","die Handschuhe",
+  "die Schmerzen","die Zähne","die Zehen","die Haare","die Tropfen","die Kenntnisse"]);
+const D_POOL = [];
+VERBS.forEach(v=> D_POOL.push({key:"v:"+v.inf, kind:"verb", de:v.inf, ru:v.ru, ex:v.ex, exRu:v.exRu, verb:v, u:!!v.u}));
+LEX_TOPICS.forEach(t=> t.words.forEach(w=> D_POOL.push({key:"w:"+w.de, kind:"word", de:w.de, ru:w.ru, u:!!w.u})));
+PHRASES.forEach(p=> D_POOL.push({key:"p:"+p.de, kind:"phrase", de:p.de, ru:p.ru, ex:p.ex, exRu:p.exRu, u:!!p.u}));
+const D_BYKEY = Object.fromEntries(D_POOL.map(i=>[i.key, i]));
+const D_NOUNS = D_POOL.filter(i=> i.kind==="word" && /^(der|die|das) \S+$/.test(i.de) && !D_PLURALS.has(i.de));
+const D_VERBS = D_POOL.filter(i=> i.kind==="verb");
+const D_PERF_VERBS = D_VERBS.filter(i=> i.verb.perf);
+
+const D_LEN = {
+  5:  {warm:2, neu:2, review:3,  gram:1},
+  10: {warm:3, neu:4, review:6,  gram:3},
+  20: {warm:4, neu:8, review:12, gram:5},
+};
+const D_GRAM_TYPES = [
+  {type:"conj", label:"Präsens — спряжение"},
+  {type:"perf", label:"Perfekt"},
+  {type:"art",  label:"Артикли der / die / das"},
+];
+function dGramOfDay(date){ return D_GRAM_TYPES[Math.floor(new Date(date+"T12:00:00").getTime()/86400000) % D_GRAM_TYPES.length]; }
+function dDueKeys(today){ return Object.keys(dSrs).filter(k=> D_BYKEY[k] && dSrs[k].due <= today); }
+function dNewItems(){ return D_POOL.filter(i=> !dSrs[i.key]); }
+
+function dMakeMC(it, dir, block, rnd){
+  const others = dShuffle(D_POOL.filter(x=> x.kind===it.kind && x.key!==it.key && x.ru!==it.ru && x.de!==it.de), rnd).slice(0,3);
+  return {type:"mc", dir, item:it, opts:dShuffle([it, ...others], rnd), block};
+}
+function dMakeTask(ty, it, block, rnd, dir){
+  if(ty==="mc") return dMakeMC(it, dir, block, rnd);
+  if(ty==="conj") return {type:"conj", item:it, person:dPick(PERSONS, rnd), block};
+  return {type:ty, item:it, block};
+}
+function dTypesFor(it){
+  if(it.kind==="verb") return it.verb.perf ? ["conj","input","perf","mc"] : ["conj","input","mc"];
+  if(it.kind==="word") return D_NOUNS.includes(it) ? ["art","input","mc"] : ["input","mc"];
+  return ["mc"];
+}
+function dTypeKey(t){ return t.type==="mc" ? "mc-"+t.dir : t.type; }
+
+// Общая часть дня: одинакова на всех устройствах (зависит только от даты)
+function dSharedTasks(today){
+  const g = dGramOfDay(today), rnd = dRng(dHash("deutsch-daily-"+today));
+  const src = g.type==="art" ? D_NOUNS : (g.type==="perf" ? D_PERF_VERBS : D_VERBS);
+  const gram = dShuffle(src, rnd).slice(0,5).map(it=> g.type==="conj"
+    ? {type:"conj", item:it, person:dPick(PERSONS, rnd), block:"gram"}
+    : {type:g.type, item:it, block:"gram"});
+  const gramKeys = new Set(gram.map(t=>t.item.key));
+  const pairs = [], usedRu = new Set();
+  for(const i of dShuffle(D_POOL.filter(i=> i.kind!=="phrase" && !gramKeys.has(i.key) && i.ru.length<=26 && i.de.length<=18), rnd)){
+    if(usedRu.has(i.ru)) continue;
+    usedRu.add(i.ru); pairs.push({de:i.de, ru:i.ru});
+    if(pairs.length===6) break;
+  }
+  return {g, gram, match:{type:"match", pairs, block:"match"}};
+}
+
+function dBuildSession(len){
+  const cfg = D_LEN[len], today = dToday(), rnd = Math.random;
+  const shared = dSharedTasks(today);
+  const gram = shared.gram.slice(0, cfg.gram);
+  const reserved = new Set(gram.map(t=>t.item.key));
+
+  const due = dShuffle(dDueKeys(today), rnd).sort((a,b)=> dSrs[a].due.localeCompare(dSrs[b].due))
+    .filter(k=>!reserved.has(k)).map(k=>D_BYKEY[k]);
+  let fresh = dNewItems().filter(i=>!reserved.has(i.key));
+  fresh = dPref.focusU
+    ? dShuffle(fresh.filter(i=>i.u), rnd).concat(dShuffle(fresh.filter(i=>!i.u), rnd))
+    : dShuffle(fresh, rnd);
+  const newItems = fresh.slice(0, cfg.neu);
+  // В первые дни повторять ещё нечего — добираем непройденным («проверка, что уже знаешь»)
+  const reviewPool = due.slice();
+  const filler = fresh.slice(cfg.neu);
+  while(reviewPool.length < cfg.warm + cfg.review && filler.length) reviewPool.push(filler.shift());
+  const warmItems = reviewPool.slice(0, cfg.warm);
+  const revItems = reviewPool.slice(cfg.warm, cfg.warm + cfg.review);
+
+  const tasks = [];
+  warmItems.forEach((it,i)=> tasks.push(dMakeMC(it, i%2 ? "ru-de" : "de-ru", "warm", rnd)));
+  newItems.forEach(it=>{
+    tasks.push({type:"intro", item:it, block:"neu"});
+    tasks.push(dMakeMC(it, "ru-de", "neu", rnd));
+  });
+  let prevKey = tasks.length ? dTypeKey(tasks[tasks.length-1]) : "";
+  revItems.forEach((it, idx)=>{
+    const types = dTypesFor(it);
+    let task = null;
+    for(let k=0; k<types.length && !task; k++){
+      const ty = types[(idx+k) % types.length];
+      const dir = prevKey==="mc-de-ru" ? "ru-de" : prevKey==="mc-ru-de" ? "de-ru" : (idx%2 ? "de-ru" : "ru-de");
+      const key = ty==="mc" ? "mc-"+dir : ty;
+      if(key!==prevKey) task = dMakeTask(ty, it, "review", rnd, dir);
+    }
+    task = task || dMakeTask(types[0], it, "review", rnd, "de-ru");
+    tasks.push(task);
+    prevKey = dTypeKey(task);
+  });
+  tasks.push(...gram, shared.match);
+  return {tasks, gramLabel: shared.g.label};
+}
+
+function dSrsUpdate(it, ok){
+  const today = dToday(), cur = dSrs[it.key];
+  const first = !dS.touched.has(it.key);
+  dS.touched.add(it.key);
+  if(!ok){
+    dSrs[it.key] = {lvl:1, due:dAddDays(today,1)};
+  } else if(first){
+    if(!cur){
+      const lvl = dS.introduced.has(it.key) ? 1 : 2; // знакомое без подсказки — сразу уровень 2
+      dSrs[it.key] = {lvl, due:dAddDays(today, D_INTERVALS[lvl])};
+      dS.newLearned++;
+    } else if(cur.due <= today){
+      const lvl = Math.min(5, cur.lvl+1);
+      dSrs[it.key] = {lvl, due:dAddDays(today, D_INTERVALS[lvl])};
+      if(lvl > cur.lvl) dS.levelUps++;
+    }
+  }
+  dSave(D_SRS_KEY, dSrs);
+}
+function dAnswer(t, ok){
+  if(t.block==="retry"){ dS.retryTotal++; if(ok) dS.retryOk++; }
+  else { dS.scored++; if(ok) dS.correct++; else if(t.type!=="match") dS.wrongTasks.push(t); }
+  if(t.item) dSrsUpdate(t.item, ok);
+}
+function dMakeRetry(t){
+  const it = t.item;
+  if(t.type==="conj") return {type:"conj", item:it, person:dPick(PERSONS.filter(p=>p.key!==t.person.key), Math.random), block:"retry"};
+  if(t.type==="perf" || t.type==="art") return {type:t.type, item:it, block:"retry"};
+  if(t.type==="input") return dMakeMC(it, "ru-de", "retry", Math.random);
+  if(it.kind!=="phrase") return {type:"input", item:it, block:"retry"};
+  return dMakeMC(it, t.dir==="de-ru" ? "ru-de" : "de-ru", "retry", Math.random);
+}
+function dBuildRetries(){
+  const seen = new Set(), out = [];
+  dS.wrongTasks.forEach(t=>{ if(out.length<3 && !seen.has(t.item.key)){ seen.add(t.item.key); out.push(dMakeRetry(t)); } });
+  return out;
+}
+
+function dView(v){ ["dailyStart","dailyRun","dailyEnd"].forEach(id=> dEl(id).hidden = (id!==v)); window.scrollTo(0,0); }
+function dBlockLabel(t){
+  return {warm:"Разминка", neu:"Новое", review:"Повторение", gram:"Грамматика дня · "+dS.gramLabel,
+    match:"Финал · на скорость", retry:"Работа над ошибками"}[t.block];
+}
+function dStart(len){
+  const built = dBuildSession(len);
+  dS = {len, tasks:built.tasks, gramLabel:built.gramLabel, i:0, correct:0, scored:0, wrongTasks:[],
+    touched:new Set(), introduced:new Set(), retryOk:0, retryTotal:0, retriesAdded:false,
+    newLearned:0, levelUps:0, matchTime:null, matchMistakes:0};
+  dView("dailyRun");
+  dRenderTask();
+}
+function dNext(){
+  dS.i++;
+  const t = dS.tasks[dS.i];
+  // Ошибки возвращаются перед финальным раундом
+  if(!dS.retriesAdded && (!t || t.type==="match")){
+    dS.retriesAdded = true;
+    const r = dBuildRetries();
+    if(r.length) dS.tasks.splice(dS.i, 0, ...r);
+  }
+  if(dS.i >= dS.tasks.length){ dFinish(); return; }
+  dRenderTask();
+}
+function dRenderTask(){
+  const t = dS.tasks[dS.i], total = dS.tasks.length;
+  dEl("dCount").textContent = (dS.i+1)+" / "+total;
+  dEl("dProg").style.width = Math.round(dS.i/total*100)+"%";
+  dEl("dBlock").textContent = dBlockLabel(t);
+  const box = dEl("dTask");
+  ({intro:dRIntro, mc:dRMC, input:dRInput, conj:dRConj, perf:dRPerf, art:dRArt, match:dRMatch})[t.type](t, box);
+  window.scrollTo(0,0);
+}
+
+const D_ACTIONS = `<div class="d-fb feedback"></div>
+  <div class="daily-actions"><button class="primary d-check">Prüfen</button><button class="primary d-next" style="display:none">Weiter →</button></div>`;
+const D_UMLAUTS = `<div class="umlauts">${["ä","ö","ü","ß"].map(c=>`<button type="button" data-c="${c}">${c}</button>`).join("")}</div>`;
+const D_INPUT = `<input class="answer d-in" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="…" />`;
+function dWireUmlauts(box){
+  const inp = box.querySelector(".d-in");
+  box.querySelectorAll(".umlauts button").forEach(b=> b.onclick = ()=>{
+    if(inp.disabled) return;
+    const s = inp.selectionStart ?? inp.value.length, e = inp.selectionEnd ?? inp.value.length;
+    inp.value = inp.value.slice(0,s) + b.dataset.c + inp.value.slice(e);
+    inp.focus(); inp.setSelectionRange(s+1, s+1);
+  });
+}
+function dExample(it){ return it && it.ex ? `<div class="d-ex">${escapeHtml(it.ex)}<br><span>${escapeHtml(it.exRu)}</span></div>` : ""; }
+function dAfter(box, ok, correctText, it){
+  const fb = box.querySelector(".d-fb");
+  fb.className = "d-fb feedback " + (ok ? "correct" : "wrong");
+  fb.textContent = ok ? "Richtig!" : (correctText ? "Richtig wäre: „"+correctText+"“" : "Не совсем — правильный ответ выделен");
+  fb.insertAdjacentHTML("afterend", dExample(it));
+  const c = box.querySelector(".d-check"); if(c) c.style.display = "none";
+  const nb = box.querySelector(".d-next"); nb.style.display = ""; nb.onclick = dNext; nb.focus();
+}
+function dWireInputCheck(box, check){
+  const inp = box.querySelector(".d-in");
+  dWireUmlauts(box);
+  box.querySelector(".d-check").onclick = ()=>{ if(!inp.value.trim()) { inp.focus(); return; } check(inp); };
+  inp.focus();
+}
+
+function dRIntro(t, box){
+  const it = t.item;
+  dS.introduced.add(it.key);
+  const v = it.verb;
+  box.innerHTML = `
+    <div class="q-label">Новое ${it.kind==="verb" ? "слово — глагол" : it.kind==="phrase" ? "выражение" : "слово"}</div>
+    <div class="q-word serif">${escapeHtml(it.de)}${it.u ? '<span class="u-tag">Unterricht</span>' : ''}</div>
+    <div class="q-sub">${escapeHtml(it.ru)}</div>
+    ${v ? `<div class="d-ex">ich ${escapeHtml(v.ich)} · du ${escapeHtml(v.du)} · er ${escapeHtml(v.er)}${v.perf ? "<br><span>Perfekt: "+escapeHtml(v.perf.join(" "))+"</span>" : ""}</div>` : ""}
+    ${dExample(it)}
+    <div class="daily-actions"><button class="primary d-next">Запомнил(а) →</button></div>`;
+  box.querySelector(".d-next").onclick = dNext;
+}
+function dRMC(t, box){
+  const it = t.item, deRu = t.dir==="de-ru";
+  box.innerHTML = `
+    <div class="q-label">${deRu ? "Выбери перевод" : "Как это по-немецки?"}</div>
+    <div class="q-word ${deRu ? "serif" : ""}">${escapeHtml(deRu ? it.de : it.ru)}</div>
+    <div class="options">${t.opts.map((o,i)=>`<button class="opt" data-i="${i}">${escapeHtml(deRu ? o.ru : o.de)}</button>`).join("")}</div>
+    ${D_ACTIONS}`;
+  box.querySelector(".d-check").style.display = "none";
+  box.querySelectorAll(".opt").forEach(b=> b.onclick = ()=>{
+    const ok = t.opts[+b.dataset.i].key === it.key;
+    box.querySelectorAll(".opt").forEach(x=>{ x.disabled = true; if(t.opts[+x.dataset.i].key===it.key) x.classList.add("correct"); });
+    if(!ok) b.classList.add("wrong");
+    dAnswer(t, ok);
+    dAfter(box, ok, null, it);
+  });
+}
+function dRInput(t, box){
+  const it = t.item;
+  const hasArt = /^(der|die|das) /.test(it.de);
+  box.innerHTML = `
+    <div class="q-label">Напиши по-немецки</div>
+    <div class="q-word">${escapeHtml(it.ru)}</div>
+    ${hasArt ? '<div class="q-sub">артикль можно не писать</div>' : ''}
+    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+  dWireInputCheck(box, inp=>{
+    const acc = [it.de, it.de.replace(/^(der|die|das)\s+/, ""), it.de.replace(/^sich\s+/, "")];
+    const sg = it.ru.match(/ед\. ((?:der|die|das) \S+)\)/);
+    if(sg) acc.push(sg[1], sg[1].replace(/^(der|die|das)\s+/, ""));
+    const ok = acc.map(normalize).includes(normalize(inp.value));
+    inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
+    dAnswer(t, ok);
+    dAfter(box, ok, it.de, it);
+  });
+}
+function dRConj(t, box){
+  const v = t.item.verb, p = t.person;
+  box.innerHTML = `
+    <div class="q-label">Präsens · поставь глагол в нужную форму</div>
+    <div class="q-word serif">${escapeHtml(v.inf)} <span class="pronoun">(${p.label})</span></div>
+    <div class="q-sub">${escapeHtml(v.ru)}</div>
+    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+  dWireInputCheck(box, inp=>{
+    const form = v[p.key];
+    const acc = [form].concat(p.label.split("/").map(pr=> pr.toLowerCase()+" "+form));
+    const ok = acc.map(normalize).includes(normalize(inp.value));
+    inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
+    dAnswer(t, ok);
+    dAfter(box, ok, (p.label.split("/")[0])+" "+form, t.item);
+  });
+}
+function dRPerf(t, box){
+  const v = t.item.verb;
+  box.innerHTML = `
+    <div class="q-label">Perfekt · выбери hat или ist и впиши Partizip II</div>
+    <div class="q-word serif">${escapeHtml(v.inf)}</div>
+    <div class="q-sub">${escapeHtml(v.ru)}</div>
+    <div class="aux-toggle"><button type="button" data-a="hat">hat</button><button type="button" data-a="ist">ist</button></div>
+    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+  let aux = null;
+  box.querySelectorAll(".aux-toggle button").forEach(b=> b.onclick = ()=>{
+    if(box.querySelector(".d-in").disabled) return;
+    aux = b.dataset.a;
+    box.querySelectorAll(".aux-toggle button").forEach(x=> x.classList.toggle("sel", x===b));
+    box.querySelector(".d-in").focus();
+  });
+  box.querySelector(".d-in").placeholder = "Partizip II";
+  dWireInputCheck(box, inp=>{
+    const fb = box.querySelector(".d-fb");
+    if(!aux){ fb.className = "d-fb feedback wrong"; fb.textContent = "Сначала выбери hat или ist"; return; }
+    const typed = normalize(inp.value).replace(/^(hat|ist)\s+/, "");
+    const part = v.perf[1];
+    const partOk = [part, part.replace(/^sich\s+/, "")].map(normalize).includes(typed);
+    const ok = partOk && aux===v.perf[0];
+    inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
+    box.querySelectorAll(".aux-toggle button").forEach(x=>{ x.disabled = true; });
+    dAnswer(t, ok);
+    dAfter(box, ok, v.perf.join(" "), t.item);
+  });
+}
+function dRArt(t, box){
+  const it = t.item, art = it.de.split(" ")[0], noun = it.de.slice(art.length+1);
+  box.innerHTML = `
+    <div class="q-label">Какой артикль?</div>
+    <div class="q-word serif">___ ${escapeHtml(noun)}</div>
+    <div class="q-sub">${escapeHtml(it.ru)}</div>
+    <div class="art-btns">${["der","die","das"].map(a=>`<button class="opt" data-a="${a}">${a}</button>`).join("")}</div>
+    ${D_ACTIONS}`;
+  box.querySelector(".d-check").style.display = "none";
+  box.querySelectorAll(".art-btns .opt").forEach(b=> b.onclick = ()=>{
+    const ok = b.dataset.a === art;
+    box.querySelectorAll(".art-btns .opt").forEach(x=>{ x.disabled = true; if(x.dataset.a===art) x.classList.add("correct"); });
+    if(!ok) b.classList.add("wrong");
+    dAnswer(t, ok);
+    dAfter(box, ok, it.de, it);
+  });
+}
+function dRMatch(t, box){
+  const left = t.pairs, right = dShuffle(t.pairs, Math.random);
+  box.innerHTML = `
+    <div class="q-label">Соедини пары как можно быстрее</div>
+    <div class="match-time" id="dTimer">0 с</div>
+    <div class="match-grid">
+      <div class="match-col">${left.map((p,i)=>`<button class="match-btn serif" data-side="l" data-k="${i}">${escapeHtml(p.de)}</button>`).join("")}</div>
+      <div class="match-col">${right.map(p=>`<button class="match-btn" data-side="r" data-k="${left.indexOf(p)}">${escapeHtml(p.ru)}</button>`).join("")}</div>
+    </div>
+    ${D_ACTIONS}`;
+  box.querySelector(".d-check").style.display = "none";
+  let selL = null, selR = null, done = 0, mistakes = 0;
+  const t0 = Date.now();
+  const timer = setInterval(()=>{
+    const el = dEl("dTimer");
+    if(!el){ clearInterval(timer); return; }
+    el.textContent = Math.floor((Date.now()-t0)/1000)+" с";
+  }, 250);
+  box.querySelectorAll(".match-btn").forEach(b=> b.onclick = ()=>{
+    const side = b.dataset.side;
+    box.querySelectorAll(`.match-btn[data-side="${side}"]`).forEach(x=> x.classList.remove("sel"));
+    b.classList.add("sel");
+    if(side==="l") selL = b; else selR = b;
+    if(!selL || !selR) return;
+    const a = selL, c = selR;
+    selL = selR = null;
+    [a,c].forEach(x=> x.classList.remove("sel"));
+    if(a.dataset.k === c.dataset.k){
+      [a,c].forEach(x=> x.classList.add("done"));
+      done++;
+    } else {
+      mistakes++;
+      [a,c].forEach(x=> x.classList.add("err"));
+      setTimeout(()=> [a,c].forEach(x=> x.classList.remove("err")), 450);
+    }
+    if(done === left.length){
+      clearInterval(timer);
+      const secs = Math.round((Date.now()-t0)/1000);
+      dS.matchTime = secs; dS.matchMistakes = mistakes;
+      const ok = mistakes <= 1;
+      dAnswer(t, ok);
+      const fb = box.querySelector(".d-fb");
+      fb.className = "d-fb feedback " + (ok ? "correct" : "wrong");
+      fb.textContent = `Готово за ${secs} с · ошибок: ${mistakes}`;
+      const nb = box.querySelector(".d-next"); nb.style.display = ""; nb.onclick = dNext; nb.focus();
+    }
+  });
+}
+
+function dFinish(){
+  const today = dToday();
+  if(dStats.lastDone !== today){
+    dStats.streak = (dStats.lastDone === dAddDays(today,-1)) ? dStats.streak+1 : 1;
+    dStats.lastDone = today;
+  }
+  const res = {score:dS.correct, total:dS.scored, len:dS.len, time:dS.matchTime};
+  const prev = dStats.history[today];
+  if(!prev || res.score/res.total >= prev.score/prev.total) dStats.history[today] = res;
+  dSave(D_STATS_KEY, dStats);
+  dEl("dProg").style.width = "100%";
+  const pct = res.total ? Math.round(res.score/res.total*100) : 0;
+  dEl("dailyEnd").innerHTML = `
+    <div class="panel">
+      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Daily Challenge пройден</div>
+      <div class="end-score serif">${res.score}/${res.total}</div>
+      <p class="sub" style="text-align:center;">${pct}% правильных с первой попытки</p>
+      <div class="daily-stats">
+        <div class="daily-stat"><div class="n">🔥 ${dStats.streak}</div><div class="k">дней подряд</div></div>
+        <div class="daily-stat"><div class="n">${dS.newLearned}</div><div class="k">новых в изучении</div></div>
+        <div class="daily-stat"><div class="n">${dS.levelUps}</div><div class="k">уровней вверх</div></div>
+      </div>
+      ${dS.retryTotal ? `<p class="sub">Работа над ошибками: исправлено ${dS.retryOk} из ${dS.retryTotal}</p>` : ""}
+      ${res.time!=null ? `<p class="sub">Финальный раунд: ${res.time} с, ошибок ${dS.matchMistakes}</p>` : ""}
+      <div class="daily-actions stack">
+        <button class="primary" id="dShareBtn">Поделиться результатом</button>
+        <button id="dAgainBtn">Ещё одна сессия</button>
+        <button id="dHomeBtn">На главную</button>
+      </div>
+    </div>`;
+  dEl("dShareBtn").onclick = ()=> dShare(dEl("dShareBtn"), res);
+  dEl("dAgainBtn").onclick = dRenderStart;
+  dEl("dHomeBtn").onclick = ()=> showScreen("screen-home");
+  dView("dailyEnd");
+  dUpdateHome();
+}
+function dShareText(res){
+  const d = new Date().toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit"});
+  const st = dStats.streak;
+  return `Deutsch Daily ${d} (${res.len} Min.)\n✅ ${res.score}/${res.total}`
+    + (res.time!=null ? ` · ⚡ Paare in ${res.time} s` : "")
+    + `\n🔥 ${st} ${st===1 ? "Tag" : "Tage"} in Folge\n${location.origin+location.pathname}`;
+}
+async function dShare(btn, res){
+  const text = dShareText(res);
+  if(navigator.share){
+    try{ await navigator.share({text}); return; }
+    catch(e){ if(e && e.name==="AbortError") return; }
+  }
+  try{ await navigator.clipboard.writeText(text); btn.textContent = "Скопировано — вставь в чат ✓"; }
+  catch(e){ window.prompt("Скопируй результат:", text); }
+}
+
+function dRenderStart(){
+  dS = null;
+  const today = dToday(), g = dGramOfDay(today), done = dStats.history[today];
+  dEl("dailyStart").innerHTML = `
+    <h1 class="serif">Daily Challenge</h1>
+    <p class="sub">Новое и повторение на сегодня. «Грамматика дня» и финальный раунд у всех одинаковые — можно сравнить результат.</p>
+    ${done ? `<div class="daily-done">Сегодня уже пройдено: <b>${done.score}/${done.total}</b>. Можно ещё раз — повторение подберётся заново.</div>` : ""}
+    <div class="daily-stats">
+      <div class="daily-stat"><div class="n">🔥 ${dStreakNow()}</div><div class="k">дней подряд</div></div>
+      <div class="daily-stat"><div class="n">${dDueKeys(today).length}</div><div class="k">к повторению</div></div>
+      <div class="daily-stat"><div class="n">${dNewItems().length}</div><div class="k">ещё не начато</div></div>
+    </div>
+    <div class="daily-gram">Грамматика дня: <b>${g.label}</b></div>
+    <label class="daily-toggle"><input type="checkbox" id="dFocus" ${dPref.focusU ? "checked" : ""}> Чаще слова с урока (Aus dem Unterricht)</label>
+    <div class="daily-len">
+      ${[[5,"быстро"],[10,"обычно"],[20,"подольше"]].map(([m,l])=>`<button data-len="${m}"><span class="m">${m}</span><span class="l">мин · ${l}</span></button>`).join("")}
+    </div>`;
+  dEl("dFocus").onchange = e=>{ dPref.focusU = e.target.checked; dSave(D_PREF_KEY, dPref); };
+  dEl("dailyStart").querySelectorAll(".daily-len button").forEach(b=> b.onclick = ()=> dStart(+b.dataset.len));
+  dView("dailyStart");
+}
+function dUpdateHome(){
+  const el = dEl("dailyHomeSub"), done = dStats.history[dToday()], st = dStreakNow();
+  el.textContent = done ? `Сегодня: ${done.score}/${done.total} ✓ · 🔥 ${st}`
+    : st ? `🔥 ${st} дн. подряд — не прерывай серию!` : "Новое и повторение · 5–20 минут";
+}
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Enter" || !dS || dEl("dailyRun").hidden || !dEl("screen-daily").classList.contains("active")) return;
+  const box = dEl("dTask"), nb = box.querySelector(".d-next"), ch = box.querySelector(".d-check");
+  if(nb && nb.style.display!=="none"){ e.preventDefault(); nb.click(); }
+  else if(ch && ch.style.display!=="none"){ e.preventDefault(); ch.click(); }
+});
+dUpdateHome();
 
 })();
 </script>
