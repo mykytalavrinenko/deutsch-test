@@ -278,6 +278,13 @@
   .home-card.daily-card:hover{border-color:var(--accent-ink);}
   .home-card.daily-card .badge-mono{background:color-mix(in srgb, var(--surface) 22%, transparent);color:var(--surface);}
   .home-card.daily-card .txt .d, .home-card.daily-card .chevron{color:color-mix(in srgb, var(--surface) 82%, transparent);}
+  .home-card.hot-card .badge-mono{background:var(--amber-soft);color:var(--amber);font-size:15px;}
+  .daily-note{background:var(--accent-soft);color:var(--accent-ink);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.45;}
+  .hot-list{display:flex;flex-direction:column;gap:6px;margin:4px 0 16px;}
+  .hot-row{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 10px;border-radius:10px;background:var(--surface-2);}
+  .hot-row .ru{color:var(--ink-muted);text-align:right;}
+  .hot-row.hard{background:var(--amber-soft);}
+  .hot-row.hard .de::after{content:" · трудное";color:var(--amber);font-size:11.5px;font-weight:700;}
 
   .daily-top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;font-variant-numeric:tabular-nums;}
   .daily-block{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent-ink);}
@@ -701,7 +708,15 @@
         <div class="badge-mono">D</div>
         <div class="txt">
           <div class="t">Daily Challenge</div>
-          <div class="d" id="dailyHomeSub">Новое и повторение · 5–20 минут</div>
+          <div class="d" id="dailyHomeSub">20 заданий на повторение · ~10 минут</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
+      <button class="home-card hot-card" data-target="screen-daily" data-mode="hot">
+        <div class="badge-mono">10</div>
+        <div class="txt">
+          <div class="t">Горячая десятка</div>
+          <div class="d" id="hotHomeSub">10 новых слов: выучить и сразу применить</div>
         </div>
         <div class="chevron">›</div>
       </button>
@@ -1282,17 +1297,18 @@ const SCREEN_TITLES = {
   "screen-redewendungen": "Redewendungen",
   "screen-daily": "Daily Challenge",
 };
-function showScreen(id){
+// mode="hot" открывает на экране сессий «Горячую десятку» вместо Daily Challenge
+function showScreen(id, mode){
   document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("active", s.id===id));
   document.getElementById("backBtn").hidden = (id==="screen-home");
-  document.getElementById("appTitle").textContent = SCREEN_TITLES[id] || "Deutsch";
+  document.getElementById("appTitle").textContent = (id==="screen-daily" && mode==="hot") ? "Горячая десятка" : (SCREEN_TITLES[id] || "Deutsch");
   window.scrollTo(0,0);
   hideTip();
-  if(id==="screen-daily") dRenderStart();
+  if(id==="screen-daily") (mode==="hot" ? hRenderStart() : dRenderStart());
   if(id==="screen-home") dUpdateHome();
 }
 document.querySelectorAll(".home-card").forEach(card=>{
-  card.addEventListener("click", ()=> showScreen(card.dataset.target));
+  card.addEventListener("click", ()=> showScreen(card.dataset.target, card.dataset.mode));
 });
 document.getElementById("backBtn").addEventListener("click", ()=> showScreen("screen-home"));
 
@@ -3047,11 +3063,8 @@ const D_NOUNS = D_POOL.filter(i=> i.kind==="word" && /^(der|die|das) \S+$/.test(
 const D_VERBS = D_POOL.filter(i=> i.kind==="verb");
 const D_PERF_VERBS = D_VERBS.filter(i=> i.verb.perf);
 
-const D_LEN = {
-  5:  {warm:2, neu:2, review:3,  gram:1},
-  10: {warm:3, neu:4, review:6,  gram:3},
-  20: {warm:4, neu:8, review:12, gram:5},
-};
+// Daily: ровно 20 заданий = разминка 3 + повторение 9 (из них ≥2 грамматика) + грамматика дня 5 + работа над ошибками 2 + финал 1
+const D_PLAN = {warm:3, review:9, bonus:2, slots:2};
 const D_GRAM_TYPES = [
   {type:"conj",  label:"Präsens — спряжение"},
   {type:"case",  label:"Артикль и падеж"},
@@ -3377,8 +3390,8 @@ function dPickUnused(arr, rnd, used, keyOf){
   for(let a=0; a<30; a++){ const x = dPick(arr, rnd); const k = keyOf(x); if(!used.has(k)){ used.add(k); return x; } }
   return dPick(arr, rnd);
 }
-function dMakeGap(rnd, block, used){
-  const g = dPickUnused(D_GAPS_OK, rnd, used, g=> "s:"+g.sent);
+function dMakeGap(rnd, block, used){ return dGapTask(dPickUnused(D_GAPS_OK, rnd, used, g=> "s:"+g.sent), rnd, block); }
+function dGapTask(g, rnd, block){
   const f = dFindWord(g.sent, g.ans);
   const excl = new Set([g.ans, ...g.excl]);
   const others = dShuffle(g.set.filter(x=> !excl.has(x)), rnd).slice(0,3);
@@ -3498,32 +3511,32 @@ function dSharedTasks(today){
   return {g, gram, match:{type:"match", pairs, block:"match"}};
 }
 
-function dBuildSession(len){
-  const cfg = D_LEN[len], today = dToday(), rnd = Math.random;
+function dStudied(){ return Object.keys(dSrs).filter(k=> D_BYKEY[k]); }
+function dBuildSession(){
+  const today = dToday(), rnd = Math.random;
   const shared = dSharedTasks(today);
-  const gram = shared.gram.slice(0, cfg.gram);
+  const gram = shared.gram;
   const reserved = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
 
+  // Только изученные слова: сначала те, что пора повторить, затем самые слабые из остальных
   const due = dShuffle(dDueKeys(today), rnd).sort((a,b)=> dSrs[a].due.localeCompare(dSrs[b].due))
     .filter(k=>!reserved.has(k)).map(k=>D_BYKEY[k]);
-  let fresh = dNewItems().filter(i=>!reserved.has(i.key));
-  fresh = dPref.focusU
-    ? dShuffle(fresh.filter(i=>i.u), rnd).concat(dShuffle(fresh.filter(i=>!i.u), rnd))
-    : dShuffle(fresh, rnd);
-  const newItems = fresh.slice(0, cfg.neu);
-  // В первые дни повторять ещё нечего — добираем непройденным («проверка, что уже знаешь»)
-  const reviewPool = due.slice();
-  const filler = fresh.slice(cfg.neu);
-  while(reviewPool.length < cfg.warm + cfg.review && filler.length) reviewPool.push(filler.shift());
-  const warmItems = reviewPool.slice(0, cfg.warm);
-  const revItems = reviewPool.slice(cfg.warm, cfg.warm + cfg.review);
+  const dueKeys = new Set(due.map(i=>i.key));
+  const weakest = dShuffle(dStudied().filter(k=> !dueKeys.has(k) && !reserved.has(k)), rnd)
+    .sort((a,b)=> dSrs[a].lvl-dSrs[b].lvl || dSrs[a].due.localeCompare(dSrs[b].due)).map(k=>D_BYKEY[k]);
+  const items = due.concat(weakest).slice(0, D_PLAN.warm + D_PLAN.review - D_PLAN.bonus);
+
+  // Если изученных слов мало, пустые места занимает грамматика
+  const used = new Set();
+  const fillTypes = dShuffle(["case","gap","error","order","vgap"].filter(t=> t!==shared.g.type), rnd);
+  let fi = 0;
+  const filler = block=> dGramTask(fillTypes[fi++ % fillTypes.length], rnd, block, used);
 
   const tasks = [];
-  warmItems.forEach((it,i)=> tasks.push(dMakeMC(it, i%2 ? "ru-de" : "de-ru", "warm", rnd)));
-  newItems.forEach(it=>{
-    tasks.push({type:"intro", item:it, block:"neu"});
-    tasks.push(dMakeMC(it, "ru-de", "neu", rnd));
-  });
+  for(let k=0; k<D_PLAN.warm; k++){
+    tasks.push(items[k] ? dMakeMC(items[k], k%2 ? "ru-de" : "de-ru", "warm", rnd) : filler("warm"));
+  }
+  const revItems = items.slice(D_PLAN.warm);
   let prevKey = tasks.length ? dTypeKey(tasks[tasks.length-1]) : "";
   revItems.forEach((it, idx)=>{
     const types = dTypesFor(it);
@@ -3538,42 +3551,44 @@ function dBuildSession(len){
     tasks.push(task);
     prevKey = dTypeKey(task);
   });
-  // Бонусная грамматика в повторении — других тем, чем «Грамматика дня», чтобы каждый день было разнообразно
-  const bonusTypes = dShuffle(["case","gap","error","order","vgap"].filter(t=> t!==shared.g.type), rnd).slice(0, {5:1, 10:2, 20:3}[len]);
-  const revStart = tasks.length - revItems.length, used = new Set();
-  bonusTypes.forEach((ty, k)=>{
-    const pos = revStart + Math.round((k+1) * (revItems.length + k + 1) / (bonusTypes.length + 1));
-    tasks.splice(Math.min(pos, tasks.length), 0, dGramTask(ty, rnd, "review", used));
-  });
-  tasks.push(...gram, shared.match);
-  return {tasks, gramLabel: shared.g.label};
+  // Грамматика других тем, чем «Грамматика дня», равномерно вперемешку с повторением слов
+  const nFill = D_PLAN.review - revItems.length, revStart = tasks.length - revItems.length;
+  for(let k=0; k<nFill; k++){
+    const pos = revStart + Math.round((k+1) * (revItems.length + k + 1) / (nFill + 1));
+    tasks.splice(Math.min(pos, tasks.length), 0, filler("review"));
+  }
+  tasks.push(...gram);
+  for(let k=0; k<D_PLAN.slots; k++) tasks.push({type:"slot", block:"retry"});
+  tasks.push(shared.match);
+  return {tasks, gramLabel: shared.g.label, used};
 }
 
 function dSrsUpdate(it, ok, hinted){
   const today = dToday(), cur = dSrs[it.key];
+  if(!cur) return; // Daily не добавляет новых слов — только повторяет изученные
   const first = !dS.touched.has(it.key);
   dS.touched.add(it.key);
   if(!ok){
     dSrs[it.key] = {lvl:1, due:dAddDays(today,1)};
   } else if(hinted){
     // С подсказкой уровень не растёт: слово вернётся завтра
-    dSrs[it.key] = {lvl:cur ? cur.lvl : 1, due:dAddDays(today,1)};
-  } else if(first){
-    if(!cur){
-      const lvl = dS.introduced.has(it.key) ? 1 : 2; // знакомое без подсказки — сразу уровень 2
-      dSrs[it.key] = {lvl, due:dAddDays(today, D_INTERVALS[lvl])};
-      dS.newLearned++;
-    } else if(cur.due <= today){
-      const lvl = Math.min(5, cur.lvl+1);
-      dSrs[it.key] = {lvl, due:dAddDays(today, D_INTERVALS[lvl])};
-      if(lvl > cur.lvl) dS.levelUps++;
-    }
+    dSrs[it.key] = {lvl:cur.lvl, due:dAddDays(today,1)};
+  } else if(first && cur.due <= today){
+    const lvl = Math.min(5, cur.lvl+1);
+    dSrs[it.key] = {lvl, due:dAddDays(today, D_INTERVALS[lvl])};
+    if(lvl > cur.lvl) dS.levelUps++;
   }
   dSave(D_SRS_KEY, dSrs);
 }
 function dAnswer(t, ok, hinted){
+  dS.scored++;
+  if(ok) dS.correct++;
+  if(dS.mode==="hot"){
+    if(!ok && t.item) dS.hotErr[t.item.key] = (dS.hotErr[t.item.key]||0) + 1;
+    return;
+  }
   if(t.block==="retry"){ dS.retryTotal++; if(ok) dS.retryOk++; }
-  else { dS.scored++; if(ok) dS.correct++; else if(t.item) dS.wrongTasks.push(t); }
+  else if(!ok && t.item) dS.wrongTasks.push(t);
   if(t.item) dSrsUpdate(t.item, ok, hinted);
 }
 function dMakeRetry(t){
@@ -3585,38 +3600,39 @@ function dMakeRetry(t){
   if(it.kind!=="phrase") return {type:"input", item:it, block:"retry"};
   return dMakeMC(it, t.dir==="de-ru" ? "ru-de" : "de-ru", "retry", Math.random);
 }
-function dBuildRetries(){
-  const seen = new Set(), out = [];
-  dS.wrongTasks.forEach(t=>{ if(out.length<3 && !seen.has(t.item.key)){ seen.add(t.item.key); out.push(dMakeRetry(t)); } });
-  return out;
+// Место «работы над ошибками» заполняется в момент показа: ошибкой этой сессии или, если ошибок нет, бонусной грамматикой
+function dFillSlot(){
+  for(const t of dS.wrongTasks){
+    if(!dS.retried.has(t.item.key)){ dS.retried.add(t.item.key); return dMakeRetry(t); }
+  }
+  return dGramTask(dPick(["case","gap","error","order","vgap"], Math.random), Math.random, "extra", dS.used);
 }
 
 function dView(v){ ["dailyStart","dailyRun","dailyEnd"].forEach(id=> dEl(id).hidden = (id!==v)); window.scrollTo(0,0); }
 function dBlockLabel(t){
-  return {warm:"Разминка", neu:"Новое", review:"Повторение", gram:"Грамматика дня · "+dS.gramLabel,
-    match:"Финал · на скорость", retry:"Работа над ошибками"}[t.block];
+  return {warm:"Разминка", review:"Повторение", gram:"Грамматика дня · "+dS.gramLabel, match:"Финал · на скорость",
+    retry:"Работа над ошибками", extra:"Бонус · ошибок не было",
+    learn1:"Знакомство · слова 1–5", pairs1:"Пары · слова 1–5", recog1:"Узнавание · слова 1–5",
+    learn2:"Знакомство · слова 6–10", pairs2:"Пары · слова 6–10", recog2:"Узнавание · слова 6–10",
+    use:"В предложениях", recall:"Вспомни и напиши"}[t.block];
 }
-function dStart(len){
-  const built = dBuildSession(len);
-  dS = {len, tasks:built.tasks, gramLabel:built.gramLabel, i:0, correct:0, scored:0, wrongTasks:[],
-    touched:new Set(), introduced:new Set(), retryOk:0, retryTotal:0, retriesAdded:false,
-    newLearned:0, levelUps:0, matchTime:null, matchMistakes:0};
+function dNewSession(mode, tasks, extra){
+  return Object.assign({mode, tasks, i:0, correct:0, scored:0, wrongTasks:[], retried:new Set(), touched:new Set(),
+    introduced:new Set(), retryOk:0, retryTotal:0, levelUps:0, matchTime:null, matchMistakes:0, hotErr:{}, used:new Set()}, extra);
+}
+function dStart(){
+  const built = dBuildSession();
+  dS = dNewSession("daily", built.tasks, {gramLabel:built.gramLabel, used:built.used});
   dView("dailyRun");
   dRenderTask();
 }
 function dNext(){
   dS.i++;
-  const t = dS.tasks[dS.i];
-  // Ошибки возвращаются перед финальным раундом
-  if(!dS.retriesAdded && (!t || t.type==="match")){
-    dS.retriesAdded = true;
-    const r = dBuildRetries();
-    if(r.length) dS.tasks.splice(dS.i, 0, ...r);
-  }
-  if(dS.i >= dS.tasks.length){ dFinish(); return; }
+  if(dS.i >= dS.tasks.length){ dS.mode==="hot" ? hFinish() : dFinish(); return; }
   dRenderTask();
 }
 function dRenderTask(){
+  if(dS.tasks[dS.i].type==="slot") dS.tasks[dS.i] = dFillSlot();
   const t = dS.tasks[dS.i], total = dS.tasks.length;
   dEl("dCount").textContent = (dS.i+1)+" / "+total;
   dEl("dProg").style.width = Math.round(dS.i/total*100)+"%";
@@ -3948,32 +3964,33 @@ function dFinish(){
     dStats.streak = (dStats.lastDone === dAddDays(today,-1)) ? dStats.streak+1 : 1;
     dStats.lastDone = today;
   }
-  const res = {score:dS.correct, total:dS.scored, len:dS.len, time:dS.matchTime};
+  const res = {score:dS.correct, total:dS.scored, time:dS.matchTime};
   const prev = dStats.history[today];
   if(!prev || res.score/res.total >= prev.score/prev.total) dStats.history[today] = res;
   dSave(D_STATS_KEY, dStats);
   dEl("dProg").style.width = "100%";
   const pct = res.total ? Math.round(res.score/res.total*100) : 0;
+  const tomorrow = new Set(dS.wrongTasks.map(t=> t.item.key).filter(k=> dSrs[k])).size;
   dEl("dailyEnd").innerHTML = `
     <div class="panel">
       <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Daily Challenge пройден</div>
       <div class="end-score serif">${res.score}/${res.total}</div>
-      <p class="sub" style="text-align:center;">${pct}% правильных с первой попытки</p>
+      <p class="sub" style="text-align:center;">${pct}% правильных ответов</p>
       <div class="daily-stats">
         <div class="daily-stat"><div class="n">🔥 ${dStats.streak}</div><div class="k">дней подряд</div></div>
-        <div class="daily-stat"><div class="n">${dS.newLearned}</div><div class="k">новых в изучении</div></div>
-        <div class="daily-stat"><div class="n">${dS.levelUps}</div><div class="k">уровней вверх</div></div>
+        <div class="daily-stat"><div class="n">${dS.levelUps}</div><div class="k">слов уровнем выше</div></div>
+        <div class="daily-stat"><div class="n">${tomorrow}</div><div class="k">повторим завтра</div></div>
       </div>
       ${dS.retryTotal ? `<p class="sub">Работа над ошибками: исправлено ${dS.retryOk} из ${dS.retryTotal}</p>` : ""}
       ${res.time!=null ? `<p class="sub">Финальный раунд: ${res.time} с, ошибок ${dS.matchMistakes}</p>` : ""}
       <div class="daily-actions stack">
         <button class="primary" id="dShareBtn">Поделиться результатом</button>
-        <button id="dAgainBtn">Ещё одна сессия</button>
+        <button id="dHotBtn">К «Горячей десятке»</button>
         <button id="dHomeBtn">На главную</button>
       </div>
     </div>`;
   dEl("dShareBtn").onclick = ()=> dShare(dEl("dShareBtn"), res);
-  dEl("dAgainBtn").onclick = dRenderStart;
+  dEl("dHotBtn").onclick = ()=> showScreen("screen-daily", "hot");
   dEl("dHomeBtn").onclick = ()=> showScreen("screen-home");
   dView("dailyEnd");
   dUpdateHome();
@@ -3981,7 +3998,7 @@ function dFinish(){
 function dShareText(res){
   const d = new Date().toLocaleDateString("de-DE", {day:"2-digit", month:"2-digit"});
   const st = dStats.streak;
-  return `Deutsch Daily ${d} (${res.len} Min.)\n✅ ${res.score}/${res.total}`
+  return `Deutsch Daily ${d}\n✅ ${res.score}/${res.total}`
     + (res.time!=null ? ` · ⚡ Paare in ${res.time} s` : "")
     + `\n🔥 ${st} ${st===1 ? "Tag" : "Tage"} in Folge\n${location.origin+location.pathname}`;
 }
@@ -3997,29 +4014,183 @@ async function dShare(btn, res){
 
 function dRenderStart(){
   dS = null;
-  const today = dToday(), g = dGramOfDay(today), done = dStats.history[today];
+  const today = dToday(), g = dGramOfDay(today), done = dStats.history[today], studied = dStudied().length;
   dEl("dailyStart").innerHTML = `
     <h1 class="serif">Daily Challenge</h1>
-    <p class="sub">Новое и повторение на сегодня. «Грамматика дня» и финальный раунд у всех одинаковые — можно сравнить результат.</p>
-    ${done ? `<div class="daily-done">Сегодня уже пройдено: <b>${done.score}/${done.total}</b>. Можно ещё раз — повторение подберётся заново.</div>` : ""}
+    <p class="sub">20 заданий на повторение изученных слов и грамматику, около 10 минут. «Грамматика дня» и финал у всех одинаковые — можно сравнить результат.</p>
+    ${done ? `<div class="daily-done">Сегодня пройдено: <b>${done.score}/${done.total}</b></div>` : ""}
+    ${studied===0 ? `<div class="daily-note">Изученных слов пока нет, поэтому сегодня будет только грамматика. Новые слова учатся в «Горячей десятке», а Daily потом их повторяет.</div>` : ""}
     <div class="daily-stats">
       <div class="daily-stat"><div class="n">🔥 ${dStreakNow()}</div><div class="k">дней подряд</div></div>
       <div class="daily-stat"><div class="n">${dDueKeys(today).length}</div><div class="k">к повторению</div></div>
-      <div class="daily-stat"><div class="n">${dNewItems().length}</div><div class="k">ещё не начато</div></div>
+      <div class="daily-stat"><div class="n">${studied}</div><div class="k">слов изучено</div></div>
     </div>
     <div class="daily-gram">Грамматика дня: <b>${g.label}</b></div>
-    <label class="daily-toggle"><input type="checkbox" id="dFocus" ${dPref.focusU ? "checked" : ""}> Чаще слова с урока (Aus dem Unterricht)</label>
-    <div class="daily-len">
-      ${[[5,"быстро"],[10,"обычно"],[20,"подольше"]].map(([m,l])=>`<button data-len="${m}"><span class="m">${m}</span><span class="l">мин · ${l}</span></button>`).join("")}
+    <div class="daily-actions stack">
+      <button class="primary" id="dGo">${done ? "Пройти ещё раз" : "Начать · 20 заданий"}</button>
+      ${studied===0 ? `<button id="dToHot">Сначала «Горячая десятка»</button>` : ""}
     </div>`;
-  dEl("dFocus").onchange = e=>{ dPref.focusU = e.target.checked; dSave(D_PREF_KEY, dPref); };
-  dEl("dailyStart").querySelectorAll(".daily-len button").forEach(b=> b.onclick = ()=> dStart(+b.dataset.len));
+  dEl("dGo").onclick = dStart;
+  if(dEl("dToHot")) dEl("dToHot").onclick = ()=> showScreen("screen-daily", "hot");
   dView("dailyStart");
 }
 function dUpdateHome(){
-  const el = dEl("dailyHomeSub"), done = dStats.history[dToday()], st = dStreakNow();
-  el.textContent = done ? `Сегодня: ${done.score}/${done.total} ✓ · 🔥 ${st}`
-    : st ? `🔥 ${st} дн. подряд — не прерывай серию!` : "Новое и повторение · 5–20 минут";
+  const done = dStats.history[dToday()], st = dStreakNow();
+  dEl("dailyHomeSub").textContent = done ? `Сегодня: ${done.score}/${done.total} ✓ · 🔥 ${st}`
+    : st ? `🔥 ${st} дн. подряд — не прерывай серию!` : "20 заданий на повторение · ~10 минут";
+  const hotToday = hStats.byDate[dToday()] || 0, studied = dStudied().length;
+  dEl("hotHomeSub").textContent = hotToday ? `Сегодня +${hotToday} · изучено слов: ${studied}`
+    : studied ? `Изучено слов: ${studied} · выучи ещё 10` : "10 новых слов: выучить и сразу применить";
+}
+
+/* ================= ГОРЯЧАЯ ДЕСЯТКА ================= */
+// 10 новых слов: две порции по 5 (знакомство → пары → узнавание), затем все 10 в предложениях и «вспомни и напиши».
+// После сессии слова попадают в повторение с уровнем 1 — Daily Challenge спросит их завтра.
+const H_STATS_KEY = "hot.stats.v1";
+let hStats = dLoad(H_STATS_KEY, {byDate:{}, total:0});
+// Прилагательные, которые естественно звучат в «Er ist sehr ___»
+const H_PERSON_ADJ = new Set(["ehrlich","treu","zärtlich","genervt","ruhig","schlau","seltsam","begabt","talentiert","berühmt",
+  "erfolgreich","gierig","böse","blass","krank","gesund","reich","arm","süchtig","verantwortlich","nass","kalt","warm"]);
+// Шаблоны, в которые подходит любое существительное — и предметное, и абстрактное
+const H_NOUN_TPL = [
+  {s:"Wo ist ___ {N}?", c:"nom", why:"Подлежащее → Nominativ"},
+  {s:"Ich denke an ___ {N}.", c:"akk", why:"denken an + Akkusativ"},
+  {s:"Was weißt du über ___ {N}?", c:"akk", why:"über (о чём?) + Akkusativ"},
+  {s:"Wir sprechen von ___ {N}.", c:"dat", why:"von + Dativ"},
+];
+function hPickWords(){
+  const rnd = Math.random;
+  const fresh = D_POOL.filter(i=> !dSrs[i.key] && (i.kind!=="phrase" || dWords(i.de)<=8));
+  const order = arr=> dPref.focusU ? dShuffle(arr.filter(i=>i.u), rnd).concat(dShuffle(arr.filter(i=>!i.u), rnd)) : dShuffle(arr, rnd);
+  // Смесь: 5 слов, 3 глагола, 2 фразы; если какого-то типа не хватает — добираем остальными
+  const pick = [].concat(order(fresh.filter(i=>i.kind==="word")).slice(0,5),
+    order(fresh.filter(i=>i.kind==="verb")).slice(0,3), order(fresh.filter(i=>i.kind==="phrase")).slice(0,2));
+  const rest = order(fresh.filter(i=> !pick.includes(i)));
+  while(pick.length<10 && rest.length) pick.push(rest.shift());
+  return dShuffle(pick, rnd);
+}
+// Варианты ответа берутся из этой же десятки — так приходится различать именно новые слова
+function hMCFromSet(it, set, dir, block, rnd){
+  const others = [], usedDe = new Set([it.de]), usedRu = new Set([it.ru]);
+  // Сначала слова того же типа из десятки, потом похожие из словаря, и только потом остальные из десятки
+  const cand = dShuffle(set.filter(x=> x!==it && x.kind===it.kind), rnd)
+    .concat(dSimilar(it, rnd), dShuffle(set.filter(x=> x!==it && x.kind!==it.kind), rnd));
+  for(const x of cand){
+    if(others.length>=3) break;
+    if(usedDe.has(x.de) || usedRu.has(x.ru)) continue;
+    others.push(x); usedDe.add(x.de); usedRu.add(x.ru);
+  }
+  return {type:"mc", dir, item:it, opts:dShuffle([it, ...others], rnd), block};
+}
+function hRecog(it, set, k, rnd, block){
+  if(k%2 && D_TTS && (it.kind!=="phrase" || dWords(it.de)<=4)){
+    return {type:"audio", item:it, opts:hMCFromSet(it, set, "de-ru", block, rnd).opts, block};
+  }
+  return hMCFromSet(it, set, k%2 ? "de-ru" : "ru-de", block, rnd);
+}
+function hNounCase(it, rnd, block){
+  const art = it.de.split(" ")[0], bare = it.de.slice(art.length+1), tpl = dPick(H_NOUN_TPL, rnd);
+  const ans = D_ART_FORMS.def[tpl.c][art];
+  const [before, after] = tpl.s.replace("{N}", bare).split("___");
+  const opts = dShuffle(dShuffle(["der","die","das","den","dem"].filter(x=> x!==ans), rnd).slice(0,3).concat([ans]), rnd);
+  return {type:"case", item:it, before, after, ans, opts, sub:`${bare} — ${it.ru}`, note:`${tpl.why} → ${ans} ${bare} (${it.de})`, block};
+}
+function hAdjGap(it, set, rnd, block){
+  const others = [];
+  for(const x of dShuffle(set.filter(x=> x!==it && H_PERSON_ADJ.has(x.de)), rnd)
+      .concat(dShuffle(D_POOL.filter(x=> x.kind==="word" && x!==it && H_PERSON_ADJ.has(x.de)), rnd))){
+    if(others.length>=3) break;
+    if(!others.includes(x.de)) others.push(x.de);
+  }
+  const ru1 = it.ru.split(/[,;(]/)[0].trim();
+  return {type:"gap", item:it, before:"Er ist sehr ", after:".", ans:it.de, opts:dShuffle([it.de, ...others], rnd),
+    sub:`Он очень ${ru1}.`, note:`${it.de} — ${it.ru}`, block};
+}
+// Слово в предложении: способ зависит от типа слова
+function hSentence(it, set, rnd){
+  const b = "use";
+  if(it.kind==="verb"){
+    if(D_VGAPS.has(it.key)) return {type:"vgap", item:it, gap:D_VGAPS.get(it.key), block:b};
+    if(D_ORDER_BY_KEY.has(it.key)) return dMakeOrder(rnd, b, new Set(), D_ORDER_BY_KEY.get(it.key));
+    return {type:"conj", item:it, person:dPick(PERSONS, rnd), block:b};
+  }
+  if(it.kind==="phrase"){
+    const g = D_GAPS_OK.find(g=> g.ans===it.de);
+    if(g) return Object.assign(dGapTask(g, rnd, b), {item:it});
+    if(D_ORDER_BY_KEY.has(it.key)) return dMakeOrder(rnd, b, new Set(), D_ORDER_BY_KEY.get(it.key));
+    if(dWords(it.de)>=3) return dMakeOrder(rnd, b, new Set(), {de:it.de, ru:it.ru, key:it.key});
+    if(D_SIT_BY_DE.has(it.de)) return dMakeSituation(it, b, rnd);
+    return hMCFromSet(it, set, "ru-de", b, rnd);
+  }
+  if(D_NOUNS.includes(it)) return hNounCase(it, rnd, b);
+  if(H_PERSON_ADJ.has(it.de)) return hAdjGap(it, set, rnd, b);
+  return {type:"input", item:it, block:b};
+}
+function hBuild(words){
+  const rnd = Math.random, tasks = [];
+  [words.slice(0,5), words.slice(5,10)].forEach((chunk, ci)=>{
+    if(!chunk.length) return;
+    const n = ci+1;
+    chunk.forEach(it=> tasks.push({type:"intro", item:it, block:"learn"+n}));
+    if(chunk.length>=2) tasks.push({type:"match", pairs:chunk.map(i=>({de:i.de, ru:i.ru})), block:"pairs"+n});
+    chunk.forEach((it,k)=> tasks.push(hRecog(it, words, k, rnd, "recog"+n)));
+  });
+  dShuffle(words, rnd).forEach(it=> tasks.push(hSentence(it, words, rnd)));
+  dShuffle(words, rnd).slice(0,5).forEach(it=> tasks.push(it.kind==="phrase"
+    ? hMCFromSet(it, words, "ru-de", "recall", rnd) : {type:"input", item:it, block:"recall"}));
+  return tasks;
+}
+function hStart(){
+  const words = hPickWords();
+  if(!words.length){ dEl("dailyStart").insertAdjacentHTML("beforeend", `<div class="daily-done">Все слова уже в изучении 🎉</div>`); return; }
+  dS = dNewSession("hot", hBuild(words), {words});
+  dView("dailyRun");
+  dRenderTask();
+}
+function hFinish(){
+  const today = dToday(), tomorrow = dAddDays(today, 1);
+  dS.words.forEach(it=>{ if(!dSrs[it.key]) dSrs[it.key] = {lvl:1, due:tomorrow}; });
+  dSave(D_SRS_KEY, dSrs);
+  hStats.byDate[today] = (hStats.byDate[today]||0) + dS.words.length;
+  hStats.total = (hStats.total||0) + dS.words.length;
+  dSave(H_STATS_KEY, hStats);
+  dEl("dProg").style.width = "100%";
+  const pct = dS.scored ? Math.round(dS.correct/dS.scored*100) : 0;
+  dEl("dailyEnd").innerHTML = `
+    <div class="panel">
+      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Горячая десятка пройдена</div>
+      <div class="end-score serif">+${dS.words.length}</div>
+      <p class="sub" style="text-align:center;">новых слов · ${pct}% правильных ответов</p>
+      <div class="hot-list">${dS.words.map(it=>`<div class="hot-row${dS.hotErr[it.key] ? " hard" : ""}"><span class="de">${escapeHtml(it.de)}</span><span class="ru">${escapeHtml(it.ru)}</span></div>`).join("")}</div>
+      <p class="sub">Завтра Daily Challenge повторит эти слова. «Трудные» — где были ошибки.</p>
+      <div class="daily-actions stack">
+        <button class="primary" id="hAgainBtn">Ещё 10 слов</button>
+        <button id="hDailyBtn">К Daily Challenge</button>
+        <button id="hHomeBtn">На главную</button>
+      </div>
+    </div>`;
+  dEl("hAgainBtn").onclick = hStart;
+  dEl("hDailyBtn").onclick = ()=> showScreen("screen-daily");
+  dEl("hHomeBtn").onclick = ()=> showScreen("screen-home");
+  dView("dailyEnd");
+  dUpdateHome();
+}
+function hRenderStart(){
+  dS = null;
+  const today = hStats.byDate[dToday()] || 0, left = D_POOL.filter(i=> !dSrs[i.key]).length;
+  dEl("dailyStart").innerHTML = `
+    <h1 class="serif">Горячая десятка</h1>
+    <p class="sub">10 новых слов в две порции: знакомство, пары, узнавание — и сразу в предложения. Завтра Daily Challenge их повторит.</p>
+    ${today ? `<div class="daily-done">Сегодня выучено: <b>${today}</b> слов</div>` : ""}
+    <div class="daily-stats">
+      <div class="daily-stat"><div class="n">${dStudied().length}</div><div class="k">слов изучено</div></div>
+      <div class="daily-stat"><div class="n">${left}</div><div class="k">ещё впереди</div></div>
+    </div>
+    <label class="daily-toggle"><input type="checkbox" id="dFocus" ${dPref.focusU ? "checked" : ""}> Сначала слова с урока (Aus dem Unterricht)</label>
+    <div class="daily-actions stack"><button class="primary" id="hGo">${today ? "Ещё 10 слов" : "Начать · 10 слов"}</button></div>`;
+  dEl("dFocus").onchange = e=>{ dPref.focusU = e.target.checked; dSave(D_PREF_KEY, dPref); };
+  dEl("hGo").onclick = hStart;
+  dView("dailyStart");
 }
 document.addEventListener("keydown", e=>{
   if(e.key!=="Enter" || !dS || dEl("dailyRun").hidden || !dEl("screen-daily").classList.contains("active")) return;
