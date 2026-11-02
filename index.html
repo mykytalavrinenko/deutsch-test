@@ -4595,7 +4595,7 @@ function aRender(){
   if(!todayN) c.setDate(c.getDate()-1);
   while(aLog[c.toLocaleDateString("sv-SE")]){ run++; c.setDate(c.getDate()-1); }
   dEl("activity").innerHTML = `
-    <div class="ac-head"><b>Активность</b><span>сегодня ${todayN} · подряд ${run} дн. · всего ${days} дн.</span></div>
+    <div class="ac-head"><b>Активность</b><span title="всего дней с занятиями: ${days}">сегодня ${todayN} · подряд ${run} дн.</span></div>
     <div class="ac-grid">${cells}</div>
     <div class="ac-legend">меньше <i class="ac l0"></i><i class="ac l1"></i><i class="ac l2"></i><i class="ac l3"></i><i class="ac l4"></i> больше</div>`;
 }
