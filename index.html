@@ -354,8 +354,8 @@
   .activity{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
   .ac-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;}
   .ac-head b{color:var(--ink);font-size:13.5px;}
-  .ac-grid{display:grid;grid-template-rows:repeat(7,11px);grid-auto-columns:11px;grid-auto-flow:column;gap:3px;justify-content:end;overflow-x:auto;}
-  .ac{display:block;width:11px;height:11px;border-radius:3px;background:var(--surface-2);}
+  .ac-grid{display:grid;grid-template-columns:repeat(17,minmax(0,16px));grid-template-rows:repeat(7,auto);gap:3px;justify-content:space-between;}
+  .ac{display:block;width:100%;aspect-ratio:1;border-radius:3px;background:var(--surface-2);}
   .ac.l1{background:color-mix(in srgb, var(--accent) 28%, var(--surface-2));}
   .ac.l2{background:color-mix(in srgb, var(--accent) 52%, var(--surface-2));}
   .ac.l3{background:color-mix(in srgb, var(--accent) 76%, var(--surface-2));}
@@ -363,7 +363,7 @@
   .ac.lx{background:transparent;}
   .ac.today{outline:1.5px solid var(--ink-muted);outline-offset:1px;}
   .ac-legend{display:flex;align-items:center;justify-content:flex-end;gap:3px;font-size:11px;color:var(--ink-muted);margin-top:6px;}
-  .ac-legend .ac{width:9px;height:9px;}
+  .ac-legend .ac{width:9px;height:9px;aspect-ratio:auto;}
 
   .practice-btn{display:block;width:100%;margin:0 0 14px;padding:13px;border-radius:12px;border:1px solid var(--accent);
     background:var(--accent-soft);color:var(--accent-ink);font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;}
@@ -374,6 +374,7 @@
   .bub.me{align-self:flex-end;background:var(--accent);color:var(--surface);border-bottom-right-radius:5px;}
   .bub .tr-btn{display:block;border:none;background:none;color:var(--accent-ink);font-size:12px;padding:0;margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:inherit;}
   .bub .tr{display:block;font-size:12.5px;color:var(--ink-muted);margin-top:4px;}
+  .bub .tr[hidden]{display:none;}
   @keyframes bubIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
   @media (prefers-reduced-motion: reduce){ .bub{animation:none;} }
   .end-score{font-size:48px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;margin:4px 0 2px;}
@@ -4588,8 +4589,13 @@ function aRender(){
     cells += `<i class="ac l${lvl}${key===dToday() ? " today" : ""}" style="grid-column:${w+1};grid-row:${d+1}" title="${dt.toLocaleDateString("ru-RU")}: ${n} заданий"></i>`;
   }
   const todayN = aLog[dToday()] || 0;
+  // Серия: сколько дней подряд были занятия (сегодня ещё может быть пустым)
+  let run = 0;
+  const c = new Date(today);
+  if(!todayN) c.setDate(c.getDate()-1);
+  while(aLog[c.toLocaleDateString("sv-SE")]){ run++; c.setDate(c.getDate()-1); }
   dEl("activity").innerHTML = `
-    <div class="ac-head"><span><b>Активность</b> · сегодня ${todayN} заданий</span><span>${days} дн. за 4 месяца · 🔥 ${dStreakNow()}</span></div>
+    <div class="ac-head"><b>Активность</b><span>сегодня ${todayN} · подряд ${run} дн. · всего ${days} дн.</span></div>
     <div class="ac-grid">${cells}</div>
     <div class="ac-legend">меньше <i class="ac l0"></i><i class="ac l1"></i><i class="ac l2"></i><i class="ac l3"></i><i class="ac l4"></i> больше</div>`;
 }
