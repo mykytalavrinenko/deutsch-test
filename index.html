@@ -289,6 +289,10 @@
   .d-ex{background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:13px;margin:0 0 12px;line-height:1.45;}
   .d-ex span{color:var(--ink-muted);}
   .umlauts{display:flex;gap:6px;justify-content:center;margin:-4px 0 12px;}
+  .hint-row{display:flex;justify-content:center;align-items:center;gap:10px;margin:-4px 0 10px;min-height:30px;}
+  .hint-btn{border:none;background:none;color:var(--accent-ink);font-size:13.5px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-family:inherit;padding:4px 6px;}
+  .hint-btn:disabled{color:var(--ink-muted);text-decoration:none;cursor:default;}
+  .hint-text{font-size:17px;font-weight:700;letter-spacing:.6px;color:var(--ink);}
   .umlauts button{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:8px;width:42px;height:36px;font-size:16px;cursor:pointer;font-family:inherit;}
   .aux-toggle{display:flex;gap:8px;justify-content:center;margin-bottom:12px;}
   .aux-toggle button{min-width:96px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:11px;padding:10px 14px;font-size:15px;font-family:inherit;cursor:pointer;}
@@ -3545,12 +3549,15 @@ function dBuildSession(len){
   return {tasks, gramLabel: shared.g.label};
 }
 
-function dSrsUpdate(it, ok){
+function dSrsUpdate(it, ok, hinted){
   const today = dToday(), cur = dSrs[it.key];
   const first = !dS.touched.has(it.key);
   dS.touched.add(it.key);
   if(!ok){
     dSrs[it.key] = {lvl:1, due:dAddDays(today,1)};
+  } else if(hinted){
+    // С подсказкой уровень не растёт: слово вернётся завтра
+    dSrs[it.key] = {lvl:cur ? cur.lvl : 1, due:dAddDays(today,1)};
   } else if(first){
     if(!cur){
       const lvl = dS.introduced.has(it.key) ? 1 : 2; // знакомое без подсказки — сразу уровень 2
@@ -3564,10 +3571,10 @@ function dSrsUpdate(it, ok){
   }
   dSave(D_SRS_KEY, dSrs);
 }
-function dAnswer(t, ok){
+function dAnswer(t, ok, hinted){
   if(t.block==="retry"){ dS.retryTotal++; if(ok) dS.retryOk++; }
   else { dS.scored++; if(ok) dS.correct++; else if(t.item) dS.wrongTasks.push(t); }
-  if(t.item) dSrsUpdate(t.item, ok);
+  if(t.item) dSrsUpdate(t.item, ok, hinted);
 }
 function dMakeRetry(t){
   const it = t.item;
@@ -3791,7 +3798,19 @@ function dRInput(t, box){
     <div class="q-label">Напиши по-немецки</div>
     <div class="q-word">${escapeHtml(it.ru)}</div>
     ${art ? '<div class="q-sub">с артиклем: der, die или das</div>' : ''}
-    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+    ${D_INPUT}${D_UMLAUTS}
+    <div class="hint-row"><button type="button" class="hint-btn">Подсказка</button><span class="hint-text"></span></div>
+    ${D_ACTIONS}`;
+  // Подсказка: первые 2 буквы самого слова (без артикля и sich)
+  let hinted = false;
+  const hintBtn = box.querySelector(".hint-btn");
+  hintBtn.onclick = ()=>{
+    if(box.querySelector(".d-in").disabled) return;
+    const word = it.de.replace(D_ART_RE, "").replace(/^sich\s+/, "");
+    box.querySelector(".hint-text").textContent = word.slice(0,2) + "…";
+    hintBtn.disabled = true; hinted = true;
+    box.querySelector(".d-in").focus();
+  };
   dWireInputCheck(box, inp=>{
     // Существительные засчитываются только с правильным артиклем
     const acc = [it.de, it.de.replace(/^sich\s+/, "")];
@@ -3806,8 +3825,10 @@ function dRInput(t, box){
       if(bares.includes(typedBare)) msg = typedBare===typed ? `Почти! Нужен артикль: „${it.de}“` : `Слово верно, но артикль другой: „${it.de}“`;
     }
     inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
-    dAnswer(t, ok);
+    hintBtn.disabled = true;
+    dAnswer(t, ok, hinted);
     dAfter(box, ok, it.de, it, msg);
+    if(ok && hinted) box.querySelector(".d-fb").textContent = "Richtig! (с подсказкой — повторим завтра)";
   });
 }
 function dRConj(t, box){
