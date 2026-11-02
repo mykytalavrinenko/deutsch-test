@@ -352,18 +352,12 @@
   .home-card.blitz-card .badge-mono{background:var(--bad-soft);color:var(--bad);font-size:15px;}
 
   .activity{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
-  .ac-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;color:var(--ink-muted);margin-bottom:8px;}
-  .ac-head b{color:var(--ink);font-size:13.5px;}
-  .ac-grid{display:grid;grid-template-columns:repeat(17,minmax(0,16px));grid-template-rows:repeat(7,auto);gap:3px;justify-content:space-between;}
-  .ac{display:block;width:100%;aspect-ratio:1;border-radius:3px;background:var(--surface-2);}
-  .ac.l1{background:color-mix(in srgb, var(--accent) 28%, var(--surface-2));}
-  .ac.l2{background:color-mix(in srgb, var(--accent) 52%, var(--surface-2));}
-  .ac.l3{background:color-mix(in srgb, var(--accent) 76%, var(--surface-2));}
-  .ac.l4{background:var(--accent);}
-  .ac.lx{background:transparent;}
-  .ac.today{outline:1.5px solid var(--ink-muted);outline-offset:1px;}
-  .ac-legend{display:flex;align-items:center;justify-content:flex-end;gap:3px;font-size:11px;color:var(--ink-muted);margin-top:6px;}
-  .ac-legend .ac{width:9px;height:9px;aspect-ratio:auto;}
+  .activity{display:flex;align-items:center;gap:14px;}
+  .ac-fire{font-size:34px;line-height:1;}
+  .ac-num{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:44px;line-height:1;font-weight:600;color:var(--ink);}
+  .ac-cap{font-size:13px;color:var(--ink-muted);line-height:1.35;}
+  .ac-cap b{display:block;color:var(--ink);font-size:14.5px;}
+  .activity.off .ac-fire{filter:grayscale(1);opacity:.45;}
 
   .practice-btn{display:block;width:100%;margin:0 0 14px;padding:13px;border-radius:12px;border:1px solid var(--accent);
     background:var(--accent-soft);color:var(--accent-ink);font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;}
@@ -761,7 +755,7 @@
         <div class="badge-mono">Di</div>
         <div class="txt">
           <div class="t">Интерактивный диалог</div>
-          <div class="d">Врач, кафе, вокзал, звонок арендодателю…</div>
+          <div class="d">Тренируй слова в реальной ситуации</div>
         </div>
         <div class="chevron">›</div>
       </button>
@@ -4577,27 +4571,18 @@ const A_KEY = "activity.v1";
 let aLog = dLoad(A_KEY, {});
 function aTrack(){ const d = dToday(); aLog[d] = (aLog[d]||0) + 1; dSave(A_KEY, aLog); }
 function aRender(){
-  const weeks = 17, today = new Date(dToday()+"T12:00:00");
-  const start = new Date(today);
-  start.setDate(today.getDate() - (today.getDay()+6)%7 - (weeks-1)*7);   // понедельник 17 недель назад
-  let cells = "", days = 0;
-  for(let w=0; w<weeks; w++) for(let d=0; d<7; d++){
-    const dt = new Date(start); dt.setDate(start.getDate() + w*7 + d);
-    const key = dt.toLocaleDateString("sv-SE"), n = aLog[key] || 0;
-    if(n) days++;
-    const lvl = dt > today ? "x" : n===0 ? 0 : n<10 ? 1 : n<25 ? 2 : n<50 ? 3 : 4;
-    cells += `<i class="ac l${lvl}${key===dToday() ? " today" : ""}" style="grid-column:${w+1};grid-row:${d+1}" title="${dt.toLocaleDateString("ru-RU")}: ${n} заданий"></i>`;
-  }
   const todayN = aLog[dToday()] || 0;
-  // Серия: сколько дней подряд были занятия (сегодня ещё может быть пустым)
+  // Серия: сколько дней подряд были занятия (сегодняшний день ещё может быть пустым)
   let run = 0;
-  const c = new Date(today);
+  const c = new Date(dToday()+"T12:00:00");
   if(!todayN) c.setDate(c.getDate()-1);
   while(aLog[c.toLocaleDateString("sv-SE")]){ run++; c.setDate(c.getDate()-1); }
-  dEl("activity").innerHTML = `
-    <div class="ac-head"><b>Активность</b><span title="всего дней с занятиями: ${days}">сегодня ${todayN} · подряд ${run} дн.</span></div>
-    <div class="ac-grid">${cells}</div>
-    <div class="ac-legend">меньше <i class="ac l0"></i><i class="ac l1"></i><i class="ac l2"></i><i class="ac l3"></i><i class="ac l4"></i> больше</div>`;
+  const m10 = run%10, m100 = run%100;
+  const word = m10===1 && m100!==11 ? "день" : m10>=2 && m10<=4 && (m100<12 || m100>14) ? "дня" : "дней";
+  const el = dEl("activity");
+  el.classList.toggle("off", !todayN);
+  el.innerHTML = `<span class="ac-fire">🔥</span><span class="ac-num">${run}</span>
+    <span class="ac-cap"><b>${word} подряд</b>${todayN ? `сегодня ${todayN} заданий` : "сегодня ещё не занимались"}</span>`;
 }
 
 /* ================= БЛИЦ 60 СЕКУНД ================= */
