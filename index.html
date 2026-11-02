@@ -321,6 +321,23 @@
   .daily-len button:hover{border-color:var(--accent);}
   .daily-len .m{display:block;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;}
   .daily-len .l{display:block;font-size:11.5px;color:var(--ink-muted);margin-top:2px;}
+  .daily-task .q-sent{font-size:clamp(17px,5vw,21px);text-align:center;line-height:1.5;margin-bottom:18px;text-wrap:balance;}
+  .daily-task .q-sent + .q-sub{margin-top:-10px;}
+  .daily-task .q-sit{font-size:16.5px;text-align:center;line-height:1.45;margin-bottom:16px;text-wrap:balance;}
+  .gap{display:inline-block;min-width:54px;border-bottom:2px solid var(--accent);color:var(--accent-ink);font-weight:700;padding:0 4px;text-align:center;}
+  .gap.ok{border-color:var(--good);color:var(--good);}
+  .gap.bad{border-color:var(--bad);color:var(--bad);}
+  .gap-hint{color:var(--ink-muted);font-style:italic;}
+  .built{min-height:54px;border:1.5px dashed var(--border);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-bottom:12px;}
+  .built.ok{border-color:var(--good);border-style:solid;}
+  .built.bad{border-color:var(--bad);border-style:solid;}
+  .built-hint{font-size:12.5px;color:var(--ink-muted);}
+  .tiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px;}
+  .tile{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:9px;padding:8px 11px;font-size:15px;cursor:pointer;font-family:inherit;}
+  .tile.used{display:none;}
+  .built .tile{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);}
+  .play-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
+  .play-btn{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink);border-radius:11px;padding:11px 18px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
   .end-score{font-size:48px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;margin:4px 0 2px;}
 
   /* ---- List / vocab table (shared) ---- */
@@ -3019,8 +3036,8 @@ const D_PLURALS = new Set(["die Eltern","die Geschwister","die Nudeln","die Schu
   "die Schmerzen","die Zähne","die Zehen","die Haare","die Tropfen","die Kenntnisse"]);
 const D_POOL = [];
 VERBS.forEach(v=> D_POOL.push({key:"v:"+v.inf, kind:"verb", de:v.inf, ru:v.ru, ex:v.ex, exRu:v.exRu, verb:v, u:!!v.u}));
-LEX_TOPICS.forEach(t=> t.words.forEach(w=> D_POOL.push({key:"w:"+w.de, kind:"word", de:w.de, ru:w.ru, u:!!w.u})));
-PHRASES.forEach(p=> D_POOL.push({key:"p:"+p.de, kind:"phrase", de:p.de, ru:p.ru, ex:p.ex, exRu:p.exRu, u:!!p.u}));
+LEX_TOPICS.forEach(t=> t.words.forEach(w=> D_POOL.push({key:"w:"+w.de, kind:"word", de:w.de, ru:w.ru, u:!!w.u, topic:t.key})));
+PHRASES.forEach(p=> D_POOL.push({key:"p:"+p.de, kind:"phrase", de:p.de, ru:p.ru, ex:p.ex, exRu:p.exRu, u:!!p.u, cat:p.cat}));
 const D_BYKEY = Object.fromEntries(D_POOL.map(i=>[i.key, i]));
 const D_NOUNS = D_POOL.filter(i=> i.kind==="word" && /^(der|die|das) \S+$/.test(i.de) && !D_PLURALS.has(i.de));
 const D_VERBS = D_POOL.filter(i=> i.kind==="verb");
@@ -3032,38 +3049,442 @@ const D_LEN = {
   20: {warm:4, neu:8, review:12, gram:5},
 };
 const D_GRAM_TYPES = [
-  {type:"conj", label:"Präsens — спряжение"},
-  {type:"perf", label:"Perfekt"},
-  {type:"art",  label:"Артикли der / die / das"},
+  {type:"conj",  label:"Präsens — спряжение"},
+  {type:"case",  label:"Артикль и падеж"},
+  {type:"perf",  label:"Perfekt"},
+  {type:"gap",   label:"Вставь слово: предлоги и связки"},
+  {type:"art",   label:"Артикли der / die / das"},
+  {type:"vgap",  label:"Глагол в предложении"},
+  {type:"order", label:"Порядок слов"},
+  {type:"error", label:"Найди ошибку"},
 ];
 function dGramOfDay(date){ return D_GRAM_TYPES[Math.floor(new Date(date+"T12:00:00").getTime()/86400000) % D_GRAM_TYPES.length]; }
 function dDueKeys(today){ return Object.keys(dSrs).filter(k=> D_BYKEY[k] && dSrs[k].due <= today); }
 function dNewItems(){ return D_POOL.filter(i=> !dSrs[i.key]); }
 
+// Неверные варианты подбираются похожими на правильный ответ, чтобы выбор не угадывался по «чужеродности»
+const D_ART_RE = /^(der|die|das) /;
+const D_NOUN_BY_BARE = new Map(D_NOUNS.map(n=>{ const art = n.de.split(" ")[0]; return [n.de.slice(art.length+1).toLowerCase(), {art, de:n.de}]; }));
+const D_SIMPLE_VERBS = VERBS.filter(v=> !v.sep && !v.inf.includes(" ") && v.perf);
+const D_STEMS = new Map(D_SIMPLE_VERBS.map(v=> [v.inf.replace(/e?n$/, "").toLowerCase(), v]));
+const D_POSS = /^(m|d|s)ein(e|en|em|er|es)?$/i;
+const D_STOP = new Set(["bitte","ich","du","er","sie","es","wir","ihr","mal","nicht","kein","keine","der","die","das","den","dem","des",
+  "ein","eine","einen","einem","und","oder","aber","zu","um","auf","in","an","mit","von","für","so","ja","nein","auch","noch","schon",
+  "sehr","gut","mir","dir","mich","dich","sich","uns","euch","ist","bin","bist","sind","hat","habe","hast","haben","was","wie","wo"]);
+function dCapLike(s, like){ return like[0]===like[0].toUpperCase() ? s[0].toUpperCase()+s.slice(1) : s; }
+function dBase(inf){
+  const s = inf.replace(/^sich\s+/, "");
+  const m = s.match(/^(zurück|vorbei|wieder|statt|fern|unter|über|nach|weg|auf|aus|bei|ein|mit|vor|ab|an|zu|um|be|ver|ent|zer|er)(?=[a-zäöüß]{4,})/);
+  return m ? s.slice(m[1].length) : s;
+}
+// Варианты фразы с заменой одного слова: глагола, притяжательного местоимения или существительного того же рода
+function dMutations(text, rnd){
+  const tokens = text.split(/(\s+|[,.!?;:„“"«»()…])/);
+  const out = [];
+  const idxs = tokens.map((_,i)=>i).filter(i=> /\p{L}/u.test(tokens[i]) && !D_STOP.has(tokens[i].toLowerCase()));
+  for(const i of dShuffle(idxs, rnd)){
+    const tok = tokens[i], low = tok.toLowerCase();
+    let repl = [];
+    const pm = tok.match(D_POSS);
+    if(pm){
+      repl = ["m","d","s"].filter(x=> x!==pm[1].toLowerCase()).map(x=> dCapLike(x+"ein"+(pm[2]||""), tok));
+    } else if(D_NOUN_BY_BARE.has(low)){
+      const n = D_NOUN_BY_BARE.get(low);
+      repl = dShuffle(D_NOUNS.filter(x=> x.de.startsWith(n.art+" ") && x.de!==n.de), rnd).slice(0,2).map(x=> x.de.slice(n.art.length+1));
+    } else if(D_STEMS.has(low)){
+      repl = dShuffle([...D_STEMS.keys()].filter(s=> s!==low && s.length<=7), rnd).slice(0,2).map(s=> dCapLike(s, tok));
+    } else {
+      for(const v of D_SIMPLE_VERBS){
+        const p = PERSONS.find(p=> v[p.key].toLowerCase()===low);
+        if(p){ repl = dShuffle(D_SIMPLE_VERBS.filter(o=> o!==v), rnd).slice(0,2).map(o=> dCapLike(o[p.key], tok)); break; }
+      }
+    }
+    for(const r of repl){
+      const t2 = tokens.slice(); t2[i] = r;
+      const s = t2.join("");
+      if(s!==text && !out.includes(s)) out.push(s);
+      if(out.length>=3) return out;
+    }
+  }
+  return out;
+}
+// Кандидаты из пула, отсортированные по похожести на правильный ответ
+function dSimilar(it, rnd){
+  const itArt = (it.de.match(D_ART_RE)||[])[1];
+  const itBase = it.kind==="verb" ? dBase(it.de) : null;
+  const wc = s=> s.split(/\s+/).length;
+  return dShuffle(D_POOL.filter(x=> x.kind===it.kind && x.key!==it.key), rnd).map(x=>{
+    let s = 0;
+    if(it.kind==="verb"){
+      if(dBase(x.de)===itBase) s += 3;
+      if(x.verb.cat===it.verb.cat) s += 1;
+    } else if(it.kind==="word"){
+      const a = (x.de.match(D_ART_RE)||[])[1];
+      if(x.topic===it.topic) s += 2;
+      if(itArt && a===itArt) s += 2;
+      if(!!itArt===!!a) s += 1;
+    } else {
+      if(x.cat===it.cat) s += 2;
+      if(Math.abs(wc(x.de)-wc(it.de))<=1) s += 1;
+    }
+    return {x, s};
+  }).sort((a,b)=> b.s-a.s).map(o=> o.x);
+}
 function dMakeMC(it, dir, block, rnd){
-  const others = dShuffle(D_POOL.filter(x=> x.kind===it.kind && x.key!==it.key && x.ru!==it.ru && x.de!==it.de), rnd).slice(0,3);
+  const others = [];
+  if(dir==="ru-de" && it.kind==="phrase"){
+    dMutations(it.de, rnd).slice(0,3).forEach(s=> others.push({key:"fake:"+s, de:s, ru:""}));
+  }
+  const usedDe = new Set([it.de, ...others.map(o=>o.de)]), usedRu = new Set([it.ru]);
+  for(const x of dSimilar(it, rnd)){
+    if(others.length>=3) break;
+    if(usedDe.has(x.de) || usedRu.has(x.ru)) continue;
+    others.push(x); usedDe.add(x.de); usedRu.add(x.ru);
+  }
   return {type:"mc", dir, item:it, opts:dShuffle([it, ...others], rnd), block};
 }
+/* ---- Данные для заданий на предложения ---- */
+// Пропуск слова: возвращает текст до и после найденного слова (целым словом, без учёта регистра)
+function dFindWord(sent, word){
+  const esc = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp(`(^|[^\\p{L}])(${esc})(?![\\p{L}])`, "iu");
+  const m = sent.match(re);
+  if(!m) return null;
+  const start = m.index + m[1].length;
+  return {before:sent.slice(0,start), match:sent.substr(start, m[2].length), after:sent.slice(start+m[2].length)};
+}
+function dCount(sent, word){ let n = 0, s = sent; let f; while((f = dFindWord(s, word))){ n++; s = f.after; } return n; }
+function dCap1(s){ return s[0].toUpperCase()+s.slice(1); }
+
+// Предлоги и связки: «Вставь слово»
+const D_PREP_SET = ["für","ohne","gegen","durch","um","bis","mit","nach","bei","seit","von","zu","aus","außer","auf","an","über","in","vor","während","trotz","wegen"];
+// Предлоги, которые в том же предложении тоже могут быть верны — их не даём как неверный вариант
+const D_PREP_CONFLICT = {ohne:["mit"], mit:["ohne","bei","zu","nach","von","vor"], für:["gegen"], gegen:["für","um"],
+  um:["gegen","nach","vor","bis"], vor:["nach"], nach:["vor","zu"], bis:["seit","über","nach"], seit:["bis","vor"],
+  durch:["um","in","über","auf","an","gegen"], trotz:["wegen","während"], wegen:["trotz","während"],
+  während:["wegen","trotz","nach","vor","bei","in"], statt:["trotz","wegen","während"], außer:["mit","ohne","bei"],
+  bei:["mit","neben","zu"], von:["aus","bei","zu"], aus:["von","nach"], zu:["nach","in","mit","von","bei"],
+  gegenüber:["bei","neben","vor","hinter","an"], über:["von"]};
+const D_KONN_GROUPS = [["deshalb","daher","also"],["trotzdem","jedoch","allerdings"],["außerdem","darüber hinaus"],
+  ["schließlich","letztendlich","insgesamt"],["sowieso","immerhin"]];
+const D_KONN = PHRASES.filter(p=> p.cat==="konnektoren" && !p.de.includes("…")).map(p=> p.de);
+const D_GAPS = [];
+PREPOSITIONS.filter(p=> p.case!=="Wechsel").forEach(p=>
+  D_GAPS.push({sent:p.ex, ru:p.exRu, ans:p.de, set:D_PREP_SET, excl:D_PREP_CONFLICT[p.de]||[], note:`${p.de} + ${p.case}`}));
+VERB_PREPS.forEach(v=>{
+  const prep = v.verb.split(" ").pop(), base = v.verb.slice(0, -prep.length-1);
+  const siblings = VERB_PREPS.filter(o=> o!==v && o.verb.startsWith(base+" ")).map(o=> o.verb.split(" ").pop());
+  D_GAPS.push({sent:v.ex, ru:v.exRu, ans:prep, set:D_PREP_SET, excl:siblings.concat(D_PREP_CONFLICT[prep]||[]), note:`${v.verb} + ${v.case} — ${v.ru}`});
+});
+PHRASES.filter(p=> p.cat==="konnektoren" && p.ex && !p.de.includes("…")).forEach(p=>{
+  const group = D_KONN_GROUPS.find(g=> g.includes(p.de)) || [];
+  D_GAPS.push({sent:p.ex, ru:p.exRu, ans:p.de, set:D_KONN, excl:group, note:`${p.de} — ${p.ru}`});
+});
+const D_GAPS_OK = D_GAPS.filter(g=> dCount(g.sent, g.ans)===1);
+
+// Артикль по падежу: шаблоны с однозначным падежом и предметные существительные
+const D_CASE_NOUNS = ["der Tisch","der Stuhl","der Schrank","der Pullover","der Rock","der Schal","der Koffer","der Käse","der Saft",
+  "der Kaffee","der Wagen","der Anzug","der Knopf","der Blumenstrauß","der Hustensaft","die Jacke","die Hose","die Mütze","die Salbe",
+  "die Tablette","die Fahrkarte","die Wohnung","die Küche","die Kapuze","die Schaufel","die Butter","die Tür","das Bett","das Fenster",
+  "das Fahrrad","das Auto","das Buch","das Kleid","das Hemd","das T-Shirt","das Ticket","das Messer","das Brot","das Brettspiel",
+  "das Lehrbuch","das Hotel","das Haus","das Zimmer"]
+  .filter(de=> D_BYKEY["w:"+de]).map(de=>{ const art = de.split(" ")[0]; return {de, art, bare:de.slice(art.length+1), ru:D_BYKEY["w:"+de].ru}; });
+const D_PLACE_NOUNS = new Set(["der Tisch","der Stuhl","der Schrank","das Bett","das Fenster","die Tür","das Auto","das Haus","der Wagen","das Fahrrad","der Koffer","das Hotel"]);
+const D_CASE_TPL = [
+  {s:"___ {N} ist hier.", c:"nom", why:"Подлежащее → Nominativ (кто? что?)"},
+  {s:"Ich brauche ___ {N}.", c:"akk", why:"brauchen + Akkusativ (что?)"},
+  {s:"Hast du ___ {N} gesehen?", c:"akk", why:"sehen + Akkusativ (что?)"},
+  {s:"Das ist für ___ {N}.", c:"akk", why:"für + Akkusativ"},
+  {s:"Was machst du mit ___ {N}?", c:"dat", why:"mit + Dativ"},
+  {s:"Ich bin mit ___ {N} zufrieden.", c:"dat", why:"mit + Dativ"},
+  {s:"Wir sprechen von ___ {N}.", c:"dat", why:"von + Dativ"},
+  {s:"Ich stelle die Tasche neben ___ {N}.", c:"akk", place:true, why:"neben + Akkusativ: куда? (движение)"},
+  {s:"Die Tasche steht neben ___ {N}.", c:"dat", place:true, why:"neben + Dativ: где? (место)"},
+];
+const D_ART_FORMS = {
+  def:   {nom:{der:"der", die:"die", das:"das"},  akk:{der:"den", die:"die", das:"das"},  dat:{der:"dem", die:"der", das:"dem"}},
+  indef: {nom:{der:"ein", die:"eine", das:"ein"}, akk:{der:"einen", die:"eine", das:"ein"}, dat:{der:"einem", die:"einer", das:"einem"}},
+};
+
+// Глагол в нужной форме: ищем спрягаемую форму в примере к глаголу
+const D_MODAL_TOK = new Set(["kann","kannst","können","könnt","muss","musst","müssen","müsst","will","willst","wollen","wollt",
+  "soll","sollst","sollen","sollt","darf","darfst","dürfen","dürft","möchte","möchtest","möchten","möchtet","mag","magst","mögen",
+  "mögt","werde","wirst","wird","werden","werdet","zu","lass","lasst"]);
+const D_VGAPS = new Map();
+VERBS.forEach(v=>{
+  if(v.sep || !v.ex || v.ex.includes("—")) return;
+  const forms = [...new Set(PERSONS.map(p=> v[p.key]))].sort((a,b)=> b.length-a.length);
+  for(const form of forms){
+    const f = dFindWord(v.ex, form);
+    if(!f) continue;
+    if(form.toLowerCase()===v.inf.replace(/^sich\s+/, "").toLowerCase()
+       && v.ex.toLowerCase().split(/[^\p{L}]+/u).some(t=> D_MODAL_TOK.has(t))) continue;
+    D_VGAPS.set("v:"+v.inf, {before:f.before, after:f.after, form:f.match});
+    break;
+  }
+});
+const D_VGAP_ITEMS = D_VERBS.filter(i=> D_VGAPS.has(i.key));
+
+// Порядок слов и «найди ошибку»: придаточные предложения
+const D_SUBCONJ = new Set(["weil","dass","wenn","obwohl","bevor","nachdem","ob"]);
+const D_PRON = new Set(["ich","du","er","sie","es","wir","ihr","man"]);
+const D_ORDER_EXTRA = [
+  {de:"Ich bleibe zu Hause, weil ich krank bin.", ru:"Я остаюсь дома, потому что я болен(льна)."},
+  {de:"Ich weiß, dass du recht hast.", ru:"Я знаю, что ты прав(а)."},
+  {de:"Wenn ich Zeit habe, gehe ich schwimmen.", ru:"Если у меня будет время, я пойду плавать."},
+  {de:"Er kommt nicht, weil er arbeiten muss.", ru:"Он не придёт, потому что должен работать."},
+  {de:"Ich glaube, dass der Film gut ist.", ru:"Я думаю, что фильм хороший."},
+  {de:"Obwohl es regnet, gehen wir spazieren.", ru:"Хотя идёт дождь, мы идём гулять."},
+  {de:"Ich lerne Deutsch, weil ich in Deutschland wohne.", ru:"Я учу немецкий, потому что живу в Германии."},
+  {de:"Sie sagt, dass sie morgen kommt.", ru:"Она говорит, что придёт завтра."},
+  {de:"Ruf mich an, wenn du Zeit hast.", ru:"Позвони мне, когда у тебя будет время."},
+  {de:"Ich trinke Kaffee, bevor ich zur Arbeit gehe.", ru:"Я пью кофе перед тем, как пойти на работу."},
+  {de:"Nachdem wir gegessen haben, gehen wir spazieren.", ru:"После того как поедим, пойдём гулять."},
+  {de:"Ich hoffe, dass alles klappt.", ru:"Надеюсь, что всё получится."},
+];
+const D_ORDER_POOL = [], D_ORDER_BY_KEY = new Map();
+const dWords = s=> s.split(" ").length;
+D_ORDER_EXTRA.filter(s=> !D_SUBCONJ.has(s.de.split(" ")[0].toLowerCase())).forEach(s=> D_ORDER_POOL.push(s));
+VERBS.forEach(v=>{ if(v.ex && !v.ex.includes("—") && dWords(v.ex)>=4 && dWords(v.ex)<=9){ const s = {de:v.ex, ru:v.exRu, key:"v:"+v.inf}; D_ORDER_POOL.push(s); D_ORDER_BY_KEY.set(s.key, s); } });
+PHRASES.forEach(p=>{ if(p.ex && dWords(p.ex)>=4 && dWords(p.ex)<=10){ const s = {de:p.ex, ru:p.exRu, key:"p:"+p.de}; D_ORDER_POOL.push(s); D_ORDER_BY_KEY.set(s.key, s); } });
+
+const D_SENTS = [...new Set([].concat(
+  VERBS.map(v=>v.ex), PREPOSITIONS.flatMap(p=> p.ex ? [p.ex] : [p.exAkk, p.exDat]),
+  VERB_PREPS.map(v=>v.ex), D_ORDER_EXTRA.map(s=>s.de)
+).filter(s=> s && !s.includes("—") && /[.!?]$/.test(s) && dWords(s)>=3 && dWords(s)<=11))];
+const D_PART_AUX = new Map();
+VERBS.forEach(v=>{ if(!v.perf) return; const part = v.perf[1].split(" ").pop().toLowerCase();
+  D_PART_AUX.set(part, D_PART_AUX.has(part) && D_PART_AUX.get(part)!==v.perf[0] ? "?" : v.perf[0]); });
+const D_HABEN = new Set(["habe","hast","hat","haben","habt"]), D_SEIN = new Set(["bin","bist","ist","sind","seid"]);
+const D_AUX_SWAP = {habe:"bin", hast:"bist", hat:"ist", haben:"sind", habt:"seid", bin:"habe", bist:"hast", ist:"hat", sind:"haben", seid:"habt"};
+const D_WECHSEL = new Set(["in","an","auf","über","unter","vor","hinter","neben","zwischen","im","ins","am","ans"]);
+
+// Делает в правильном предложении одну типичную ошибку; возвращает {bad, why} или null
+function dMutateError(sent, rnd, allowConj){
+  const toks = sent.split(" ");
+  const strip = t=> t.replace(/[,.!?]+$/, "");
+  for(const rule of dShuffle(allowConj ? ["conj","aux","case","order"] : ["aux","case","order"], rnd)){
+    if(rule==="conj"){
+      const w0 = toks[0].toLowerCase();
+      if((w0==="ich" || w0==="er") && toks[1]){
+        const w1 = strip(toks[1]).toLowerCase();
+        const v = VERBS.find(v=> !v.sep && v[w0].split(" ")[0]===w1);
+        if(v){
+          // ich → форма er (Ich kommt), er → форма du (Er kommst): обе однозначно неверны
+          const other = (w0==="ich" ? v.er : v.du).split(" ")[0];
+          if(other!==w1){
+            const t2 = toks.slice(); t2[1] = toks[1].replace(new RegExp(w1, "i"), other);
+            return {bad:t2.join(" "), why:`Спряжение: «${toks[0]} ${w1}», а не «${toks[0]} ${other}»`};
+          }
+        }
+      }
+    }
+    if(rule==="aux"){
+      const last = strip(toks[toks.length-1]).toLowerCase(), aux = D_PART_AUX.get(last);
+      if(aux && aux!=="?"){
+        const fam = aux==="hat" ? D_HABEN : D_SEIN;
+        const i = toks.findIndex(t=> fam.has(strip(t).toLowerCase()));
+        if(i>=0){
+          const t2 = toks.slice(); t2[i] = dCapLike(D_AUX_SWAP[strip(toks[i]).toLowerCase()], toks[i]) + toks[i].slice(strip(toks[i]).length);
+          return {bad:t2.join(" "), why:`Perfekt: «${last}» образуется с ${aux==="hat" ? "haben" : "sein"}`};
+        }
+      }
+    }
+    if(rule==="case" && !toks.some(t=> D_WECHSEL.has(strip(t).toLowerCase()))){
+      const i = toks.findIndex(t=> ["den","dem","einen","einem"].includes(t.toLowerCase()));
+      if(i>=0){
+        const sw = {den:"dem", dem:"den", einen:"einem", einem:"einen"}[toks[i].toLowerCase()];
+        const t2 = toks.slice(); t2[i] = dCapLike(sw, toks[i]);
+        return {bad:t2.join(" "), why:`Падеж: здесь нужно «${toks[i]}», а не «${sw}»`};
+      }
+    }
+    if(rule==="order"){
+      const ci = toks.findIndex(t=> D_SUBCONJ.has(strip(t).toLowerCase()));
+      if(ci>=0 && toks[ci+1] && D_PRON.has(toks[ci+1].toLowerCase())){
+        let end = ci+1;
+        while(end < toks.length-1 && !/,$/.test(toks[end])) end++;
+        if(end-ci >= 3){
+          const punct = (toks[end].match(/[,.!?]+$/)||[""])[0], verb = strip(toks[end]);
+          const middle = toks.slice(ci+2, end);
+          const moved = [toks[ci+1], verb, ...middle];
+          moved[moved.length-1] += punct;
+          const bad = toks.slice(0, ci+1).concat(moved, toks.slice(end+1)).join(" ");
+          if(bad!==sent) return {bad, why:"В придаточном предложении (после weil, dass, wenn…) глагол стоит в конце"};
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// Ситуации для «Что сказать?»; not — фразы, которые тоже подошли бы, их не даём как неверные
+const D_SITUATIONS = [
+  {sit:"Друг рассказывает, что сдал экзамен.", ans:"Herzlichen Glückwunsch!", not:["Nice!","Krass!","Läuft bei dir!","Geil!","Boah!","Ich bin stolz auf dich!","Das ist mega!"]},
+  {sit:"Коллега заболел и уходит домой.", ans:"Gute Besserung!", not:["Sei gesund!"]},
+  {sit:"Вы не расслышали, что сказал собеседник.", ans:"Wie bitte?", not:["Ehrlich?"]},
+  {sit:"Друг извиняется, что опоздал на пять минут. Вы не сердитесь.", ans:"Macht nichts.", not:["Kein Problem.","Alles klar!","Passt.","Easy."]},
+  {sit:"Подруга завтра идёт на собеседование.", ans:"Viel Glück!", not:["Die Daumen drücken","Mach dir keine Sorgen."]},
+  {sit:"Друзья уходят на вечеринку.", ans:"Viel Spaß!", not:[]},
+  {sit:"Гость впервые пришёл к вам домой.", ans:"Herzlich willkommen!", not:[]},
+  {sit:"Вас спрашивают, где поужинать, а вам правда всё равно.", ans:"Das ist mir egal.", not:["Das ist mir Wurst.","Passt.","Easy."]},
+  {sit:"Вас спрашивают, сколько стоит ремонт машины, а вы понятия не имеете.", ans:"Ich habe keine Ahnung.", not:["Ich bin mir nicht sicher."]},
+  {sit:"Подруга нервничает перед экзаменом. Успокойте её.", ans:"Mach dir keine Sorgen.", not:["Viel Glück!","Die Daumen drücken"]},
+  {sit:"Концерт отменили, а вы очень его ждали.", ans:"Schade!", not:["Pech gehabt!","Mann!"]},
+  {sit:"Вам объяснили сложную тему, и вы ничего не поняли.", ans:"Ich verstehe nur Bahnhof.", not:["Wie bitte?"]},
+  {sit:"31 декабря прощаетесь с соседом до следующего года.", ans:"Guten Rutsch (ins neue Jahr)!", not:[]},
+  {sit:"Встречаете друга на улице и неформально здороваетесь.", ans:"Was geht?", not:["Wie geht's?","Alter!","Digga!"]},
+  {sit:"Друг рассказал что-то невероятное.", ans:"Krass!", not:["Boah!","Ehrlich?","Alter!","Digga!","Mann!"]},
+  {sit:"Вам предлагают бегать под дождём, а вы совсем не хотите.", ans:"Ich hab keinen Bock.", not:["Ich habe keine Lust.","Auf keinen Fall."]},
+  {sit:"Вы наконец поняли, что имел в виду собеседник.", ans:"Ach so!", not:["Alles klar!","Genau!"]},
+  {sit:"Звоните арендодателю, чтобы узнать о квартире.", ans:"Ich rufe Sie an, um mich nach Ihrer Wohnung zu erkundigen.", not:[]},
+  {sit:"Хотите вежливо попросить незнакомого человека об услуге.", ans:"Ich möchte Sie um einen Gefallen bitten.", not:[]},
+  {sit:"Коллега болтает, пока вы сосредоточенно работаете.", ans:"Lenken Sie mich bitte nicht ab!", not:["Ich bin gerade beschäftigt."]},
+  {sit:"Ваш ребёнок получил отличную оценку.", ans:"Ich bin stolz auf dich!", not:["Herzlichen Glückwunsch!","Läuft bei dir!","Nice!","Geil!","Das ist mega!"]},
+  {sit:"Друг спрашивает, стоило ли ехать в долгую поездку. Стоило!", ans:"Es hat sich gelohnt.", not:[]},
+  {sit:"Вас зовут гулять, но ответ зависит от погоды.", ans:"Das hängt davon ab.", not:["Es kommt darauf an.","Jein.","Ich bin mir nicht sicher."]},
+  {sit:"Друг не выиграл в лотерею.", ans:"Pech gehabt!", not:["Schade!","Mann!"]},
+  {sit:"Сосед расспрашивает о чужих делах, которые вас не касаются.", ans:"Das ist nicht mein Bier.", not:["Das ist mir egal.","Das ist mir Wurst."]},
+  {sit:"Собеседник сказал именно то, что вы думаете.", ans:"Genau!", not:["Auf jeden Fall.","Alles klar!"]},
+  {sit:"Друг звонит поболтать, а вы сейчас заняты.", ans:"Ich bin gerade beschäftigt.", not:["Lenken Sie mich bitte nicht ab!","Ich will dich nicht stören."]},
+  {sit:"Уезжаете в отпуск и просите друга присмотреть за цветами.", ans:"Pass bitte auf meine Blumen auf.", not:[]},
+  {sit:"Вас спрашивают, понравился ли фильм. И да, и нет.", ans:"Jein.", not:["Es kommt darauf an.","Das hängt davon ab."]},
+  {sit:"Друг хочет за вас заплатить, а вы категорически против.", ans:"Auf keinen Fall.", not:["Ich hab keinen Bock."]},
+].filter(s=> D_BYKEY["p:"+s.ans]);
+const D_SIT_BY_DE = new Map(D_SITUATIONS.map(s=> [s.ans, s]));
+const D_SIT_CATS = new Set(["alltag","meinung","slang","idiome","hoeflich"]);
+
+// Озвучка: встроенный синтез речи браузера
+const D_TTS = typeof window.speechSynthesis!=="undefined" && typeof window.SpeechSynthesisUtterance!=="undefined";
+if(D_TTS) speechSynthesis.getVoices();
+function dSpeak(text, rate){
+  if(!D_TTS) return;
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE"; u.rate = rate || 0.9;
+    const vs = speechSynthesis.getVoices();
+    const v = vs.find(v=> v.lang==="de-DE") || vs.find(v=> v.lang && v.lang.toLowerCase().startsWith("de"));
+    if(v) u.voice = v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+/* ---- Генераторы заданий ---- */
+function dPickUnused(arr, rnd, used, keyOf){
+  for(let a=0; a<30; a++){ const x = dPick(arr, rnd); const k = keyOf(x); if(!used.has(k)){ used.add(k); return x; } }
+  return dPick(arr, rnd);
+}
+function dMakeGap(rnd, block, used){
+  const g = dPickUnused(D_GAPS_OK, rnd, used, g=> "s:"+g.sent);
+  const f = dFindWord(g.sent, g.ans);
+  const excl = new Set([g.ans, ...g.excl]);
+  const others = dShuffle(g.set.filter(x=> !excl.has(x)), rnd).slice(0,3);
+  const cap = /^[A-ZÄÖÜ]/.test(f.match);
+  const opts = dShuffle([g.ans, ...others], rnd).map(o=> cap ? dCap1(o) : o);
+  return {type:"gap", before:f.before, after:f.after, ans:cap ? dCap1(g.ans) : g.ans, opts, sub:g.ru, note:g.note, block};
+}
+function dMakeCase(rnd, block, used){
+  let tpl, n;
+  for(let a=0; a<30; a++){
+    tpl = dPick(D_CASE_TPL, rnd);
+    n = dPick(D_CASE_NOUNS.filter(x=> !tpl.place || D_PLACE_NOUNS.has(x.de)), rnd);
+    if(!used.has("c:"+tpl.s+n.de)){ used.add("c:"+tpl.s+n.de); break; }
+  }
+  const kind = rnd()<0.5 ? "def" : "indef";
+  const ans = D_ART_FORMS[kind][tpl.c][n.art];
+  const set = kind==="def" ? ["der","die","das","den","dem"] : ["ein","eine","einen","einem","einer"];
+  const atStart = tpl.s.startsWith("___");
+  const cap = s=> atStart ? dCap1(s) : s;
+  const [before, after] = tpl.s.replace("{N}", n.bare).split("___");
+  const opts = dShuffle(dShuffle(set.filter(x=> x!==ans), rnd).slice(0,3).concat([ans]), rnd).map(cap);
+  return {type:"case", before, after, ans:cap(ans), opts, sub:`${n.de} — ${n.ru}`, note:`${tpl.why} → ${ans} ${n.bare}`, block};
+}
+function dMakeOrder(rnd, block, used, src){
+  const s = src || dPickUnused(D_ORDER_POOL, rnd, used, s=> "o:"+s.de);
+  const words = s.de.replace(/[.!?]+$/, "").split(" ").map(w=> w.replace(/,$/, ""));
+  let order = dShuffle(words.map((_,i)=>i), rnd);
+  for(let a=0; a<5 && order.every((v,i)=> v===i); a++) order = dShuffle(order, rnd);
+  return {type:"order", item: s.key ? D_BYKEY[s.key] : undefined, words, order, sent:s.de, ru:s.ru, block};
+}
+function dMakeError(rnd, block, used){
+  // Спряжение подходит почти к любому предложению, поэтому в 70% случаев сначала ищем ошибку в падеже, порядке слов или Perfekt
+  for(const allowConj of rnd()<0.3 ? [true] : [false, true]){
+    for(let a=0; a<120; a++){
+      const src = dPick(D_SENTS, rnd);
+      if(used.has("e:"+src)) continue;
+      const mut = dMutateError(src, rnd, allowConj);
+      if(!mut) continue;
+      used.add("e:"+src);
+      const others = dShuffle(D_SENTS.filter(s=> s!==src && Math.abs(dWords(s)-dWords(src))<=3), rnd).slice(0,2);
+      const opts = dShuffle([{de:mut.bad, bad:true}, ...others.map(de=>({de, bad:false}))], rnd);
+      return {type:"error", opts, good:src, why:mut.why, block};
+    }
+  }
+  return dMakeGap(rnd, block, used);
+}
+function dMakeAudio(it, block, rnd){
+  const others = [], used = new Set([it.de]);
+  for(const x of dSimilar(it, rnd)){ if(others.length>=3) break; if(used.has(x.de)) continue; others.push(x); used.add(x.de); }
+  return {type:"audio", item:it, opts:dShuffle([it, ...others], rnd), block};
+}
+function dMakeSituation(it, block, rnd){
+  const s = D_SIT_BY_DE.get(it.de), excl = new Set([it.de, ...s.not]);
+  const others = dShuffle(D_POOL.filter(x=> x.kind==="phrase" && D_SIT_CATS.has(x.cat) && !excl.has(x.de)), rnd).slice(0,3);
+  return {type:"situation", item:it, sit:s.sit, opts:dShuffle([it, ...others], rnd), block};
+}
+// Задание на грамматику без привязки к карточке (используется в «Грамматике дня» и как бонус в повторении)
+function dGramTask(type, rnd, block, used){
+  switch(type){
+    case "conj":  return {type:"conj", item:dPickUnused(D_VERBS, rnd, used, i=>i.key), person:dPick(PERSONS, rnd), block};
+    case "perf":  return {type:"perf", item:dPickUnused(D_PERF_VERBS, rnd, used, i=>i.key), block};
+    case "art":   return {type:"art", item:dPickUnused(D_NOUNS, rnd, used, i=>i.key), block};
+    case "vgap":  { const it = dPickUnused(D_VGAP_ITEMS, rnd, used, i=>i.key); return {type:"vgap", item:it, gap:D_VGAPS.get(it.key), block}; }
+    case "case":  return dMakeCase(rnd, block, used);
+    case "gap":   return dMakeGap(rnd, block, used);
+    case "order": return dMakeOrder(rnd, block, used);
+    case "error": return dMakeError(rnd, block, used);
+  }
+}
+
 function dMakeTask(ty, it, block, rnd, dir){
   if(ty==="mc") return dMakeMC(it, dir, block, rnd);
   if(ty==="conj") return {type:"conj", item:it, person:dPick(PERSONS, rnd), block};
+  if(ty==="vgap") return {type:"vgap", item:it, gap:D_VGAPS.get(it.key), block};
+  if(ty==="audio") return dMakeAudio(it, block, rnd);
+  if(ty==="situation") return dMakeSituation(it, block, rnd);
+  if(ty==="order") return dMakeOrder(rnd, block, new Set(), D_ORDER_BY_KEY.get(it.key));
   return {type:ty, item:it, block};
 }
 function dTypesFor(it){
-  if(it.kind==="verb") return it.verb.perf ? ["conj","input","perf","mc"] : ["conj","input","mc"];
-  if(it.kind==="word") return D_NOUNS.includes(it) ? ["art","input","mc"] : ["input","mc"];
-  return ["mc"];
+  const t = [];
+  if(it.kind==="verb"){
+    t.push("conj");
+    if(D_VGAPS.has(it.key)) t.push("vgap");
+    t.push("input");
+    if(it.verb.perf) t.push("perf");
+    if(D_TTS) t.push("audio");
+    if(D_ORDER_BY_KEY.has(it.key)) t.push("order");
+    t.push("mc");
+  } else if(it.kind==="word"){
+    if(D_NOUNS.includes(it)) t.push("art");
+    t.push("input");
+    if(D_TTS) t.push("audio");
+    t.push("mc");
+  } else {
+    if(D_SIT_BY_DE.has(it.de)) t.push("situation");
+    if(D_ORDER_BY_KEY.has(it.key)) t.push("order");
+    if(D_TTS && dWords(it.de)<=4) t.push("audio");
+    t.push("mc");
+  }
+  return t;
 }
 function dTypeKey(t){ return t.type==="mc" ? "mc-"+t.dir : t.type; }
 
 // Общая часть дня: одинакова на всех устройствах (зависит только от даты)
 function dSharedTasks(today){
-  const g = dGramOfDay(today), rnd = dRng(dHash("deutsch-daily-"+today));
-  const src = g.type==="art" ? D_NOUNS : (g.type==="perf" ? D_PERF_VERBS : D_VERBS);
-  const gram = dShuffle(src, rnd).slice(0,5).map(it=> g.type==="conj"
-    ? {type:"conj", item:it, person:dPick(PERSONS, rnd), block:"gram"}
-    : {type:g.type, item:it, block:"gram"});
-  const gramKeys = new Set(gram.map(t=>t.item.key));
+  const g = dGramOfDay(today), rnd = dRng(dHash("deutsch-daily-"+today)), used = new Set();
+  const gram = [];
+  for(let k=0; k<5; k++) gram.push(dGramTask(g.type, rnd, "gram", used));
+  const gramKeys = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
   const pairs = [], usedRu = new Set();
   for(const i of dShuffle(D_POOL.filter(i=> i.kind!=="phrase" && !gramKeys.has(i.key) && i.ru.length<=26 && i.de.length<=18), rnd)){
     if(usedRu.has(i.ru)) continue;
@@ -3077,7 +3498,7 @@ function dBuildSession(len){
   const cfg = D_LEN[len], today = dToday(), rnd = Math.random;
   const shared = dSharedTasks(today);
   const gram = shared.gram.slice(0, cfg.gram);
-  const reserved = new Set(gram.map(t=>t.item.key));
+  const reserved = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
 
   const due = dShuffle(dDueKeys(today), rnd).sort((a,b)=> dSrs[a].due.localeCompare(dSrs[b].due))
     .filter(k=>!reserved.has(k)).map(k=>D_BYKEY[k]);
@@ -3113,6 +3534,13 @@ function dBuildSession(len){
     tasks.push(task);
     prevKey = dTypeKey(task);
   });
+  // Бонусная грамматика в повторении — других тем, чем «Грамматика дня», чтобы каждый день было разнообразно
+  const bonusTypes = dShuffle(["case","gap","error","order","vgap"].filter(t=> t!==shared.g.type), rnd).slice(0, {5:1, 10:2, 20:3}[len]);
+  const revStart = tasks.length - revItems.length, used = new Set();
+  bonusTypes.forEach((ty, k)=>{
+    const pos = revStart + Math.round((k+1) * (revItems.length + k + 1) / (bonusTypes.length + 1));
+    tasks.splice(Math.min(pos, tasks.length), 0, dGramTask(ty, rnd, "review", used));
+  });
   tasks.push(...gram, shared.match);
   return {tasks, gramLabel: shared.g.label};
 }
@@ -3138,13 +3566,14 @@ function dSrsUpdate(it, ok){
 }
 function dAnswer(t, ok){
   if(t.block==="retry"){ dS.retryTotal++; if(ok) dS.retryOk++; }
-  else { dS.scored++; if(ok) dS.correct++; else if(t.type!=="match") dS.wrongTasks.push(t); }
+  else { dS.scored++; if(ok) dS.correct++; else if(t.item) dS.wrongTasks.push(t); }
   if(t.item) dSrsUpdate(t.item, ok);
 }
 function dMakeRetry(t){
   const it = t.item;
   if(t.type==="conj") return {type:"conj", item:it, person:dPick(PERSONS.filter(p=>p.key!==t.person.key), Math.random), block:"retry"};
   if(t.type==="perf" || t.type==="art") return {type:t.type, item:it, block:"retry"};
+  if(t.type==="vgap") return {type:"vgap", item:it, gap:t.gap, block:"retry"};
   if(t.type==="input") return dMakeMC(it, "ru-de", "retry", Math.random);
   if(it.kind!=="phrase") return {type:"input", item:it, block:"retry"};
   return dMakeMC(it, t.dir==="de-ru" ? "ru-de" : "de-ru", "retry", Math.random);
@@ -3186,7 +3615,8 @@ function dRenderTask(){
   dEl("dProg").style.width = Math.round(dS.i/total*100)+"%";
   dEl("dBlock").textContent = dBlockLabel(t);
   const box = dEl("dTask");
-  ({intro:dRIntro, mc:dRMC, input:dRInput, conj:dRConj, perf:dRPerf, art:dRArt, match:dRMatch})[t.type](t, box);
+  ({intro:dRIntro, mc:dRMC, input:dRInput, conj:dRConj, perf:dRPerf, art:dRArt, match:dRMatch,
+    gap:dRGapMC, case:dRGapMC, vgap:dRVGap, order:dROrder, error:dRError, audio:dRAudio, situation:dRSituation})[t.type](t, box);
   window.scrollTo(0,0);
 }
 
@@ -3204,11 +3634,11 @@ function dWireUmlauts(box){
   });
 }
 function dExample(it){ return it && it.ex ? `<div class="d-ex">${escapeHtml(it.ex)}<br><span>${escapeHtml(it.exRu)}</span></div>` : ""; }
-function dAfter(box, ok, correctText, it){
+function dAfter(box, ok, correctText, it, wrongMsg, note){
   const fb = box.querySelector(".d-fb");
   fb.className = "d-fb feedback " + (ok ? "correct" : "wrong");
-  fb.textContent = ok ? "Richtig!" : (correctText ? "Richtig wäre: „"+correctText+"“" : "Не совсем — правильный ответ выделен");
-  fb.insertAdjacentHTML("afterend", dExample(it));
+  fb.textContent = ok ? "Richtig!" : (wrongMsg || (correctText ? "Richtig wäre: „"+correctText+"“" : "Не совсем — правильный ответ выделен"));
+  fb.insertAdjacentHTML("afterend", (note ? `<div class="d-ex">${escapeHtml(note)}</div>` : "") + dExample(it));
   const c = box.querySelector(".d-check"); if(c) c.style.display = "none";
   const nb = box.querySelector(".d-next"); nb.style.display = ""; nb.onclick = dNext; nb.focus();
 }
@@ -3217,6 +3647,112 @@ function dWireInputCheck(box, check){
   dWireUmlauts(box);
   box.querySelector(".d-check").onclick = ()=>{ if(!inp.value.trim()) { inp.focus(); return; } check(inp); };
   inp.focus();
+}
+
+function dOptionsHTML(labels){ return `<div class="options">${labels.map((l,i)=>`<button class="opt" data-i="${i}">${escapeHtml(l)}</button>`).join("")}</div>`; }
+// Общая логика выбора варианта: подсветить верный, отметить ошибку, засчитать
+function dWireOptions(box, isRight, onDone){
+  box.querySelector(".d-check").style.display = "none";
+  box.querySelectorAll(".options .opt").forEach(b=> b.onclick = ()=>{
+    const i = +b.dataset.i, ok = isRight(i);
+    box.querySelectorAll(".options .opt").forEach(x=>{ x.disabled = true; if(isRight(+x.dataset.i)) x.classList.add("correct"); });
+    if(!ok) b.classList.add("wrong");
+    onDone(ok);
+  });
+}
+function dRGapMC(t, box){
+  box.innerHTML = `
+    <div class="q-label">${t.type==="case" ? "Выбери артикль в нужном падеже" : "Вставь пропущенное слово"}</div>
+    <div class="q-sent">${escapeHtml(t.before)}<span class="gap">___</span>${escapeHtml(t.after)}</div>
+    <div class="q-sub">${escapeHtml(t.sub)}</div>
+    ${dOptionsHTML(t.opts)}${D_ACTIONS}`;
+  dWireOptions(box, i=> t.opts[i]===t.ans, ok=>{
+    const gap = box.querySelector(".gap"); gap.textContent = t.ans; gap.classList.add(ok ? "ok" : "bad");
+    dAnswer(t, ok);
+    dAfter(box, ok, null, null, null, t.note);
+  });
+}
+function dRVGap(t, box){
+  const g = t.gap, v = t.item.verb;
+  box.innerHTML = `
+    <div class="q-label">Поставь глагол в нужную форму</div>
+    <div class="q-sent">${escapeHtml(g.before)}<span class="gap">___</span><span class="gap-hint"> (${escapeHtml(v.inf)})</span>${escapeHtml(g.after)}</div>
+    <div class="q-sub">${escapeHtml(v.exRu)}</div>
+    ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
+  dWireInputCheck(box, inp=>{
+    const ok = normalize(inp.value)===normalize(g.form);
+    inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
+    const gap = box.querySelector(".gap"); gap.textContent = g.form; gap.classList.add(ok ? "ok" : "bad");
+    box.querySelector(".gap-hint").remove();
+    dAnswer(t, ok);
+    dAfter(box, ok, g.form, null);
+  });
+}
+function dROrder(t, box){
+  box.innerHTML = `
+    <div class="q-label">Собери предложение</div>
+    <div class="q-sit">${escapeHtml(t.ru)}</div>
+    <div class="built"></div>
+    <div class="tiles">${t.order.map(i=>`<button class="tile" data-i="${i}">${escapeHtml(t.words[i])}</button>`).join("")}</div>
+    ${D_ACTIONS}`;
+  const built = [], bEl = box.querySelector(".built");
+  let done = false;
+  const redraw = ()=>{
+    bEl.innerHTML = built.length ? built.map((i,pos)=>`<button class="tile" data-pos="${pos}">${escapeHtml(t.words[i])}</button>`).join("")
+      : `<span class="built-hint">нажимай на слова по порядку</span>`;
+    bEl.querySelectorAll(".tile").forEach(b=> b.onclick = ()=>{
+      if(done) return;
+      const i = built.splice(+b.dataset.pos, 1)[0];
+      box.querySelector(`.tiles .tile[data-i="${i}"]`).classList.remove("used");
+      redraw();
+    });
+  };
+  redraw();
+  box.querySelectorAll(".tiles .tile").forEach(b=> b.onclick = ()=>{
+    if(done || b.classList.contains("used")) return;
+    b.classList.add("used"); built.push(+b.dataset.i); redraw();
+  });
+  box.querySelector(".d-check").onclick = ()=>{
+    const fb = box.querySelector(".d-fb");
+    if(built.length < t.words.length){ fb.className = "d-fb feedback wrong"; fb.textContent = "Используй все слова"; return; }
+    done = true;
+    const ok = built.map(i=> t.words[i]).join(" ").toLowerCase() === t.words.join(" ").toLowerCase();
+    bEl.classList.add(ok ? "ok" : "bad");
+    dAnswer(t, ok);
+    dAfter(box, ok, t.sent, null);
+  };
+}
+function dRError(t, box){
+  box.innerHTML = `
+    <div class="q-label">В каком предложении ошибка?</div>
+    ${dOptionsHTML(t.opts.map(o=>o.de))}${D_ACTIONS}`;
+  dWireOptions(box, i=> t.opts[i].bad, ok=>{
+    dAnswer(t, ok);
+    dAfter(box, ok, null, null, "Ошибка была в другом предложении — оно выделено", `Правильно: «${t.good}» — ${t.why}`);
+  });
+}
+function dRAudio(t, box){
+  const it = t.item;
+  box.innerHTML = `
+    <div class="q-label">Что ты слышишь?</div>
+    <div class="play-row"><button type="button" class="play-btn" data-r="0.9">▶ Слушать</button><button type="button" class="play-btn" data-r="0.6">Медленно</button></div>
+    ${dOptionsHTML(t.opts.map(o=>o.de))}${D_ACTIONS}`;
+  box.querySelectorAll(".play-btn").forEach(b=> b.onclick = ()=> dSpeak(it.de, +b.dataset.r));
+  dSpeak(it.de, 0.9);
+  dWireOptions(box, i=> t.opts[i].key===it.key, ok=>{
+    dAnswer(t, ok);
+    dAfter(box, ok, null, null, null, `${it.de} — ${it.ru}`);
+  });
+}
+function dRSituation(t, box){
+  box.innerHTML = `
+    <div class="q-label">Что сказать?</div>
+    <div class="q-sit">${escapeHtml(t.sit)}</div>
+    ${dOptionsHTML(t.opts.map(o=>o.de))}${D_ACTIONS}`;
+  dWireOptions(box, i=> t.opts[i].key===t.item.key, ok=>{
+    dAnswer(t, ok);
+    dAfter(box, ok, null, t.item, null, `${t.item.de} — ${t.item.ru}`);
+  });
 }
 
 function dRIntro(t, box){
@@ -3250,20 +3786,28 @@ function dRMC(t, box){
 }
 function dRInput(t, box){
   const it = t.item;
-  const hasArt = /^(der|die|das) /.test(it.de);
+  const art = (it.de.match(D_ART_RE)||[])[1];
   box.innerHTML = `
     <div class="q-label">Напиши по-немецки</div>
     <div class="q-word">${escapeHtml(it.ru)}</div>
-    ${hasArt ? '<div class="q-sub">артикль можно не писать</div>' : ''}
+    ${art ? '<div class="q-sub">с артиклем: der, die или das</div>' : ''}
     ${D_INPUT}${D_UMLAUTS}${D_ACTIONS}`;
   dWireInputCheck(box, inp=>{
-    const acc = [it.de, it.de.replace(/^(der|die|das)\s+/, ""), it.de.replace(/^sich\s+/, "")];
+    // Существительные засчитываются только с правильным артиклем
+    const acc = [it.de, it.de.replace(/^sich\s+/, "")];
     const sg = it.ru.match(/ед\. ((?:der|die|das) \S+)\)/);
-    if(sg) acc.push(sg[1], sg[1].replace(/^(der|die|das)\s+/, ""));
-    const ok = acc.map(normalize).includes(normalize(inp.value));
+    if(sg) acc.push(sg[1]);
+    const typed = normalize(inp.value);
+    const ok = acc.map(normalize).includes(typed);
+    let msg = null;
+    if(!ok && art){
+      const typedBare = typed.replace(/^(der|die|das)\s+/, "");
+      const bares = acc.map(a=> normalize(a).replace(/^(der|die|das)\s+/, ""));
+      if(bares.includes(typedBare)) msg = typedBare===typed ? `Почти! Нужен артикль: „${it.de}“` : `Слово верно, но артикль другой: „${it.de}“`;
+    }
     inp.disabled = true; inp.classList.add(ok ? "correct" : "wrong");
     dAnswer(t, ok);
-    dAfter(box, ok, it.de, it);
+    dAfter(box, ok, it.de, it, msg);
   });
 }
 function dRConj(t, box){
