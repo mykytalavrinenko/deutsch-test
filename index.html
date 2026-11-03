@@ -18,6 +18,7 @@
     --bad-soft:#FBE8E3;
     --amber:#B8863A;
     --amber-soft:#F5EBD8;
+    --hot-bg:#9A6A22; --blitz-bg:#B4452E; --dlg-bg:#33784F;
     --shadow: 0 1px 2px rgba(28,34,46,.04), 0 8px 24px -12px rgba(28,34,46,.18);
   }
   @media (prefers-color-scheme: dark){
@@ -37,6 +38,7 @@
       --bad-soft:#3A2420;
       --amber:#E0B871;
       --amber-soft:#3A2F19;
+      --hot-bg:var(--amber); --blitz-bg:var(--bad); --dlg-bg:var(--good);
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
     }
   }
@@ -56,6 +58,7 @@
     --bad-soft:#3A2420;
     --amber:#E0B871;
     --amber-soft:#3A2F19;
+    --hot-bg:var(--amber); --blitz-bg:var(--bad); --dlg-bg:var(--good);
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
   }
 
@@ -227,7 +230,7 @@
     background:var(--accent-soft); color:var(--accent-ink);
   }
   .home-card .badge-mono svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
-  .home-card[data-target="screen-dialog"] .badge-mono, #dlgList .badge-mono{background:var(--good-soft);color:var(--good);}
+  #dlgList .badge-mono{background:var(--good-soft);color:var(--good);}
   .home-card .txt{flex:1;min-width:0;}
   .home-card .txt .t{font-size:15.5px;font-weight:700;margin-bottom:2px;}
   .home-card .txt .d{font-size:12.5px;color:var(--ink-muted);}
@@ -284,11 +287,14 @@
   .lex-intro{margin-bottom:12px;}
 
   /* ---- Daily Challenge ---- */
-  .home-card.daily-card{background:var(--accent);border-color:var(--accent);color:var(--surface);}
-  .home-card.daily-card:hover{border-color:var(--accent-ink);}
-  .home-card.daily-card .badge-mono{background:color-mix(in srgb, var(--surface) 22%, transparent);color:var(--surface);}
-  .home-card.daily-card .txt .d, .home-card.daily-card .chevron{color:color-mix(in srgb, var(--surface) 82%, transparent);}
-  .home-card.hot-card .badge-mono{background:var(--amber-soft);color:var(--amber);font-size:15px;}
+  .home-card.daily-card{--card-bg:var(--accent);}
+  .home-card.hot-card{--card-bg:var(--hot-bg);}
+  .home-card.blitz-card{--card-bg:var(--blitz-bg);}
+  .home-card.dlg-card{--card-bg:var(--dlg-bg);}
+  .home-card.solid{background:var(--card-bg);border-color:var(--card-bg);color:var(--surface);}
+  .home-card.solid:hover{border-color:var(--ink-muted);}
+  .home-card.solid .badge-mono{background:color-mix(in srgb, var(--surface) 22%, transparent);color:var(--surface);}
+  .home-card.solid .txt .d, .home-card.solid .chevron{color:color-mix(in srgb, var(--surface) 85%, transparent);}
   .daily-note{background:var(--accent-soft);color:var(--accent-ink);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.45;}
   .hot-list{display:flex;flex-direction:column;gap:6px;margin:4px 0 16px;}
   .hot-row{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 10px;border-radius:10px;background:var(--surface-2);}
@@ -363,7 +369,6 @@
   .built .tile{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);}
   .play-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;}
   .play-btn{border:1px solid var(--accent);background:var(--accent-soft);color:var(--accent-ink);border-radius:11px;padding:11px 18px;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;}
-  .home-card.blitz-card .badge-mono{background:var(--bad-soft);color:var(--bad);font-size:15px;}
 
   .activity{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow);}
   .activity{display:flex;align-items:center;gap:14px;}
@@ -745,7 +750,7 @@
     </div>
     <div class="activity" id="activity"></div>
     <div class="home-grid">
-      <button class="home-card daily-card" data-target="screen-daily">
+      <button class="home-card solid daily-card" data-target="screen-daily">
         <div class="badge-mono" data-ico="daily"></div>
         <div class="txt">
           <div class="t">Daily Challenge</div>
@@ -753,7 +758,7 @@
         </div>
         <div class="chevron">›</div>
       </button>
-      <button class="home-card hot-card" data-target="screen-daily" data-mode="hot">
+      <button class="home-card solid hot-card" data-target="screen-daily" data-mode="hot">
         <div class="badge-mono" data-ico="flame"></div>
         <div class="txt">
           <div class="t">Горячая десятка</div>
@@ -761,7 +766,7 @@
         </div>
         <div class="chevron">›</div>
       </button>
-      <button class="home-card blitz-card" data-target="screen-daily" data-mode="blitz">
+      <button class="home-card solid blitz-card" data-target="screen-daily" data-mode="blitz">
         <div class="badge-mono" data-ico="timer"></div>
         <div class="txt">
           <div class="t">Блиц 60 секунд</div>
@@ -769,7 +774,7 @@
         </div>
         <div class="chevron">›</div>
       </button>
-      <button class="home-card" data-target="screen-dialog">
+      <button class="home-card solid dlg-card" data-target="screen-dialog">
         <div class="badge-mono" data-ico="chat"></div>
         <div class="txt">
           <div class="t">Интерактивный диалог</div>
@@ -4854,6 +4859,11 @@ const ICONS = {
   coffee:'<path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/>',
   train:'<path d="M8 3.1V7a4 4 0 0 0 8 0V3.1M9 15l-1-1M15 15l1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5z"/><path d="m8 19-2 3M16 19l2 3"/>',
   speaker:'<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+  office:'<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l9 5H3z"/>',
+  pin:'<path d="M20 10c0 5-5.5 10.2-7.4 11.8a1 1 0 0 1-1.2 0C9.5 20.2 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  basket:'<path d="m15 11-1 9M19 11l-4-7M2 11h20M3.5 11l1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4M4.5 15.5h15M5 11l4-7M9 11l1 9"/>',
+  package:'<path d="M11 21.7a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7z"/><path d="M12 22V12M3.3 7 12 12l8.7-5M7.5 4.3l9 5.1"/>',
+  briefcase:'<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
   bag:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>',
 };
 function icoSVG(k){ return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || ""}</svg>`; }
@@ -4971,6 +4981,125 @@ const DIALOGS = [
       {de:"Danke, Ihnen auch!", next:"end", why:"Ihnen auch! — «Вам тоже!» Ihnen — Dativ от Sie, форма на «вы»."},
       {de:"Danke, gleichfalls, Digga!", ok:false, fb:"«Digga» — сленг для друзей, не для продавца."}]}},
     end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
+  {id:"buergeramt", ico:"office", title:"Beim Bürgeramt", ru:"Регистрация по адресу (Anmeldung)", start:"n1", nodes:{
+    n1:{npc:"Guten Morgen. Haben Sie einen Termin?", npcRu:"Доброе утро. Вам назначено?", step:{kind:"choice", q:"Скажите, что вам назначено на 9:30", opts:[
+      {de:"Ja, ich habe um halb zehn einen Termin.", next:"n2", why:"halb zehn — 9:30, «половина десятого». Время — с um: um halb zehn."},
+      {de:"Ja, ich habe um halb neun einen Termin.", ok:false, fb:"halb neun — это 8:30, «половина девятого». 9:30 — halb zehn."},
+      {de:"Ja, ich bin ein Termin.", ok:false, fb:"Термин «имеют», а не «являются им»: Ich habe einen Termin."}]}},
+    n2:{npc:"Gut. Worum geht es?", npcRu:"Хорошо. По какому вопросу?", step:{kind:"gap", q:"Скажите, что хотите зарегистрироваться",
+      before:"Ich möchte mich ", after:".", opts:["anmelden","anrufen","ankommen","anziehen"], ans:"anmelden", fb:"Зарегистрироваться по адресу — sich anmelden.",
+      why:"sich anmelden — зарегистрироваться по месту жительства. После möchte инфинитив стоит в конце.", next:"n3"}},
+    n3:{npc:"Haben Sie Ihren Pass und die Wohnungsgeberbestätigung dabei?", npcRu:"У вас с собой паспорт и подтверждение от арендодателя?", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Ja, hier sind beide Dokumente.", next:"n4", why:"beide — оба. Документов два, поэтому hier sind (мн. ч.)."},
+      {de:"Den Pass habe ich, aber die Bestätigung habe ich vergessen.", next:"n3b", why:"Если начать с дополнения (den Pass), глагол всё равно на 2-м месте: Den Pass habe ich. vergessen — забыть, Perfekt: habe … vergessen."}]}},
+    n3b:{npc:"Ohne die Bestätigung geht es leider nicht. Ihr Vermieter kann sie Ihnen aber per E-Mail schicken.", npcRu:"Без подтверждения, к сожалению, нельзя. Но арендодатель может прислать его вам по e-mail.",
+      step:{kind:"order", q:"Спросите, можно ли показать его на телефоне", target:"Kann ich sie auf dem Handy zeigen?",
+      why:"Вопрос да/нет: kann на первом месте, инфинитив zeigen в конце. sie = die Bestätigung, auf dem Handy — Dativ.", next:"n3c"}},
+    n3c:{npc:"Ja, das geht auch.", npcRu:"Да, так тоже можно.", step:{kind:"choice", q:"Покажите подтверждение", opts:[
+      {de:"Super, danke! Hier ist sie.", next:"n4", why:"Hier ist sie — «вот оно». die Bestätigung — женский род, поэтому sie."},
+      {de:"Super, danke! Hier ist er.", ok:false, fb:"die Bestätigung — женский род, значит sie, а не er."}]}},
+    n4:{npc:"Danke. Wie ist Ihre neue Adresse?", npcRu:"Спасибо. Какой у вас новый адрес?", step:{kind:"gap", q:"Скажите, что живёте на Gartenstraße, 12",
+      before:"Ich wohne ", after:" der Gartenstraße 12.", opts:["in","auf","an","bei"], ans:"in", fb:"Про улицу говорят «in der …straße».",
+      why:"По-немецки живут «в» улице: in + Dativ, die Straße → in der Gartenstraße.", next:"n5"}},
+    n5:{npc:"Und seit wann wohnen Sie dort?", npcRu:"А с какого времени вы там живёте?", step:{kind:"choice", q:"Скажите, что с 1 марта", opts:[
+      {de:"Seit dem ersten März.", next:"n6", why:"seit + Dativ: seit dem ersten März. В датах — порядковые числительные: der erste → dem ersten."},
+      {de:"Seit der erste März.", ok:false, fb:"После seit нужен Dativ: seit dem ersten März."},
+      {de:"Vor dem ersten März.", ok:false, fb:"vor — «до, перед». А нужно «с» — seit."}]}},
+    n6:{npc:"Alles klar. Hier ist Ihre Meldebescheinigung.", npcRu:"Всё ясно. Вот ваша справка о регистрации.",
+      step:{kind:"input", q:"Поблагодарите за помощь", prompt:"Vielen Dank für Ihre ___!", ans:["Hilfe"], say:"Vielen Dank für Ihre Hilfe!",
+      why:"die Hilfe — помощь. für + Akkusativ: für Ihre Hilfe.", next:"end"}},
+    end:{npc:"Gern geschehen. Auf Wiedersehen!", npcRu:"Не за что. До свидания!", end:true}}},
+
+  {id:"weg", ico:"pin", title:"Nach dem Weg fragen", ru:"Спросить дорогу", start:"n1", nodes:{
+    n1:{npc:"Hallo! Kann ich Ihnen helfen? Sie sehen ein bisschen verloren aus.", npcRu:"Здравствуйте! Вам помочь? Вы выглядите немного растерянно.", step:{kind:"choice", q:"Спросите, как пройти к вокзалу", opts:[
+      {de:"Ja, gern! Wie komme ich zum Bahnhof?", next:"n2", why:"Wie komme ich zu …? — «Как мне добраться до …?» zu + dem = zum (der Bahnhof)."},
+      {de:"Ja, gern! Wo komme ich zum Bahnhof?", ok:false, fb:"«Как добраться» — wie, а не wo (где)."},
+      {de:"Ja, gern! Wie komme ich nach dem Bahnhof?", ok:false, fb:"nach — для городов и стран. К зданию — zu: zum Bahnhof."}]}},
+    n2:{npc:"Gehen Sie hier geradeaus und dann die zweite Straße links.", npcRu:"Идите прямо, а потом на второй улице налево.", step:{kind:"gap", q:"Переспросите: на второй улице налево?",
+      before:"Die zweite Straße ", after:"?", opts:["links","rechts","geradeaus","zurück"], ans:"links", fb:"links — налево, rechts — направо.",
+      why:"links — налево, rechts — направо, geradeaus — прямо. Переспросить — хороший способ проверить, что понял(а) правильно.", next:"n3"}},
+    n3:{npc:"Genau. Dann sehen Sie schon den Bahnhof.", npcRu:"Точно. И тогда вы уже увидите вокзал.",
+      step:{kind:"order", q:"Спросите, далеко ли это отсюда", target:"Ist das weit von hier?",
+      why:"Вопрос да/нет: глагол ist на первом месте. weit von hier — далеко отсюда.", next:"n4"}},
+    n4:{npc:"Nein, zu Fuß sind es ungefähr zehn Minuten.", npcRu:"Нет, пешком примерно десять минут.", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Super, dann gehe ich zu Fuß.", next:"n5", why:"zu Fuß gehen — идти пешком. После dann глагол на 2-м месте: dann gehe ich."},
+      {de:"Gibt es auch einen Bus dorthin?", next:"n4b", why:"Gibt es …? — «Есть ли …?» После es gibt — Akkusativ: einen Bus. dorthin — туда."}]}},
+    n4b:{npc:"Ja, die Linie 5. Die Haltestelle ist gleich da drüben.", npcRu:"Да, пятый маршрут. Остановка прямо вон там.", step:{kind:"gap", q:"Спросите, как часто ходит автобус",
+      before:"Wie oft ", after:" der Bus?", opts:["fährt","fahrt","fahren","fährst"], ans:"fährt", fb:"der Bus — «он», значит fährt.",
+      why:"fahren меняет корень: du fährst, er fährt. Про транспорт «ходит» по-немецки — fahren.", next:"n5"}},
+    n5:{npc:"Viel Spaß in der Stadt!", npcRu:"Хорошо провести время в городе!", step:{kind:"choice", q:"Поблагодарите", opts:[
+      {de:"Danke, das ist sehr nett von Ihnen!", next:"end", why:"Das ist nett von Ihnen — «очень любезно с вашей стороны». von + Dativ: Sie → Ihnen."},
+      {de:"Danke, das ist sehr nett von Sie!", ok:false, fb:"После von — Dativ: von Ihnen."}]}},
+    end:{npc:"Gern geschehen. Tschüss!", npcRu:"Не за что. Пока!", end:true}}},
+
+  {id:"markt", ico:"basket", title:"Auf dem Markt", ru:"Покупки на рынке", start:"n1", nodes:{
+    n1:{npc:"Guten Tag! Was darf's sein?", npcRu:"Добрый день! Что для вас?", step:{kind:"choice", q:"Попросите килограмм помидоров", opts:[
+      {de:"Ein Kilo Tomaten, bitte.", next:"n2", why:"Мера + товар без артикля и без предлога: ein Kilo Tomaten, 200 Gramm Käse."},
+      {de:"Ein Kilo von Tomaten, bitte.", ok:false, fb:"По-немецки без «von»: ein Kilo Tomaten."},
+      {de:"Eine Kilo Tomaten, bitte.", ok:false, fb:"das Kilo — средний род: ein Kilo."}]}},
+    n2:{npc:"Gern. Sonst noch etwas?", npcRu:"Конечно. Что-нибудь ещё?", step:{kind:"gap", q:"Попросите ещё три яблока",
+      before:"Ja, noch drei ", after:", bitte.", opts:["Äpfel","Apfel","Äpfeln","Apfels"], ans:"Äpfel", fb:"Мн. ч. от der Apfel — die Äpfel.",
+      why:"der Apfel → die Äpfel: во мн. ч. появляется умлаут. noch — «ещё».", next:"n3"}},
+    n3:{npc:"Die Äpfel sind heute im Angebot.", npcRu:"Яблоки сегодня по акции.", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Prima, dann nehme ich sechs.", next:"n4", why:"nehmen — брать: ich nehme, du nimmst. После dann глагол на 2-м месте."},
+      {de:"Nein danke, drei reichen.", next:"n4", why:"reichen — хватать: drei reichen — «трёх хватит»."}]}},
+    n4:{npc:"Das macht dann 6,80 Euro.", npcRu:"С вас 6,80 евро.",
+      step:{kind:"order", q:"Спросите, найдётся ли для вас пакет", target:"Haben Sie eine Tüte für mich?",
+      why:"die Tüte — пакет. Вопрос да/нет: haben на первом месте. für + Akkusativ: für mich.", next:"n5"}},
+    n5:{npc:"Natürlich, hier bitte. Ich gebe Ihnen noch ein paar Kräuter dazu.", npcRu:"Конечно, вот. И я добавлю вам немного зелени.",
+      step:{kind:"input", q:"Скажите «Как мило!»", prompt:"Das ist aber ___!", ans:["nett","lieb"], say:"Das ist aber nett!",
+      why:"nett — милый, любезный. aber здесь усиливает, а не значит «но»: Das ist aber nett! — «Как мило!»", next:"n6"}},
+    n6:{npc:"Bitte schön. Bis zum nächsten Mal!", npcRu:"Пожалуйста. До следующего раза!", step:{kind:"choice", q:"Попрощайтесь", opts:[
+      {de:"Bis nächste Woche! Tschüss!", next:"end", why:"Bis nächste Woche — «до следующей недели». С продавцом на рынке можно и неформально: Tschüss."},
+      {de:"Bis letzte Woche! Tschüss!", ok:false, fb:"letzte Woche — прошлая неделя. Прощаются на будущее: bis nächste Woche."}]}},
+    end:{npc:"Tschüss, schönes Wochenende!", npcRu:"Пока, хороших выходных!", end:true}}},
+
+  {id:"nachbar", ico:"package", title:"Paket beim Nachbarn", ru:"Забрать посылку у соседа", start:"n1", nodes:{
+    n1:{npc:"Ja, bitte?", npcRu:"Да?", step:{kind:"choice", q:"Поздоровайтесь и скажите, что вы сосед(ка) сверху", opts:[
+      {de:"Hallo, ich bin Ihr Nachbar von oben.", next:"n2", why:"von oben — сверху, von unten — снизу. der Nachbar → Ihr Nachbar; соседка — Ihre Nachbarin."},
+      {de:"Hallo, ich bin Ihre Nachbarin von oben.", next:"n2", why:"von oben — сверху, von unten — снизу. die Nachbarin → Ihre Nachbarin; сосед — Ihr Nachbar."},
+      {de:"Hallo, ich bin Ihr Nachbar von über.", ok:false, fb:"«Сверху» — von oben. über — предлог «над», после него нужно существительное."}]}},
+    n2:{npc:"Ah, hallo! Was kann ich für Sie tun?", npcRu:"А, здравствуйте! Чем могу помочь?", step:{kind:"gap", q:"Скажите, что почтальон оставил у него вашу посылку",
+      before:"Der Postbote hat mein Paket bei Ihnen ", after:".", opts:["abgegeben","abgeben","gegebt","abgegebt"], ans:"abgegeben", fb:"Partizip II от abgeben — abgegeben.",
+      why:"abgeben — отдать, оставить. У отделяемых глаголов ge стоит между приставкой и корнем: ab + ge + geben.", next:"n3"}},
+    n3:{npc:"Ja, richtig! Moment, ich hole es.", npcRu:"Да, точно! Секунду, сейчас принесу.",
+      step:{kind:"order", q:"Скажите, что вы его уже ждали", target:"Toll, ich habe schon darauf gewartet!",
+      why:"warten auf + Akkusativ → darauf — «его» (на это). Perfekt: habe … gewartet.", next:"n4"}},
+    n4:{npc:"Hier, bitte. Es ist ziemlich schwer!", npcRu:"Вот, пожалуйста. Она довольно тяжёлая!", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Kein Problem, das schaffe ich.", next:"n5", why:"schaffen — справиться: Das schaffe ich — «я справлюсь»."},
+      {de:"Könnten Sie mir kurz helfen?", next:"n4b", why:"Könnten Sie …? — вежливая просьба (Konjunktiv II). helfen + Dativ: mir helfen."}]}},
+    n4b:{npc:"Klar, ich trage es mit Ihnen hoch.", npcRu:"Конечно, я помогу отнести наверх.",
+      step:{kind:"input", q:"Поблагодарите: «Это очень любезно с вашей стороны»", prompt:"Das ist sehr ___ von Ihnen.", ans:["nett","freundlich","lieb"], say:"Das ist sehr nett von Ihnen.",
+      why:"nett von Ihnen — «любезно с вашей стороны». von + Dativ: von Ihnen.", next:"n5"}},
+    n5:{npc:"Gern. Ach, nehmen Sie nächstes Mal auch ein Paket für mich an?", npcRu:"Не за что. Кстати, в следующий раз тоже примете посылку для меня?", step:{kind:"choice", q:"Согласитесь", opts:[
+      {de:"Na klar, das mache ich gern!", next:"end", why:"Na klar — «ну конечно». gern — охотно: Das mache ich gern."},
+      {de:"Na klar, ich nehme Sie gern an!", ok:false, fb:"Получилось «я охотно приму вас». Принимают посылку: Ich nehme das Paket an."},
+      {de:"Nein, Pakete sind langweilig.", ok:false, fb:"Соседу, который только что помог, так не отвечают 🙂"}]}},
+    end:{npc:"Danke! Schönen Abend noch!", npcRu:"Спасибо! Хорошего вечера!", end:true}}},
+
+  {id:"job", ico:"briefcase", title:"Vorstellungsgespräch", ru:"Собеседование на работу", start:"n1", nodes:{
+    n1:{npc:"Guten Tag, schön, dass Sie da sind. Nehmen Sie bitte Platz.", npcRu:"Добрый день, рада, что вы пришли. Присаживайтесь, пожалуйста.", step:{kind:"choice", q:"Поблагодарите за приглашение", opts:[
+      {de:"Vielen Dank für die Einladung.", next:"n2", why:"die Einladung — приглашение. für + Akkusativ: für die Einladung."},
+      {de:"Vielen Dank für der Einladung.", ok:false, fb:"После für — Akkusativ: für die Einladung."},
+      {de:"Danke, ich nehme den Platz.", ok:false, fb:"Nehmen Sie Platz — устойчивое «присаживайтесь». Отвечают просто благодарностью."}]}},
+    n2:{npc:"Erzählen Sie mal etwas über sich.", npcRu:"Расскажите немного о себе.",
+      step:{kind:"order", q:"Скажите, что уже три года работаете в продажах", target:"Ich arbeite seit drei Jahren im Verkauf.",
+      why:"seit + Dativ: seit drei Jahren. С seit — Präsens, потому что работа продолжается.", next:"n3"}},
+    n3:{npc:"Interessant. Warum möchten Sie bei uns arbeiten?", npcRu:"Интересно. Почему вы хотите работать у нас?", step:{kind:"gap", q:"Ответьте: потому что вам очень нравится их продукция",
+      before:"Weil mir Ihre Produkte sehr ", after:".", opts:["gefallen","gefällt","mögen","gefielen"], ans:"gefallen", fb:"Produkte — мн. ч., поэтому gefallen; после weil глагол в конце.",
+      why:"gefallen + Dativ: mir gefallen Ihre Produkte. Подлежащее — Produkte (мн. ч.), поэтому gefallen; после weil глагол уходит в конец.", next:"n4"}},
+    n4:{npc:"Was sind Ihre Stärken?", npcRu:"Какие у вас сильные стороны?", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
+      {de:"Ich bin zuverlässig und arbeite gern im Team.", next:"n5", why:"zuverlässig — надёжный. im Team arbeiten — работать в команде."},
+      {de:"Ich kann gut mit Kunden umgehen.", next:"n5", why:"mit Kunden umgehen — ладить с клиентами (umgehen mit + Dativ). После kann инфинитив в конце."},
+      {de:"Ich bin sehr faul, aber nett.", ok:false, fb:"faul — ленивый 🙂 На собеседовании так лучше не говорить."}]}},
+    n5:{npc:"Haben Sie noch Fragen an uns?", npcRu:"У вас есть ещё вопросы к нам?",
+      step:{kind:"input", q:"Спросите, когда можно начать", prompt:"Wann kann ich ___?", ans:["anfangen","beginnen","starten"], say:"Wann kann ich anfangen?",
+      why:"anfangen / beginnen — начинать. После kann инфинитив стоит в конце.", next:"n6"}},
+    n6:{npc:"Ab dem ersten Juni. Wir melden uns nächste Woche bei Ihnen.", npcRu:"С первого июня. Мы свяжемся с вами на следующей неделе.", step:{kind:"choice", q:"Попрощайтесь", opts:[
+      {de:"Vielen Dank für das Gespräch. Ich freue mich auf Ihre Antwort.", next:"end", why:"sich freuen auf + Akkusativ — ждать с радостью то, что будет: auf Ihre Antwort."},
+      {de:"Vielen Dank. Ich freue mich über Ihre Antwort.", ok:false, fb:"freuen über — радоваться тому, что уже есть. Ответ ещё впереди — freuen auf."},
+      {de:"Tschüss, bis Montag!", ok:false, fb:"Слишком неформально для собеседования."}]}},
+    end:{npc:"Wir danken Ihnen. Auf Wiedersehen!", npcRu:"Спасибо вам. До свидания!", end:true}}},
 ];
 const DLG_KEY = "dialog.v1";
 let dlgStats = dLoad(DLG_KEY, {});
