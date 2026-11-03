@@ -183,6 +183,14 @@
     cursor:pointer; font-size:16px; flex:0 0 auto; font-family:inherit;
   }
   .appbar .back-btn[hidden]{display:none;}
+  .appbar .scale-btn{
+    margin-left:auto; display:none; align-items:center; gap:6px;
+    appearance:none; border:1px solid var(--border); background:var(--surface); color:var(--ink);
+    height:32px; padding:0 10px; border-radius:9px; cursor:pointer; font-family:inherit; font-size:13px;
+  }
+  .appbar .scale-btn span{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-weight:700;font-size:15px;}
+  .appbar .scale-btn b{font-weight:600;color:var(--ink-muted);font-variant-numeric:tabular-nums;}
+  @media (min-width: 900px) and (hover: hover){ .appbar .scale-btn{display:flex;} }
   .appbar .app-title{font-size:15px; font-weight:700; letter-spacing:.2px;}
 
   .screen{display:none;}
@@ -725,6 +733,7 @@
 <div class="appbar">
   <button class="back-btn" id="backBtn" hidden title="Zurück">←</button>
   <div class="app-title serif" id="appTitle">Deutsch</div>
+  <button class="scale-btn" id="scaleBtn" type="button" title="Размер текста и интерфейса"><span>Aa</span><b id="scaleVal">100%</b></button>
 </div>
 
 <!-- ================= HOME ================= -->
@@ -3167,7 +3176,15 @@ const G_TOPICS = {
   konjunktiv: {label:"Konjunktiv I", types:["konj1","konj2"]},
   passiv:     {label:"Passiv",       types:["passiv"]},
 };
-function dGramOfDay(date){ return D_GRAM_TYPES[Math.floor(new Date(date+"T12:00:00").getTime()/86400000) % D_GRAM_TYPES.length]; }
+// Грамматика дня — три соседние темы из списка (2 + 2 + 1 задание), чтобы ни одной темы не было больше двух
+function dGramOfDay(date){
+  const i = Math.floor(new Date(date+"T12:00:00").getTime()/86400000), n = D_GRAM_TYPES.length;
+  return [0,1,2].map(k=> D_GRAM_TYPES[(i+k) % n]);
+}
+const D_MAX_PER_THEME = 2;
+// Тема задания: тип генератора грамматики или грамматический тип задания по слову; перевод слов темой не считается
+const D_WORD_THEME = {art:"art", conj:"conj", perf:"perf", vgap:"vgap", order:"order", case:"case", gap:"gap"};
+function dThemeOf(t){ return t.theme || D_WORD_THEME[t.type] || null; }
 function dDueKeys(today){ return Object.keys(dSrs).filter(k=> D_BYKEY[k] && dSrs[k].due <= today); }
 function dNewItems(){ return D_POOL.filter(i=> !dSrs[i.key]); }
 
@@ -3819,6 +3836,11 @@ function dMakeNeg(rnd, block){
 
 // Задание на грамматику без привязки к карточке (используется в «Грамматике дня», тренировке и как бонус в повторении)
 function dGramTask(type, rnd, block, used){
+  const t = dGramTask0(type, rnd, block, used);
+  if(t) t.theme = type;
+  return t;
+}
+function dGramTask0(type, rnd, block, used){
   switch(type){
     case "conj":  return {type:"conj", item:dPickUnused(D_VERBS, rnd, used, i=>i.key), person:dPick(PERSONS, rnd), block};
     case "perf":  return {type:"perf", item:dPickUnused(D_PERF_VERBS, rnd, used, i=>i.key), block};
@@ -3879,8 +3901,7 @@ function dTypeKey(t){ return t.type==="mc" ? "mc-"+t.dir : t.type; }
 // Общая часть дня: одинакова на всех устройствах (зависит только от даты)
 function dSharedTasks(today){
   const g = dGramOfDay(today), rnd = dRng(dHash("deutsch-daily-"+today)), used = new Set();
-  const gram = [];
-  for(let k=0; k<5; k++) gram.push(dGramTask(g.type, rnd, "gram", used));
+  const gram = [0,1,2,0,1].map(j=> Object.assign(dGramTask(g[j].type, rnd, "gram", used), {gLabel:g[j].label}));
   const gramKeys = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
   const pairs = [], usedRu = new Set();
   for(const i of dShuffle(D_POOL.filter(i=> i.kind!=="phrase" && !gramKeys.has(i.key) && i.ru.length<=26 && i.de.length<=18), rnd)){
@@ -3907,10 +3928,19 @@ function dBuildSession(){
   const items = due.concat(weakest).slice(0, D_PLAN.warm + D_PLAN.review - D_PLAN.bonus);
 
   // Если изученных слов мало, пустые места занимает грамматика
-  const used = new Set();
-  const fillTypes = dShuffle(D_BONUS_TYPES.filter(t=> t!==shared.g.type), rnd);
+  const used = new Set(), themes = {};
+  const count = t=>{ const k = dThemeOf(t); if(k) themes[k] = (themes[k]||0) + 1; return t; };
+  const full = ty=> (themes[ty]||0) >= D_MAX_PER_THEME;
+  gram.forEach(count);
+  const fillTypes = dShuffle(D_BONUS_TYPES, rnd);
   let fi = 0;
-  const filler = block=> dGramTask(fillTypes[fi++ % fillTypes.length], rnd, block, used);
+  const filler = block=>{
+    for(let k=0; k<fillTypes.length; k++){
+      const ty = fillTypes[fi++ % fillTypes.length];
+      if(!full(ty)) return count(dGramTask(ty, rnd, block, used));
+    }
+    return count(dGramTask(fillTypes[fi++ % fillTypes.length], rnd, block, used));
+  };
 
   const tasks = [];
   for(let k=0; k<D_PLAN.warm; k++){
@@ -3925,10 +3955,10 @@ function dBuildSession(){
       const ty = types[(idx+k) % types.length];
       const dir = prevKey==="mc-de-ru" ? "ru-de" : prevKey==="mc-ru-de" ? "de-ru" : (idx%2 ? "de-ru" : "ru-de");
       const key = ty==="mc" ? "mc-"+dir : ty;
-      if(key!==prevKey) task = dMakeTask(ty, it, "review", rnd, dir);
+      if(key!==prevKey && !(D_WORD_THEME[ty] && full(D_WORD_THEME[ty]))) task = dMakeTask(ty, it, "review", rnd, dir);
     }
-    task = task || dMakeTask(types[0], it, "review", rnd, "de-ru");
-    tasks.push(task);
+    task = task || dMakeTask(types.find(ty=> !(D_WORD_THEME[ty] && full(D_WORD_THEME[ty]))) || "mc", it, "review", rnd, "de-ru");
+    tasks.push(count(task));
     prevKey = dTypeKey(task);
   });
   // Грамматика других тем, чем «Грамматика дня», равномерно вперемешку с повторением слов
@@ -3938,9 +3968,10 @@ function dBuildSession(){
     tasks.splice(Math.min(pos, tasks.length), 0, filler("review"));
   }
   tasks.push(...gram);
+  // «Грамматика дня» общая для всех и стоит после повторения — подсчёт тем уже учёл её в начале
   for(let k=0; k<D_PLAN.slots; k++) tasks.push({type:"slot", block:"retry"});
   tasks.push(shared.match);
-  return {tasks, gramLabel: shared.g.label, used};
+  return {tasks, gramLabel: shared.g.map(x=> x.label).join(" · "), used, themes};
 }
 
 function dSrsUpdate(it, ok, hinted){
@@ -3991,12 +4022,15 @@ function dFillSlot(){
   for(const t of dS.wrongTasks){
     if(!dS.retried.has(t.item.key)){ dS.retried.add(t.item.key); return dMakeRetry(t); }
   }
-  return dGramTask(dPick(D_BONUS_TYPES, Math.random), Math.random, "extra", dS.used);
+  const th = dS.themes || {}, free = D_BONUS_TYPES.filter(ty=> (th[ty]||0) < D_MAX_PER_THEME);
+  const ty = dPick(free.length ? free : D_BONUS_TYPES, Math.random);
+  th[ty] = (th[ty]||0) + 1;
+  return dGramTask(ty, Math.random, "extra", dS.used);
 }
 
 function dView(v){ ["dailyStart","dailyRun","dailyEnd"].forEach(id=> dEl(id).hidden = (id!==v)); window.scrollTo(0,0); }
 function dBlockLabel(t){
-  return {warm:"Разминка", review:"Повторение", gram:"Грамматика дня · "+dS.gramLabel, match:"Финал · на скорость",
+  return {warm:"Разминка", review:"Повторение", gram:"Грамматика дня · "+(t.gLabel || dS.gramLabel), match:"Финал · на скорость",
     retry:"Работа над ошибками", extra:"Бонус · ошибок не было",
     learn1:"Знакомство · слова 1–5", pairs1:"Пары · слова 1–5", recog1:"Узнавание · слова 1–5",
     learn2:"Знакомство · слова 6–10", pairs2:"Пары · слова 6–10", recog2:"Узнавание · слова 6–10",
@@ -4008,7 +4042,7 @@ function dNewSession(mode, tasks, extra){
 }
 function dStart(){
   const built = dBuildSession();
-  dS = dNewSession("daily", built.tasks, {gramLabel:built.gramLabel, used:built.used});
+  dS = dNewSession("daily", built.tasks, {gramLabel:built.gramLabel, used:built.used, themes:built.themes});
   dView("dailyRun");
   dRenderTask();
 }
@@ -4453,7 +4487,7 @@ function dRenderStart(){
       <div class="daily-stat"><div class="n">${dDueKeys(today).length}</div><div class="k">к повторению</div></div>
       <div class="daily-stat"><div class="n">${studied}</div><div class="k">слов изучено</div></div>
     </div>
-    <div class="daily-gram">Грамматика дня: <b>${g.label}</b></div>
+    <div class="daily-gram">Грамматика дня: <b>${g.map(x=> x.label).join(" · ")}</b></div>
     <div class="daily-actions stack">
       <button class="primary" id="dGo">${done ? "Пройти ещё раз" : "Начать · 20 заданий"}</button>
       ${studied===0 ? `<button id="dToHot">Сначала «Горячая десятка»</button>` : ""}
@@ -4787,6 +4821,24 @@ document.querySelectorAll("#screen-grammatik .gtab-view").forEach(sec=>{
 /* ================= ИНТЕРАКТИВНЫЙ ДИАЛОГ ================= */
 // Узел: реплика собеседника (npc) и шаг игрока. Шаги: choice — выбор реплики (развилка или вежливый/невежливый вариант),
 // gap — вставить слово в свою реплику, order — собрать реплику из слов, input — вписать слово. ok:false — вариант не подходит, можно выбрать снова.
+/* ================= МАСШТАБ ДЛЯ БОЛЬШОГО ЭКРАНА ================= */
+// Кнопка видна только на десктопе; масштаб хранится на этом устройстве
+const UI_SCALES = [1, 1.15, 1.3, 1.45], UI_SCALE_KEY = "ui.scale.v1";
+let uiScale = 1;
+try{ uiScale = +localStorage.getItem(UI_SCALE_KEY) || 1; } catch(e){}
+function uiApplyScale(){
+  const wide = window.matchMedia("(min-width: 900px) and (hover: hover)").matches;
+  document.documentElement.style.zoom = wide && uiScale !== 1 ? uiScale : "";
+  dEl("scaleVal").textContent = Math.round(uiScale*100) + "%";
+}
+dEl("scaleBtn").onclick = ()=>{
+  uiScale = UI_SCALES[(UI_SCALES.indexOf(uiScale) + 1) % UI_SCALES.length] || 1;
+  try{ localStorage.setItem(UI_SCALE_KEY, uiScale); } catch(e){}
+  uiApplyScale();
+};
+window.matchMedia("(min-width: 900px) and (hover: hover)").addEventListener("change", uiApplyScale);
+uiApplyScale();
+
 /* ================= ИКОНКИ РАЗДЕЛОВ ================= */
 const ICONS = {
   daily:'<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>',
