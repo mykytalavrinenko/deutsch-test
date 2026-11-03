@@ -3632,7 +3632,7 @@ const D_PRAET_FORMS = [
 ];
 function dPraetNote(s){
   const v = D_PRAET_FORMS.find(x=> x.re.test(s.ans));
-  return v ? `${s.ans} — Präteritum от ${v.inf} («${v.ru}»)\n${v.f}` : "";
+  return v ? `${s.ans} — Präteritum от ${v.inf} («${v.ru}»)\n${v.f.split(" · ").map(x=> x.replace(" ", "\u00a0")).join(" · ")}` : "";
 }
 const D_KONJ2 = [
   {b:"Wenn ich Zeit ", a:", würde ich kommen.", ans:"hätte", o:["hätte","habe","hatte","hättest"], ru:"Если бы у меня было время, я бы пришёл/пришла."},
