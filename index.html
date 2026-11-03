@@ -328,6 +328,10 @@
   .daily-gram b{color:var(--ink);}
   .daily-toggle{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 0 16px;cursor:pointer;}
   .daily-toggle input{width:18px;height:18px;accent-color:var(--accent);}
+  .hot-topic{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--amber-soft);border-radius:12px;padding:10px 12px;margin-bottom:12px;}
+  .hot-topic .k{font-size:11.5px;color:var(--amber);text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
+  .hot-topic .t{font-size:15px;font-weight:700;color:var(--ink);}
+  .hot-topic button{flex:0 0 auto;font-size:13px;padding:7px 12px;}
   .daily-done{background:var(--good-soft);color:var(--good);border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:12px;}
   .daily-len{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
   .daily-len button{border:1px solid var(--border);background:var(--surface);border-radius:14px;padding:14px 6px;cursor:pointer;font-family:inherit;color:var(--ink);box-shadow:var(--shadow);}
@@ -3632,7 +3636,38 @@ const D_PRAET_FORMS = [
 ];
 function dPraetNote(s){
   const v = D_PRAET_FORMS.find(x=> x.re.test(s.ans));
-  return v ? `${s.ans} — Präteritum от ${v.inf} («${v.ru}»)\n${v.f.split(" · ").map(x=> x.replace(" ", "\u00a0")).join(" · ")}` : "";
+  return v ? `${s.ans} — Präteritum от ${v.inf} («${v.ru}»)\n${NB(v.f)}` : "";
+}
+// Пояснения для Konjunktiv II, Konjunktiv I и Passiv: перевод вставленной формы и её спряжение
+const NB = s=> s.split(" · ").map(x=> x.replace(" ", " ")).join(" · ");
+const D_KONJ2_FORMS = [
+  {re:/^hätte/,  inf:"haben",  ru:"имел(а) бы; я бы хотел(а)", f:"ich hätte · du hättest · er/sie/es hätte · wir hätten · ihr hättet · sie/Sie hätten"},
+  {re:/^wär/,    inf:"sein",   ru:"был(а) бы",                 f:"ich wäre · du wärst · er/sie/es wäre · wir wären · ihr wärt · sie/Sie wären"},
+  {re:/^würde/,  inf:"werden", ru:"бы + инфинитив: würde gehen = пошёл бы", f:"ich würde · du würdest · er/sie/es würde · wir würden · ihr würdet · sie/Sie würden"},
+  {re:/^könnte/, inf:"können", ru:"мог(ла) бы",                f:"ich könnte · du könntest · er/sie/es könnte · wir könnten · ihr könntet · sie/Sie könnten"},
+];
+function dKonj2Note(s){
+  const v = D_KONJ2_FORMS.find(x=> x.re.test(s.ans.toLowerCase()));
+  return v ? `${s.ans} — Konjunktiv II от ${v.inf} («${v.ru}»)\n${NB(v.f)}` : "";
+}
+const D_KONJ1_FORMS = {
+  sei:   {inf:"sein",   ru:"быть",   ind:"er ist"},
+  habe:  {inf:"haben",  ru:"иметь",  ind:"sie hat"},
+  fahre: {inf:"fahren", ru:"ехать",  ind:"er fährt"},
+  wolle: {inf:"wollen", ru:"хотеть", ind:"er will"},
+  wisse: {inf:"wissen", ru:"знать",  ind:"er weiß"},
+};
+function dKonj1Note(s){
+  const v = D_KONJ1_FORMS[s.ans];
+  if(!v) return "";
+  return `${s.ans} — Konjunktiv I от ${v.inf} («${v.ru}»)\nВ прямой речи: ${v.ind} → в пересказе: ${v.ind.split(" ")[0]} ${s.ans}`
+    + (s.ans==="sei" ? "" : `\nФорма = основа инфинитива + -e: ${v.inf} → ${s.ans}`);
+}
+function dPassivNote(s){
+  const part = s.ans==="worden" ? s.b.trim().split(" ").pop() : s.a.replace(/[.!?]$/, "").trim().split(" ").pop();
+  if(s.ans==="worden") return `ist … ${part} worden — Passiv Perfekt\nВ пассиве вместо geworden говорят worden: Die Rechnung ist bezahlt worden.`;
+  if(s.ans==="wurde" || s.ans==="wurden") return `${s.ans} … ${part} — Passiv Präteritum (что-то сделали в прошлом)\n${NB("ich wurde · du wurdest · er/sie/es wurde · wir wurden · ihr wurdet · sie/Sie wurden")}`;
+  return `${s.ans} … ${part} — Passiv Präsens (что-то делают сейчас или регулярно)\n${NB("ich werde · du wirst · er/sie/es wird · wir werden · ihr werdet · sie/Sie werden")}`;
 }
 const D_KONJ2 = [
   {b:"Wenn ich Zeit ", a:", würde ich kommen.", ans:"hätte", o:["hätte","habe","hatte","hättest"], ru:"Если бы у меня было время, я бы пришёл/пришла."},
@@ -3683,6 +3718,11 @@ const D_JOIN = [
   {a:"Ich kann nicht kommen.", b:"Ich muss lange arbeiten.", c:"weil", t:"Ich kann nicht kommen, weil ich lange arbeiten muss.", ru:"Я не смогу прийти, потому что мне надо долго работать."},
   {a:"Er sagt.", b:"Er hat keine Zeit.", c:"dass", t:"Er sagt, dass er keine Zeit hat.", ru:"Он говорит, что у него нет времени."},
 ];
+const D_CONJ_RU = {weil:"потому что", dass:"что", obwohl:"хотя", wenn:"если / когда", bevor:"прежде чем"};
+function dJoinNote(s){
+  const sub = s.t.slice(s.t.indexOf(", ")+2).replace(/[.!?]$/, ""), verb = sub.split(" ").pop();
+  return `${s.c} — «${D_CONJ_RU[s.c] || s.c}»\nГлагол «${verb}» уходит в конец: …, ${sub}.`;
+}
 function dMakeJoin(rnd, block, used){
   const s = dPickUnused(D_JOIN, rnd, used, s=> "j:"+s.t);
   const words = s.t.replace(/[.!?]$/, "").split(" ").map(w=> w.replace(/,$/, ""));
@@ -3690,7 +3730,7 @@ function dMakeJoin(rnd, block, used){
   for(let a=0; a<5 && order.every((v,i)=> v===i); a++) order = dShuffle(order, rnd);
   return {type:"order", label:`Соедини через «${s.c}»`, words, order, sent:s.t, ru:s.ru,
     promptHTML:`<div class="q-sit">${escapeHtml(s.a)} + ${escapeHtml(s.b)}</div><div class="q-sub">${escapeHtml(s.ru)}</div>`,
-    note:`После «${s.c}» спрягаемый глагол уходит в конец придаточного`, block};
+    note:dJoinNote(s), block};
 }
 
 // Imperativ: формы для du / ihr / Sie строим из спряжения
@@ -3747,19 +3787,19 @@ function dMakeAdjDecl(rnd, block){
   const opts = dShuffle(["e","er","es","en"].map(e=> adj.a+e), rnd);
   return def
     ? {type:"gap", label:"Выбери окончание прилагательного", before:dCap1(n.art)+" ", after:` ${n.bare} ist hier.`, ans:adj.a+end, opts,
-       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:"После der / die / das (Nominativ) — окончание -e", block}
+       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:`${n.art} ${adj.a}e ${n.bare}: после der / die / das в Nominativ всегда -e\nСравни: ${n.art==="die" ? "eine" : "ein"} ${adj.a}${{der:"er", die:"e", das:"es"}[n.art]} ${n.bare}`, block}
     : {type:"gap", label:"Выбери окончание прилагательного", before:`Das ist ${n.art==="die" ? "eine" : "ein"} `, after:` ${n.bare}.`, ans:adj.a+end, opts,
-       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:`ein + ${n.art==="der" ? "der-слово → -er" : n.art==="die" ? "eine → -e" : "das-слово → -es"}`, block};
+       sub:`${adj.a} — ${adj.ru} · ${n.de} — ${n.ru}`, note:`${n.art==="die" ? "eine" : "ein"} ${adj.a+end} ${n.bare}: ${n.art==="der" ? "ein не показывает род, поэтому окончание -er показывает der" : n.art==="die" ? "после eine — -e, как после die" : "ein не показывает род, поэтому окончание -es показывает das"}\nСравни: ${n.art} ${adj.a}e ${n.bare}`, block};
 }
 const D_NEG_NICHT = [
-  {b:"Ich komme heute ", a:".", ru:"Я сегодня не приду."},
-  {b:"Das Wetter ist ", a:" gut.", ru:"Погода не хорошая."},
-  {b:"Ich verstehe dich ", a:".", ru:"Я тебя не понимаю."},
-  {b:"Er arbeitet ", a:" viel.", ru:"Он работает не много."},
-  {b:"Der Film ist ", a:" spannend.", ru:"Фильм не захватывающий."},
-  {b:"Ich habe den Film ", a:" gesehen.", ru:"Я не смотрел(а) этот фильм."},
-  {b:"Sie wohnt ", a:" in Berlin.", ru:"Она живёт не в Берлине."},
-  {b:"Wir fahren heute ", a:" nach Hause.", ru:"Сегодня мы не едем домой."},
+  {b:"Ich komme heute ", a:".", ru:"Я сегодня не приду.", w:"Отрицаем весь глагол (kommen) — nicht в конце предложения"},
+  {b:"Das Wetter ist ", a:" gut.", ru:"Погода не хорошая.", w:"nicht стоит перед прилагательным: nicht gut"},
+  {b:"Ich verstehe dich ", a:".", ru:"Я тебя не понимаю.", w:"Отрицаем глагол — nicht после местоимения dich, в конце"},
+  {b:"Er arbeitet ", a:" viel.", ru:"Он работает не много.", w:"nicht стоит перед наречием: nicht viel"},
+  {b:"Der Film ist ", a:" spannend.", ru:"Фильм не захватывающий.", w:"nicht стоит перед прилагательным: nicht spannend"},
+  {b:"Ich habe den Film ", a:" gesehen.", ru:"Я не смотрел(а) этот фильм.", w:"У Film артикль den — значит не kein, а nicht; nicht перед Partizip gesehen"},
+  {b:"Sie wohnt ", a:" in Berlin.", ru:"Она живёт не в Берлине.", w:"nicht стоит перед местом: nicht in Berlin"},
+  {b:"Wir fahren heute ", a:" nach Hause.", ru:"Сегодня мы не едем домой.", w:"nicht стоит перед направлением: nicht nach Hause"},
 ];
 function dMakeNeg(rnd, block){
   const opts = dShuffle(["nicht","kein","keine","keinen"], rnd);
@@ -3767,11 +3807,11 @@ function dMakeNeg(rnd, block){
     const n = dPick(D_CASE_NOUNS, rnd), akk = rnd()<0.5;
     const ans = akk ? {der:"keinen", die:"keine", das:"kein"}[n.art] : {der:"kein", die:"keine", das:"kein"}[n.art];
     return {type:"gap", label:"nicht или kein?", before:akk ? "Ich habe " : "Das ist ", after:` ${n.bare}.`, ans, opts, sub:`${n.bare} — ${n.ru}`,
-      note:`Существительное без артикля отрицаем через kein (${n.de}, ${akk ? "Akkusativ" : "Nominativ"} → ${ans})`, block};
+      note:`${akk ? "Ich habe" : "Das ist"} ${akk && n.art==="der" ? "einen" : n.art==="die" ? "eine" : "ein"} ${n.bare} → ${akk ? "Ich habe" : "Das ist"} ${ans} ${n.bare}\nkein заменяет ein и берёт то же окончание (${n.de}, ${akk ? "Akkusativ" : "Nominativ"})`, block};
   }
   const s = dPick(D_NEG_NICHT, rnd);
   return {type:"gap", label:"nicht или kein?", before:s.b, after:s.a, ans:"nicht", opts, sub:s.ru,
-    note:"nicht отрицает глагол, прилагательное или существительное с определённым артиклем", block};
+    note:`${s.w}\nkein — только вместо ein или перед существительным без артикля`, block};
 }
 
 // Задание на грамматику без привязки к карточке (используется в «Грамматике дня», тренировке и как бонус в повторении)
@@ -3793,9 +3833,9 @@ function dGramTask(type, rnd, block, used){
     case "adjDecl":  return dMakeAdjDecl(rnd, block);
     case "neg":      return dMakeNeg(rnd, block);
     case "praet":    return dCurGap(D_PRAET, "Präteritum: вставь форму", dPraetNote, rnd, block, used, "pr:");
-    case "konj2":    return dCurGap(D_KONJ2, "Konjunktiv II: вставь форму", "Konjunktiv II: hätte, wäre, würde, könnte — желание, вежливость, «если бы»", rnd, block, used, "k2:");
-    case "passiv":   return dCurGap(D_PASSIV, "Passiv: вставь форму", "Passiv: werden + Partizip II (сейчас wird/werden, в прошлом wurde/wurden, Perfekt ist … worden)", rnd, block, used, "pa:");
-    case "konj1":    return dCurGap(D_KONJ1, "Konjunktiv I: косвенная речь", "Konjunktiv I: er sei, er habe, er fahre — пересказ чужих слов", rnd, block, used, "k1:");
+    case "konj2":    return dCurGap(D_KONJ2, "Konjunktiv II: вставь форму", dKonj2Note, rnd, block, used, "k2:");
+    case "passiv":   return dCurGap(D_PASSIV, "Passiv: вставь форму", dPassivNote, rnd, block, used, "pa:");
+    case "konj1":    return dCurGap(D_KONJ1, "Konjunktiv I: косвенная речь", dKonj1Note, rnd, block, used, "k1:");
   }
 }
 
@@ -4445,17 +4485,35 @@ const H_NOUN_TPL = [
   {s:"Was weißt du über ___ {N}?", c:"akk", why:"über (о чём?) + Akkusativ"},
   {s:"Wir sprechen von ___ {N}.", c:"dat", why:"von + Dativ"},
 ];
-function hPickWords(){
+// Десятка собирается из одной группы: тема словаря, тип глаголов или категория фраз
+const H_VERB_GROUPS = {grund:"Grund- und Modalverben", modal:"Grund- und Modalverben", unreg:"Unregelmäßige Verben",
+  reg:"Regelmäßige Verben", trenn:"Trennbare Verben", refl:"Reflexive Verben"};
+function hGroupOf(i){
+  if(i.kind==="word") return {key:"w:"+i.topic, label:(LEX_TOPICS.find(t=> t.key===i.topic) || {}).label || "Wortschatz"};
+  if(i.kind==="verb"){ const c = i.verb.cat==="modal" ? "grund" : i.verb.cat; return {key:"v:"+c, label:H_VERB_GROUPS[c] || "Verben"}; }
+  return {key:"p:"+i.cat, label:(PHRASE_CATS.find(c=> c.key===i.cat) || {}).label || "Redewendungen"};
+}
+function hPickWords(skip){
   const rnd = Math.random;
   const fresh = D_POOL.filter(i=> !dSrs[i.key] && (i.kind!=="phrase" || dWords(i.de)<=8));
+  if(!fresh.length) return {label:"", words:[]};
+  const groups = {};
+  fresh.forEach(i=>{ const g = hGroupOf(i); (groups[g.key] = groups[g.key] || {...g, kind:i.kind, items:[]}).items.push(i); });
+  let list = Object.values(groups);
+  if(skip && list.length>1) list = list.filter(g=> g.key!==skip);
+  // С включённым «Сначала слова с урока» берём группу, где больше всего новых слов с урока
+  const uCount = g=> g.items.filter(i=> i.u).length;
+  let g;
+  if(dPref.focusU && list.some(uCount)) g = list.slice().sort((a,b)=> uCount(b)-uCount(a))[0];
+  else { const full = list.filter(x=> x.items.length>=10); g = full.length ? dPick(full, rnd) : list.slice().sort((a,b)=> b.items.length-a.items.length)[0]; }
   const order = arr=> dPref.focusU ? dShuffle(arr.filter(i=>i.u), rnd).concat(dShuffle(arr.filter(i=>!i.u), rnd)) : dShuffle(arr, rnd);
-  // Смесь: 5 слов, 3 глагола, 2 фразы; если какого-то типа не хватает — добираем остальными
-  const pick = [].concat(order(fresh.filter(i=>i.kind==="word")).slice(0,5),
-    order(fresh.filter(i=>i.kind==="verb")).slice(0,3), order(fresh.filter(i=>i.kind==="phrase")).slice(0,2));
-  const rest = order(fresh.filter(i=> !pick.includes(i)));
+  const pick = order(g.items).slice(0,10);
+  // Если в группе меньше 10 — добираем той же частью речи из других групп
+  const rest = order(fresh.filter(i=> i.kind===g.kind && !pick.includes(i)));
   while(pick.length<10 && rest.length) pick.push(rest.shift());
-  return dShuffle(pick, rnd);
+  return {key:g.key, label:g.label + (pick.length>g.items.length ? " и похожие" : ""), words:dShuffle(pick, rnd)};
 }
+let hNextSet = null;
 // Варианты ответа берутся из этой же десятки — так приходится различать именно новые слова
 function hMCFromSet(it, set, dir, block, rnd){
   const others = [], usedDe = new Set([it.de]), usedRu = new Set([it.ru]);
@@ -4528,9 +4586,12 @@ function hBuild(words){
   return tasks;
 }
 function hStart(){
-  const words = hPickWords();
+  const set = hNextSet || hPickWords(hStats.lastGroup);
+  hNextSet = null;
+  const words = set.words;
   if(!words.length){ dEl("dailyStart").insertAdjacentHTML("beforeend", `<div class="daily-done">Все слова уже в изучении 🎉</div>`); return; }
-  dS = dNewSession("hot", hBuild(words), {words});
+  hStats.lastGroup = set.key; dSave(H_STATS_KEY, hStats);
+  dS = dNewSession("hot", hBuild(words), {words, topic:set.label});
   dView("dailyRun");
   dRenderTask();
 }
@@ -4545,13 +4606,13 @@ function hFinish(){
   const pct = dS.scored ? Math.round(dS.correct/dS.scored*100) : 0;
   dEl("dailyEnd").innerHTML = `
     <div class="panel">
-      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Горячая десятка пройдена</div>
+      <div class="q-label" style="text-align:center;color:var(--ink-muted);font-size:12.5px;">Горячая десятка пройдена · ${escapeHtml(dS.topic || "")}</div>
       <div class="end-score serif">+${dS.words.length}</div>
       <p class="sub" style="text-align:center;">новых слов · ${pct}% правильных ответов</p>
       <div class="hot-list">${dS.words.map(it=>`<div class="hot-row${dS.hotErr[it.key] ? " hard" : ""}"><span class="de">${escapeHtml(it.de)}</span><span class="ru">${escapeHtml(it.ru)}</span></div>`).join("")}</div>
       <p class="sub">Завтра Daily Challenge повторит эти слова. «Трудные» — где были ошибки.</p>
       <div class="daily-actions stack">
-        <button class="primary" id="hAgainBtn">Ещё 10 слов</button>
+        <button class="primary" id="hAgainBtn">Ещё 10 слов · другая тема</button>
         <button id="hDailyBtn">К Daily Challenge</button>
         <button id="hHomeBtn">На главную</button>
       </div>
@@ -4564,6 +4625,7 @@ function hFinish(){
 }
 function hRenderStart(){
   dS = null;
+  if(!hNextSet) hNextSet = hPickWords(hStats.lastGroup);
   const today = hStats.byDate[dToday()] || 0, left = D_POOL.filter(i=> !dSrs[i.key]).length;
   dEl("dailyStart").innerHTML = `
     <h1 class="serif">Горячая десятка</h1>
@@ -4573,9 +4635,11 @@ function hRenderStart(){
       <div class="daily-stat"><div class="n">${dStudied().length}</div><div class="k">слов изучено</div></div>
       <div class="daily-stat"><div class="n">${left}</div><div class="k">ещё впереди</div></div>
     </div>
+    ${hNextSet.words.length ? `<div class="hot-topic"><div><div class="k">Тема</div><div class="t">${escapeHtml(hNextSet.label)}</div></div><button id="hReroll">Другая тема</button></div>` : ""}
     <label class="daily-toggle"><input type="checkbox" id="dFocus" ${dPref.focusU ? "checked" : ""}> Сначала слова с урока (Aus dem Unterricht)</label>
     <div class="daily-actions stack"><button class="primary" id="hGo">${today ? "Ещё 10 слов" : "Начать · 10 слов"}</button></div>`;
-  dEl("dFocus").onchange = e=>{ dPref.focusU = e.target.checked; dSave(D_PREF_KEY, dPref); };
+  dEl("dFocus").onchange = e=>{ dPref.focusU = e.target.checked; dSave(D_PREF_KEY, dPref); hNextSet = null; hRenderStart(); };
+  if(dEl("hReroll")) dEl("hReroll").onclick = ()=>{ hNextSet = hPickWords(hNextSet.key); hRenderStart(); };
   dEl("hGo").onclick = hStart;
   dView("dailyStart");
 }
