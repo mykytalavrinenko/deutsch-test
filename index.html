@@ -372,7 +372,10 @@
   .bub{max-width:86%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.4;animation:bubIn .2s ease;}
   .bub.npc{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:5px;}
   .bub.me{align-self:flex-end;background:var(--accent);color:var(--surface);border-bottom-right-radius:5px;}
-  .bub .tr-btn{display:block;border:none;background:none;color:var(--accent-ink);font-size:12px;padding:0;margin-top:4px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:inherit;}
+  .bub-tools{display:flex;align-items:center;gap:12px;margin-top:5px;}
+  .bub .say-btn{display:flex;align-items:center;justify-content:center;width:30px;height:26px;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);color:var(--accent-ink);padding:0;cursor:pointer;}
+  .bub .say-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .bub .tr-btn{display:block;border:none;background:none;color:var(--accent-ink);font-size:12px;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:inherit;}
   .bub .tr{display:block;font-size:12.5px;color:var(--ink-muted);margin-top:4px;}
   .bub .tr[hidden]{display:none;}
   @keyframes bubIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
@@ -4798,6 +4801,7 @@ const ICONS = {
   home:'<path d="M3 10a2 2 0 0 1 .7-1.53l7-6a2 2 0 0 1 2.6 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>',
   coffee:'<path d="M10 2v2M14 2v2M6 2v2M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/>',
   train:'<path d="M8 3.1V7a4 4 0 0 0 8 0V3.1M9 15l-1-1M15 15l1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5z"/><path d="m8 19-2 3M16 19l2 3"/>',
+  speaker:'<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
   bag:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/>',
 };
 function icoSVG(k){ return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || ""}</svg>`; }
@@ -4806,113 +4810,113 @@ document.querySelectorAll("[data-ico]").forEach(el=> el.innerHTML = icoSVG(el.da
 const DIALOGS = [
   {id:"arzt", ico:"doctor", title:"Beim Hausarzt", ru:"У семейного врача", start:"n1", nodes:{
     n1:{npc:"Guten Tag! Was fehlt Ihnen?", npcRu:"Здравствуйте! Что вас беспокоит?", step:{kind:"choice", q:"Опишите симптомы", opts:[
-      {de:"Ich habe seit drei Tagen Halsschmerzen und Fieber.", next:"n2"},
+      {de:"Ich habe seit drei Tagen Halsschmerzen und Fieber.", next:"n2", why:"seit + Dativ: seit drei Tagen — «уже три дня». С seit говорят в Präsens, потому что боль ещё продолжается."},
       {de:"Ich habe gestern Halsschmerzen.", ok:false, fb:"Смешение времён: с «gestern» так не говорят. Лучше: «Ich habe seit gestern Halsschmerzen»."},
       {de:"Mir geht es super, danke!", ok:false, fb:"Вы же пришли к врачу 🙂 Опишите, что болит."}]}},
     n2:{npc:"Seit drei Tagen? Haben Sie auch Husten?", npcRu:"Уже три дня? А кашель тоже есть?", step:{kind:"gap", q:"Ответьте: да, и голова тоже болит",
-      before:"Ja, und mein Kopf ", after:" auch weh.", opts:["tut","tun","ist","hat"], ans:"tut", fb:"Kopf — один, значит «tut weh».", next:"n3"}},
+      before:"Ja, und mein Kopf ", after:" auch weh.", opts:["tut","tun","ist","hat"], ans:"tut", fb:"Kopf — один, значит «tut weh».", why:"wehtun: Mein Kopf tut weh — «у меня болит голова». Kopf — один, поэтому tut; во мн. ч. — die Füße tun weh.", next:"n3"}},
     n3:{npc:"Ich untersuche Sie kurz. Atmen Sie bitte tief ein.", npcRu:"Я вас коротко осмотрю. Сделайте, пожалуйста, глубокий вдох.",
-      step:{kind:"order", q:"Спросите, нужно ли вам оставаться дома", target:"Muss ich zu Hause bleiben?", next:"n4"}},
+      step:{kind:"order", q:"Спросите, нужно ли вам оставаться дома", target:"Muss ich zu Hause bleiben?", why:"Вопрос без вопросительного слова: muss на первом месте, инфинитив bleiben — в конце.", next:"n4"}},
     n4:{npc:"Ja, Sie haben eine Erkältung. Bleiben Sie drei Tage zu Hause und trinken Sie viel Tee.", npcRu:"Да, у вас простуда. Побудьте три дня дома и пейте много чая.",
       step:{kind:"choice", q:"Попросите выписать сироп от кашля", opts:[
-      {de:"Können Sie mir einen Hustensaft verschreiben?", next:"n5"},
+      {de:"Können Sie mir einen Hustensaft verschreiben?", next:"n5", why:"Können Sie mir …? — вежливая просьба. verschreiben — выписать (рецепт), mir — «мне» (Dativ)."},
       {de:"Geben Sie Hustensaft!", ok:false, fb:"Слишком резко. Вежливо: «Können Sie mir … verschreiben?»"},
       {de:"Ich möchte einen Hustensaft kaufen.", ok:false, fb:"Покупают в аптеке, а у врача просят рецепт — verschreiben."}]}},
     n5:{npc:"Natürlich. Hier ist Ihr Rezept. Nehmen Sie die Tropfen dreimal am Tag.", npcRu:"Конечно. Вот ваш рецепт. Капли принимайте три раза в день.",
-      step:{kind:"input", q:"Спросите, где ближайшая аптека", prompt:"Wo ist die nächste ___?", ans:["Apotheke"], say:"Wo ist die nächste Apotheke?", next:"n6"}},
+      step:{kind:"input", q:"Спросите, где ближайшая аптека", prompt:"Wo ist die nächste ___?", ans:["Apotheke"], say:"Wo ist die nächste Apotheke?", why:"die Apotheke — аптека. nächste — ближайшая (nah → am nächsten).", next:"n6"}},
     n6:{npc:"Gleich um die Ecke. Gute Besserung!", npcRu:"Прямо за углом. Выздоравливайте!", step:{kind:"choice", q:"Попрощайтесь", opts:[
-      {de:"Vielen Dank! Auf Wiedersehen!", next:"end"},
+      {de:"Vielen Dank! Auf Wiedersehen!", next:"end", why:"Auf Wiedersehen — нейтральное вежливое прощание при личной встрече."},
       {de:"Gute Besserung!", ok:false, fb:"Это желают больному, а болеете вы 🙂"},
       {de:"Tschüss, Alter!", ok:false, fb:"Слишком фамильярно для врача."}]}},
     end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
 
   {id:"wohnung", ico:"home", title:"Wohnung mieten", ru:"Звонок арендодателю", start:"n1", nodes:{
     n1:{npc:"Schmidt, guten Tag.", npcRu:"Шмидт, добрый день. (В Германии по телефону отвечают фамилией.)", step:{kind:"choice", q:"Представьтесь и скажите, зачем звоните", opts:[
-      {de:"Guten Tag, hier ist Anna Petrova. Ich rufe Sie an, um mich nach Ihrer Wohnung zu erkundigen.", next:"n2"},
+      {de:"Guten Tag, hier ist Anna Petrova. Ich rufe Sie an, um mich nach Ihrer Wohnung zu erkundigen.", next:"n2", why:"По телефону представляются «hier ist …». sich erkundigen nach + Dativ — справиться о чём-то; um … zu — «чтобы»."},
       {de:"Hallo, was geht? Ich will die Wohnung.", ok:false, fb:"Слишком неформально для разговора с арендодателем."},
       {de:"Guten Tag, ich möchte meine Wohnung verkaufen.", ok:false, fb:"Вы хотите снять квартиру — mieten, а не продать."}]}},
     n2:{npc:"Ah, die Wohnung in der Lindenstraße. Was möchten Sie wissen?", npcRu:"А, квартира на Линденштрассе. Что вы хотите узнать?",
-      step:{kind:"gap", q:"Спросите, сколько стоит аренда", before:"Wie viel ", after:" die Miete?", opts:["kostet","kosten","kauft","bezahlt"], ans:"kostet", fb:"die Miete — одна, значит «kostet».", next:"n3"}},
+      step:{kind:"gap", q:"Спросите, сколько стоит аренда", before:"Wie viel ", after:" die Miete?", opts:["kostet","kosten","kauft","bezahlt"], ans:"kostet", fb:"die Miete — одна, значит «kostet».", why:"Wie viel kostet …? — «Сколько стоит …?» die Miete — одна, поэтому kostet.", next:"n3"}},
     n3:{npc:"Die Miete ist 850 Euro warm, also mit Heizung.", npcRu:"Аренда — 850 евро «тёплая», то есть с отоплением.",
-      step:{kind:"order", q:"Спросите, есть ли в квартире балкон", target:"Hat die Wohnung einen Balkon?", next:"n4"}},
+      step:{kind:"order", q:"Спросите, есть ли в квартире балкон", target:"Hat die Wohnung einen Balkon?", why:"Вопрос да/нет: глагол hat на первом месте. der Balkon → einen Balkon (Akkusativ после haben).", next:"n4"}},
     n4:{npc:"Ja, einen kleinen Balkon und eine neue Küche.", npcRu:"Да, небольшой балкон и новая кухня.", step:{kind:"choice", q:"Попросите о просмотре", opts:[
-      {de:"Könnte ich die Wohnung besichtigen?", next:"n5"},
+      {de:"Könnte ich die Wohnung besichtigen?", next:"n5", why:"Könnte ich …? — Konjunktiv II, очень вежливая просьба. besichtigen — осмотреть квартиру перед арендой."},
       {de:"Ich habe die Wohnung besichtigt.", ok:false, fb:"Это прошедшее время, а просмотр ещё впереди."},
       {de:"Könnten Sie meine Wohnung besichtigen?", ok:false, fb:"Посмотреть нужно его квартиру, а не вашу."}]}},
     n5:{npc:"Gern. Passt Ihnen Samstag um zehn Uhr?", npcRu:"Конечно. Вам удобно в субботу в десять?", step:{kind:"choice", q:"Ответьте — выбор за вами", opts:[
-      {de:"Ja, Samstag um zehn passt mir gut.", next:"n6a"},
-      {de:"Leider nicht. Geht es auch am Sonntag?", next:"n6b"}]}},
+      {de:"Ja, Samstag um zehn passt mir gut.", next:"n6a", why:"passen + Dativ: Das passt mir — «мне подходит». Время: um zehn (Uhr)."},
+      {de:"Leider nicht. Geht es auch am Sonntag?", next:"n6b", why:"Leider nicht — «к сожалению, нет». Geht es …? — «А можно …?» Дни недели — с am: am Sonntag."}]}},
     n6a:{npc:"Prima, dann bis Samstag!", npcRu:"Отлично, тогда до субботы!", step:{kind:"choice", q:"Попрощайтесь по телефону", opts:[
-      {de:"Vielen Dank, auf Wiederhören!", next:"end"},
+      {de:"Vielen Dank, auf Wiederhören!", next:"end", why:"Auf Wiederhören — прощание по телефону: hören «слышать» вместо sehen «видеть»."},
       {de:"Vielen Dank, auf Wiedersehen!", ok:false, fb:"По телефону прощаются «Auf Wiederhören» — «до следующего разговора»."}]}},
     n6b:{npc:"Sonntag geht leider nicht, aber Montag um 18 Uhr.", npcRu:"В воскресенье, к сожалению, нельзя, но в понедельник в 18 часов.",
-      step:{kind:"gap", q:"Скажите, что понедельник вам подходит", before:"Montag um 18 Uhr ", after:" mir gut.", opts:["passt","passen","geht","gefällt"], ans:"passt", fb:"«Das passt mir» — мне подходит.", next:"n7b"}},
+      step:{kind:"gap", q:"Скажите, что понедельник вам подходит", before:"Montag um 18 Uhr ", after:" mir gut.", opts:["passt","passen","geht","gefällt"], ans:"passt", fb:"«Das passt mir» — мне подходит.", why:"passen + Dativ: Das passt mir gut — «мне это хорошо подходит». Время одно, поэтому passt.", next:"n7b"}},
     n7b:{npc:"Gut, dann bis Montag!", npcRu:"Хорошо, тогда до понедельника!", step:{kind:"choice", q:"Попрощайтесь по телефону", opts:[
-      {de:"Vielen Dank, auf Wiederhören!", next:"end"},
+      {de:"Vielen Dank, auf Wiederhören!", next:"end", why:"Auf Wiederhören — прощание по телефону: hören «слышать» вместо sehen «видеть»."},
       {de:"Vielen Dank, auf Wiedersehen!", ok:false, fb:"По телефону прощаются «Auf Wiederhören»."}]}},
     end:{npc:"Auf Wiederhören!", npcRu:"До свидания!", end:true}}},
 
   {id:"cafe", ico:"coffee", title:"Im Café", ru:"Заказ в кафе", start:"n1", nodes:{
     n1:{npc:"Hallo! Was darf es sein?", npcRu:"Здравствуйте! Что для вас?", step:{kind:"choice", q:"Закажите напиток", opts:[
-      {de:"Ich hätte gern einen Kaffee, bitte.", next:"n2k"},
-      {de:"Ich möchte einen Tee, bitte.", next:"n2t"},
+      {de:"Ich hätte gern einen Kaffee, bitte.", next:"n2k", why:"Ich hätte gern … — самая вежливая форма заказа (Konjunktiv II от haben). der Kaffee → einen Kaffee (Akkusativ)."},
+      {de:"Ich möchte einen Tee, bitte.", next:"n2t", why:"Ich möchte … — вежливое «я бы хотел(а)». der Tee → einen Tee (Akkusativ)."},
       {de:"Kaffee. Schnell!", ok:false, fb:"Невежливо. Лучше: «Ich hätte gern …, bitte»."}]}},
     n2k:{npc:"Gern. Mit Milch und Zucker?", npcRu:"Конечно. С молоком и сахаром?",
-      step:{kind:"gap", q:"С молоком, но без сахара", before:"Mit Milch, aber ", after:" Zucker, bitte.", opts:["ohne","mit","kein","nicht"], ans:"ohne", fb:"«без» — ohne.", next:"n3"}},
+      step:{kind:"gap", q:"С молоком, но без сахара", before:"Mit Milch, aber ", after:" Zucker, bitte.", opts:["ohne","mit","kein","nicht"], ans:"ohne", fb:"«без» — ohne.", why:"mit — с, ohne — без: mit Milch, ohne Zucker. После ohne — Akkusativ.", next:"n3"}},
     n2t:{npc:"Schwarztee oder Pfefferminztee?", npcRu:"Чёрный или мятный?", step:{kind:"choice", q:"Выберите чай", opts:[
-      {de:"Pfefferminztee, bitte.", next:"n3"}, {de:"Schwarztee, bitte.", next:"n3"}]}},
+      {de:"Pfefferminztee, bitte.", next:"n3", why:"Pfefferminztee — мятный чай (die Pfefferminze — мята). Для заказа хватит слова + bitte."}, {de:"Schwarztee, bitte.", next:"n3", why:"Schwarztee — чёрный чай. Для заказа хватит слова + bitte."}]}},
     n3:{npc:"Möchten Sie auch etwas essen? Wir haben frischen Apfelkuchen.", npcRu:"Хотите что-нибудь поесть? У нас свежий яблочный пирог.",
-      step:{kind:"order", q:"Ответьте: да, кусочек пирога, пожалуйста", target:"Ja, ein Stück Kuchen, bitte.", next:"n4"}},
+      step:{kind:"order", q:"Ответьте: да, кусочек пирога, пожалуйста", target:"Ja, ein Stück Kuchen, bitte.", why:"ein Stück Kuchen — «кусок пирога»: после Stück существительное идёт без артикля.", next:"n4"}},
     n4:{npc:"Gern. Zum Mitnehmen oder zum Hieressen?", npcRu:"Конечно. С собой или здесь?", step:{kind:"choice", q:"Ответьте", opts:[
-      {de:"Hier, bitte.", next:"n5"}, {de:"Zum Mitnehmen, bitte.", next:"n5"}]}},
+      {de:"Hier, bitte.", next:"n5", why:"Hier — «здесь». Официант спросил «zum Hieressen» — есть на месте."}, {de:"Zum Mitnehmen, bitte.", next:"n5", why:"zum Mitnehmen — с собой (mitnehmen — брать с собой)."}]}},
     n5:{npc:"Das macht zusammen 7,40 Euro.", npcRu:"С вас 7,40 евро.", step:{kind:"choice", q:"Спросите, можно ли заплатить картой", opts:[
-      {de:"Kann ich mit Karte bezahlen?", next:"n6"},
+      {de:"Kann ich mit Karte bezahlen?", next:"n6", why:"mit Karte bezahlen — платить картой, bar bezahlen — наличными."},
       {de:"Kann ich mit Karte kaufen?", ok:false, fb:"Платить — bezahlen."},
       {de:"Ich bezahle mit dem Karte.", ok:false, fb:"die Karte → mit der Karte (Dativ)."}]}},
     n6:{npc:"Ja, natürlich. Schönen Tag noch!", npcRu:"Да, конечно. Хорошего дня!", step:{kind:"choice", q:"Ответьте", opts:[
-      {de:"Danke, Ihnen auch!", next:"end"},
+      {de:"Danke, Ihnen auch!", next:"end", why:"Ihnen auch! — «Вам тоже!» Ihnen — Dativ от Sie, форма на «вы»."},
       {de:"Danke, dir auch!", ok:false, fb:"С незнакомым официантом на «вы»: Ihnen auch."}]}},
     end:{npc:"Tschüss!", npcRu:"Пока!", end:true}}},
 
   {id:"bahnhof", ico:"train", title:"Am Bahnhof", ru:"Покупка билета на поезд", start:"n1", nodes:{
     n1:{npc:"Guten Tag, wohin möchten Sie fahren?", npcRu:"Добрый день, куда вы хотите поехать?",
-      step:{kind:"gap", q:"Скажите, что хотите поехать в Гамбург", before:"Ich möchte ", after:" Hamburg fahren.", opts:["nach","zu","in","bei"], ans:"nach", fb:"В города и страны без артикля — nach.", next:"n2"}},
+      step:{kind:"gap", q:"Скажите, что хотите поехать в Гамбург", before:"Ich möchte ", after:" Hamburg fahren.", opts:["nach","zu","in","bei"], ans:"nach", fb:"В города и страны без артикля — nach.", why:"nach — в город или страну без артикля: nach Hamburg, nach Spanien. zu — к человеку или месту: zum Arzt.", next:"n2"}},
     n2:{npc:"Einfach oder hin und zurück?", npcRu:"В одну сторону или туда и обратно?", step:{kind:"choice", q:"Выберите билет", opts:[
-      {de:"Hin und zurück, bitte.", next:"n3"}, {de:"Einfach, bitte.", next:"n3"}]}},
+      {de:"Hin und zurück, bitte.", next:"n3", why:"hin und zurück — туда и обратно; einfach — в одну сторону."}, {de:"Einfach, bitte.", next:"n3", why:"einfach — в одну сторону; hin und zurück — туда и обратно."}]}},
     n3:{npc:"Wann möchten Sie fahren?", npcRu:"Когда вы хотите поехать?",
-      step:{kind:"order", q:"Скажите, что хотите поехать завтра утром", target:"Ich möchte morgen früh fahren.", next:"n4"}},
+      step:{kind:"order", q:"Скажите, что хотите поехать завтра утром", target:"Ich möchte morgen früh fahren.", why:"Подлежащее → möchte → время (morgen früh) → инфинитив fahren в конце. morgen früh — завтра утром.", next:"n4"}},
     n4:{npc:"Der Zug fährt um 8:15 Uhr ab. Sie müssen in Hannover umsteigen.", npcRu:"Поезд отправляется в 8:15. Пересадка в Ганновере.",
       step:{kind:"choice", q:"Спросите, с какого пути отправляется поезд", opts:[
-      {de:"Von welchem Gleis fährt der Zug ab?", next:"n5"},
+      {de:"Von welchem Gleis fährt der Zug ab?", next:"n5", why:"das Gleis — путь. von + Dativ: von welchem Gleis. abfahren — отделяемая приставка: fährt … ab."},
       {de:"Von welcher Gleis fährt der Zug ab?", ok:false, fb:"das Gleis → von welchem Gleis (Dativ, средний род)."},
       {de:"Wo ist der Zug gestern abgefahren?", ok:false, fb:"Поезд ещё не ушёл — прошедшее время не подходит."}]}},
     n5:{npc:"Von Gleis 7. Das macht 89 Euro.", npcRu:"С седьмого пути. С вас 89 евро.",
-      step:{kind:"input", q:"Отдайте деньги за билет (проездной билет — ?)", prompt:"Hier ist das Geld für die ___.", ans:["Fahrkarte"], say:"Hier ist das Geld für die Fahrkarte.", next:"n6"}},
+      step:{kind:"input", q:"Отдайте деньги за билет (проездной билет — ?)", prompt:"Hier ist das Geld für die ___.", ans:["Fahrkarte"], say:"Hier ist das Geld für die Fahrkarte.", why:"die Fahrkarte — билет. für + Akkusativ: für die Fahrkarte.", next:"n6"}},
     n6:{npc:"Vielen Dank. Gute Reise!", npcRu:"Спасибо. Счастливого пути!", step:{kind:"choice", q:"Ответьте", opts:[
-      {de:"Danke, schönen Tag noch!", next:"end"},
+      {de:"Danke, schönen Tag noch!", next:"end", why:"Schönen Tag noch! — «Хорошего дня!», стандартное прощание с кассиром или продавцом."},
       {de:"Gute Reise!", ok:false, fb:"Это желают тому, кто едет, то есть вам 🙂"}]}},
     end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
 
   {id:"schuhe", ico:"bag", title:"Schuhe umtauschen", ru:"Обмен обуви в магазине", start:"n1", nodes:{
     n1:{npc:"Guten Tag! Kann ich Ihnen helfen?", npcRu:"Добрый день! Чем могу помочь?", step:{kind:"choice", q:"Ответьте продавцу", opts:[
-      {de:"Ja, ich möchte diese Schuhe umtauschen.", next:"n2"},
-      {de:"Nein danke, ich schaue nur.", next:"n1b"},
+      {de:"Ja, ich möchte diese Schuhe umtauschen.", next:"n2", why:"umtauschen — обменять. diese Schuhe — «эту обувь» (мн. ч.)."},
+      {de:"Nein danke, ich schaue nur.", next:"n1b", why:"Ich schaue nur — «я просто смотрю», обычный ответ продавцу."},
       {de:"Ja, ich möchte diese Schuhe anrufen.", ok:false, fb:"anrufen — звонить. Обменять — umtauschen."}]}},
     n1b:{npc:"Kein Problem. Sagen Sie Bescheid, wenn Sie Hilfe brauchen.", npcRu:"Без проблем. Скажите, если понадобится помощь.",
       step:{kind:"choice", q:"Всё-таки попросите помочь с обменом", opts:[
-      {de:"Eigentlich möchte ich diese Schuhe umtauschen.", next:"n2"},
+      {de:"Eigentlich möchte ich diese Schuhe umtauschen.", next:"n2", why:"Eigentlich — «вообще-то»: удобное слово, чтобы вернуться к своему вопросу."},
       {de:"Eigentlich möchte ich diese Schuhe kaufen.", ok:false, fb:"Вы же хотите обменять — umtauschen."}]}},
     n2:{npc:"Was ist denn das Problem mit den Schuhen?", npcRu:"А в чём проблема с обувью?",
-      step:{kind:"gap", q:"Скажите, что они вам тесные", before:"Sie sind mir zu ", after:".", opts:["eng","nass","tief","laut"], ans:"eng", fb:"«тесный» — eng.", next:"n3"}},
+      step:{kind:"gap", q:"Скажите, что они вам тесные", before:"Sie sind mir zu ", after:".", opts:["eng","nass","tief","laut"], ans:"eng", fb:"«тесный» — eng.", why:"eng — тесный, узкий. zu eng — слишком тесные; mir — «мне» (Dativ).", next:"n3"}},
     n3:{npc:"Möchten Sie eine Nummer größer anprobieren?", npcRu:"Хотите примерить на размер больше?",
-      step:{kind:"order", q:"Ответьте: да, с удовольствием примерю", target:"Ja, ich probiere sie gern an.", next:"n4"}},
+      step:{kind:"order", q:"Ответьте: да, с удовольствием примерю", target:"Ja, ich probiere sie gern an.", why:"anprobieren — отделяемая приставка: ich probiere … an. sie (= die Schuhe) стоит сразу после глагола.", next:"n4"}},
     n4:{npc:"Hier, bitte. Passen sie jetzt?", npcRu:"Вот, пожалуйста. Теперь подходят?", step:{kind:"choice", q:"Ответьте", opts:[
-      {de:"Ja, die passen perfekt!", next:"n5"},
+      {de:"Ja, die passen perfekt!", next:"n5", why:"die Schuhe — мн. ч., поэтому passen. В разговоре «die» часто заменяет «sie»."},
       {de:"Ja, die passt perfekt!", ok:false, fb:"die Schuhe — множественное число, значит «passen»."}]}},
     n5:{npc:"Super. Haben Sie den Kassenbon dabei?", npcRu:"Отлично. У вас с собой чек?",
-      step:{kind:"input", q:"Скажите: «Да, вот чек»", prompt:"Ja, hier ist der ___.", ans:["Kassenbon","Bon"], say:"Ja, hier ist der Kassenbon.", next:"n6"}},
+      step:{kind:"input", q:"Скажите: «Да, вот чек»", prompt:"Ja, hier ist der ___.", ans:["Kassenbon","Bon"], say:"Ja, hier ist der Kassenbon.", why:"der Kassenbon (коротко der Bon) — кассовый чек. Hier ist … — «Вот …».", next:"n6"}},
     n6:{npc:"Danke. Der Umtausch ist erledigt. Schönen Tag noch!", npcRu:"Спасибо. Обмен оформлен. Хорошего дня!", step:{kind:"choice", q:"Попрощайтесь", opts:[
-      {de:"Danke, Ihnen auch!", next:"end"},
+      {de:"Danke, Ihnen auch!", next:"end", why:"Ihnen auch! — «Вам тоже!» Ihnen — Dativ от Sie, форма на «вы»."},
       {de:"Danke, gleichfalls, Digga!", ok:false, fb:"«Digga» — сленг для друзей, не для продавца."}]}},
     end:{npc:"Auf Wiedersehen!", npcRu:"До свидания!", end:true}}},
 ];
@@ -4945,9 +4949,13 @@ function dlgStart(id){
 function dlgBubble(who, de, ru){
   const el = document.createElement("div");
   el.className = "bub " + who;
-  el.innerHTML = `<span class="de">${escapeHtml(de)}</span>` + (ru ? `<button class="tr-btn" type="button">перевод</button><span class="tr" hidden>${escapeHtml(ru)}</span>` : "");
-  const b = el.querySelector(".tr-btn");
+  const tools = (who==="npc" && D_TTS ? `<button class="say-btn" type="button" aria-label="Озвучить">${icoSVG("speaker")}</button>` : "")
+    + (ru ? `<button class="tr-btn" type="button">перевод</button>` : "");
+  el.innerHTML = `<span class="de">${escapeHtml(de)}</span>` + (tools ? `<div class="bub-tools">${tools}</div>` : "")
+    + (ru ? `<span class="tr" hidden>${escapeHtml(ru)}</span>` : "");
+  const b = el.querySelector(".tr-btn"), sp = el.querySelector(".say-btn");
   if(b) b.onclick = ()=>{ el.querySelector(".tr").hidden = false; b.remove(); };
+  if(sp) sp.onclick = ()=> dSpeak(de);
   dEl("dlgChat").appendChild(el);
 }
 function dlgScroll(){ setTimeout(()=> window.scrollTo({top:document.body.scrollHeight, behavior:"smooth"}), 60); }
@@ -4969,6 +4977,20 @@ function dlgAdvance(say, next){
   gD.node = next;
   setTimeout(dlgShowNode, 450);
 }
+// После ответа: объяснение и кнопка «Дальше»
+function dlgExplain(box, ok, why, go){
+  const fb = box.querySelector(".d-fb");
+  fb.className = "d-fb feedback " + (ok ? "correct" : "wrong");
+  fb.textContent = ok ? "Верно!" : "Не совсем";
+  fb.insertAdjacentHTML("afterend", why ? `<div class="d-ex">${escapeHtml(why)}</div>` : "");
+  let acts = box.querySelector(".daily-actions");
+  if(!acts){ box.insertAdjacentHTML("beforeend", `<div class="daily-actions"></div>`); acts = box.querySelector(".daily-actions"); }
+  acts.innerHTML = `<button class="primary d-go">Дальше →</button>`;
+  const b = acts.querySelector(".d-go");
+  b.onclick = ()=>{ b.disabled = true; go(); };
+  b.focus({preventScroll:true});
+  dlgScroll();
+}
 function dlgMiss(box, text){
   gD.missed = true;
   const fb = box.querySelector(".d-fb");
@@ -4989,7 +5011,8 @@ function dlgRenderStep(s){
       b.classList.add("correct");
       box.querySelectorAll(".opt").forEach(x=> x.disabled = true);
       if(s.kind==="gap"){ const g = box.querySelector(".gap"); g.textContent = s.ans; g.classList.add("ok"); }
-      setTimeout(()=> dlgAdvance(s.kind==="choice" ? opt.de : s.before+s.ans+s.after, s.kind==="choice" ? opt.next : s.next), 350);
+      dlgExplain(box, true, s.kind==="choice" ? opt.why : s.why,
+        ()=> dlgAdvance(s.kind==="choice" ? opt.de : s.before+s.ans+s.after, s.kind==="choice" ? opt.next : s.next));
     });
   } else if(s.kind==="order"){
     const words = s.target.replace(/[.!?]$/, "").split(" ").map(w=> w.replace(/,$/, ""));
@@ -5014,12 +5037,10 @@ function dlgRenderStep(s){
     });
     box.querySelector(".d-check").onclick = ()=>{
       if(built.length < words.length){ dlgMiss(box, "Используй все слова"); gD.missed = false; return; }
-      if(built.map(i=> words[i]).join(" ").toLowerCase() === words.join(" ").toLowerCase()){ dlgAdvance(s.target, s.next); return; }
-      // Неверный порядок: показываем правильный и идём дальше
-      dlgMiss(box, `Правильно: «${s.target}»`);
-      const btn = box.querySelector(".d-check");
-      btn.textContent = "Дальше →";
-      btn.onclick = ()=> dlgAdvance(s.target, s.next);
+      const ok = built.map(i=> words[i]).join(" ").toLowerCase() === words.join(" ").toLowerCase();
+      if(!ok) gD.missed = true;
+      box.querySelectorAll(".tile").forEach(x=> x.disabled = true);
+      dlgExplain(box, ok, (ok ? "" : `Правильно: «${s.target}»\n`) + (s.why || ""), ()=> dlgAdvance(s.target, s.next));
     };
   } else if(s.kind==="input"){
     box.innerHTML = q + `<div class="q-sent">${escapeHtml(s.prompt)}</div>${D_INPUT}${D_UMLAUTS}
@@ -5028,11 +5049,10 @@ function dlgRenderStep(s){
     const inp = box.querySelector(".d-in"), btn = box.querySelector(".d-check");
     const check = ()=>{
       if(!inp.value.trim()) return;
-      if(s.ans.map(normalize).includes(normalize(inp.value))){ dlgAdvance(s.say, s.next); return; }
-      dlgMiss(box, `Правильно: «${s.say}»`);
+      const ok = s.ans.map(normalize).includes(normalize(inp.value));
+      if(!ok) gD.missed = true;
       inp.disabled = true;
-      btn.textContent = "Дальше →";
-      btn.onclick = ()=> dlgAdvance(s.say, s.next);
+      dlgExplain(box, ok, (ok ? "" : `Правильно: «${s.say}»\n`) + (s.why || ""), ()=> dlgAdvance(s.say, s.next));
     };
     btn.onclick = check;
     inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); btn.click(); } });
