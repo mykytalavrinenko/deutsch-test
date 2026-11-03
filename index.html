@@ -295,7 +295,7 @@
   .daily-task .q-word{font-size:clamp(22px,7vw,32px);font-weight:500;text-align:center;margin-bottom:18px;overflow-wrap:anywhere;text-wrap:balance;}
   .daily-task .q-sub{font-size:13px;color:var(--ink-muted);text-align:center;margin:-12px 0 16px;}
   .daily-task .pronoun{color:var(--accent-ink);font-weight:600;}
-  .d-ex{background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:13px;margin:0 0 12px;line-height:1.45;}
+  .d-ex{background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:13px;margin:0 0 12px;line-height:1.45;white-space:pre-line;}
   .d-ex span{color:var(--ink-muted);}
   .umlauts{display:flex;gap:6px;justify-content:center;margin:-4px 0 12px;}
   .hint-row{display:flex;justify-content:center;align-items:center;gap:10px;margin:-4px 0 10px;min-height:30px;}
@@ -3622,6 +3622,18 @@ const D_PRAET = [
   {b:"Früher ", a:" ich oft Kopfschmerzen.", ans:"hatte", o:["hatte","habe","hätte","hatten"], ru:"Раньше у меня часто болела голова."},
   {b:"Letzte Nacht ", a:" ich nicht schlafen.", ans:"konnte", o:["konnte","kann","könnte","konnten"], ru:"Прошлой ночью я не мог(ла) уснуть."},
 ];
+// Формы Präteritum для пояснения после ответа (ключ — начало вставленной формы)
+const D_PRAET_FORMS = [
+  {re:/^war/,   inf:"sein",   ru:"быть",                  f:"ich war · du warst · er/sie/es war · wir waren · ihr wart · sie/Sie waren"},
+  {re:/^hatt/,  inf:"haben",  ru:"иметь",                 f:"ich hatte · du hattest · er/sie/es hatte · wir hatten · ihr hattet · sie/Sie hatten"},
+  {re:/^konnt/, inf:"können", ru:"мочь, уметь",           f:"ich konnte · du konntest · er/sie/es konnte · wir konnten · ihr konntet · sie/Sie konnten"},
+  {re:/^musst/, inf:"müssen", ru:"быть должным, приходиться", f:"ich musste · du musstest · er/sie/es musste · wir mussten · ihr musstet · sie/Sie mussten"},
+  {re:/^wollt/, inf:"wollen", ru:"хотеть",                f:"ich wollte · du wolltest · er/sie/es wollte · wir wollten · ihr wolltet · sie/Sie wollten"},
+];
+function dPraetNote(s){
+  const v = D_PRAET_FORMS.find(x=> x.re.test(s.ans));
+  return v ? `${s.ans} — Präteritum от ${v.inf} («${v.ru}»)\n${v.f}` : "";
+}
 const D_KONJ2 = [
   {b:"Wenn ich Zeit ", a:", würde ich kommen.", ans:"hätte", o:["hätte","habe","hatte","hättest"], ru:"Если бы у меня было время, я бы пришёл/пришла."},
   {b:"Wenn ich reich ", a:", würde ich reisen.", ans:"wäre", o:["wäre","bin","war","wärst"], ru:"Если бы я был(а) богат(а), я бы путешествовал(а)."},
@@ -3652,7 +3664,7 @@ const D_KONJ1 = [
 ];
 function dCurGap(list, label, note, rnd, block, used, tag){
   const s = dPickUnused(list, rnd, used, s=> tag+s.b+s.a);
-  return {type:"gap", label, before:s.b, after:s.a, ans:s.ans, opts:dShuffle(s.o, rnd), sub:s.ru, note, block};
+  return {type:"gap", label, before:s.b, after:s.a, ans:s.ans, opts:dShuffle(s.o, rnd), sub:s.ru, note: typeof note==="function" ? note(s) : note, block};
 }
 
 // Сложные предложения: соединить два простых через союз
@@ -3780,7 +3792,7 @@ function dGramTask(type, rnd, block, used){
     case "komp":     return dMakeKomp(rnd, block, used);
     case "adjDecl":  return dMakeAdjDecl(rnd, block);
     case "neg":      return dMakeNeg(rnd, block);
-    case "praet":    return dCurGap(D_PRAET, "Präteritum: вставь форму", "Präteritum от sein, haben и модальных — так говорят и в разговоре", rnd, block, used, "pr:");
+    case "praet":    return dCurGap(D_PRAET, "Präteritum: вставь форму", dPraetNote, rnd, block, used, "pr:");
     case "konj2":    return dCurGap(D_KONJ2, "Konjunktiv II: вставь форму", "Konjunktiv II: hätte, wäre, würde, könnte — желание, вежливость, «если бы»", rnd, block, used, "k2:");
     case "passiv":   return dCurGap(D_PASSIV, "Passiv: вставь форму", "Passiv: werden + Partizip II (сейчас wird/werden, в прошлом wurde/wurden, Perfekt ist … worden)", rnd, block, used, "pa:");
     case "konj1":    return dCurGap(D_KONJ1, "Konjunktiv I: косвенная речь", "Konjunktiv I: er sei, er habe, er fahre — пересказ чужих слов", rnd, block, used, "k1:");
