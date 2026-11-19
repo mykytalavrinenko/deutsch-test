@@ -4086,15 +4086,18 @@ function dBuildSession(){
     // Грамматика дня: две темы по два задания; без слов, которые сегодня уже были
     const cand = dGramOfDay(today), free = cand.filter(x=> !(themes[x.type]||0));
     const g = (free.length>=2 ? free : cand).slice(0,2);
+    const gramOpts = new Set();
     const seenBare = ()=> [...dAvoid].map(k=> D_BYKEY[k]).filter(Boolean).map(i=> dBare(i.de)).filter(w=> w.length>=4);
     [0,1,0,1].forEach(j=>{
       const x = g[j % g.length];
       let t = null;
       for(let a=0; a<12; a++){
         t = dGramTask(x.type, rnd, "gram", used);
-        const text = dTaskText(t), hit = (t.item && dAvoid.has(t.item.key)) || seenBare().some(w=> text.includes(w));
+        const text = dTaskText(t), strOpts = (t.opts || []).filter(o=> typeof o==="string");
+        const hit = (t.item && dAvoid.has(t.item.key)) || seenBare().some(w=> text.includes(w)) || strOpts.some(o=> gramOpts.has(o));
         if(!hit) break;
       }
+      (t.opts || []).forEach(o=> typeof o==="string" && gramOpts.add(o));
       tasks.push(count(Object.assign(t, {gLabel:x.label})));
     });
 
