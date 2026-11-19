@@ -4026,6 +4026,7 @@ function dLessonOrder(){
   const pool = D_POOL.filter(i=> i.u && (i.kind!=="phrase" || dWords(i.de)<=8)).sort((a,b)=> a.key.localeCompare(b.key));
   return dShuffle(pool, dRng(dHash("deutsch-lesson-order-v1")));
 }
+function dStudied(){ return Object.keys(dSrs).filter(k=> D_BYKEY[k]); }
 function dDayIndex(date){ return Math.floor(new Date(date+"T12:00:00").getTime()/86400000); }
 
 // Весь набор дня зависит только от даты — у всех одинаковый
