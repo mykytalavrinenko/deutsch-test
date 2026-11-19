@@ -754,7 +754,7 @@
         <div class="badge-mono" data-ico="daily"></div>
         <div class="txt">
           <div class="t">Daily Challenge</div>
-          <div class="d" id="dailyHomeSub">20 заданий на повторение · ~10 минут</div>
+          <div class="d" id="dailyHomeSub">20 заданий дня · ~10 минут</div>
         </div>
         <div class="chevron">›</div>
       </button>
@@ -3262,8 +3262,9 @@ const D_NOUNS = D_POOL.filter(i=> i.kind==="word" && /^(der|die|das) \S+$/.test(
 const D_VERBS = D_POOL.filter(i=> i.kind==="verb");
 const D_PERF_VERBS = D_VERBS.filter(i=> i.verb.perf);
 
-// Daily: ровно 20 заданий = разминка 3 + повторение 9 (из них ≥2 грамматика) + грамматика дня 5 + работа над ошибками 2 + финал 1
-const D_PLAN = {warm:3, review:9, bonus:2, slots:2};
+// Daily: ровно 20 заданий, одинаковых для всех в этот день.
+// 16 (80%) — по словам «Aus dem Unterricht»: разминка 3 + повторение 12 + финал 1; 4 — «Грамматика дня» (две темы по два задания)
+const D_PLAN = {warm:3, review:12, gram:4};
 const D_GRAM_TYPES = [
   {type:"conj",     label:"Präsens — спряжение"},
   {type:"case",     label:"Артикль и падеж"},
@@ -3297,10 +3298,10 @@ const G_TOPICS = {
   konjunktiv: {label:"Konjunktiv I", types:["konj1","konj2"]},
   passiv:     {label:"Passiv",       types:["passiv"]},
 };
-// Грамматика дня — три соседние темы из списка (2 + 2 + 1 задание), чтобы ни одной темы не было больше двух
+// Кандидаты в «Грамматику дня» — соседние темы списка; берутся первые две, которых ещё нет в повторении
 function dGramOfDay(date){
   const i = Math.floor(new Date(date+"T12:00:00").getTime()/86400000), n = D_GRAM_TYPES.length;
-  return [0,1,2].map(k=> D_GRAM_TYPES[(i+k) % n]);
+  return [0,1,2,3].map(k=> D_GRAM_TYPES[(i+k) % n]);
 }
 const D_MAX_PER_THEME = 2;
 // Тема задания: тип генератора грамматики или грамматический тип задания по слову; перевод слов темой не считается
@@ -3994,105 +3995,86 @@ function dMakeTask(ty, it, block, rnd, dir){
   if(ty==="order") return dMakeOrder(rnd, block, new Set(), D_ORDER_BY_KEY.get(it.key));
   return {type:ty, item:it, block};
 }
-function dTypesFor(it){
+function dTypesFor(it, audio = D_TTS){
   const t = [];
   if(it.kind==="verb"){
     if(!it.verb.impers) t.push("conj");
     if(D_VGAPS.has(it.key)) t.push("vgap");
     t.push("input");
     if(it.verb.perf) t.push("perf");
-    if(D_TTS) t.push("audio");
+    if(audio) t.push("audio");
     if(D_ORDER_BY_KEY.has(it.key)) t.push("order");
     t.push("mc");
   } else if(it.kind==="word"){
     if(D_NOUNS.includes(it)) t.push("art");
     t.push("input");
-    if(D_TTS) t.push("audio");
+    if(audio) t.push("audio");
     t.push("mc");
   } else {
     if(D_SIT_BY_DE.has(it.de)) t.push("situation");
     if(D_ORDER_BY_KEY.has(it.key)) t.push("order");
-    if(D_TTS && dWords(it.de)<=4) t.push("audio");
+    if(audio && dWords(it.de)<=4) t.push("audio");
     t.push("mc");
   }
   return t;
 }
 function dTypeKey(t){ return t.type==="mc" ? "mc-"+t.dir : t.type; }
 
-// Общая часть дня: одинакова на всех устройствах (зависит только от даты)
-function dSharedTasks(today){
-  const g = dGramOfDay(today), rnd = dRng(dHash("deutsch-daily-"+today)), used = new Set();
-  const gram = [0,1,2,0,1].map(j=> Object.assign(dGramTask(g[j].type, rnd, "gram", used), {gLabel:g[j].label}));
-  const gramKeys = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
-  const pairs = [], usedRu = new Set();
-  for(const i of dShuffle(D_POOL.filter(i=> i.kind!=="phrase" && !gramKeys.has(i.key) && i.ru.length<=26 && i.de.length<=18), rnd)){
-    if(usedRu.has(i.ru)) continue;
-    usedRu.add(i.ru); pairs.push({de:i.de, ru:i.ru});
-    if(pairs.length===6) break;
-  }
-  return {g, gram, match:{type:"match", pairs, block:"match"}};
+// Слова с урока в постоянном (перемешанном один раз) порядке: каждый день берётся следующая порция,
+// поэтому слова не повторяются, пока не пройден весь список
+function dLessonOrder(){
+  const pool = D_POOL.filter(i=> i.u && (i.kind!=="phrase" || dWords(i.de)<=8)).sort((a,b)=> a.key.localeCompare(b.key));
+  return dShuffle(pool, dRng(dHash("deutsch-lesson-order-v1")));
 }
+function dDayIndex(date){ return Math.floor(new Date(date+"T12:00:00").getTime()/86400000); }
 
-function dStudied(){ return Object.keys(dSrs).filter(k=> D_BYKEY[k]); }
+// Весь набор дня зависит только от даты — у всех одинаковый
 function dBuildSession(){
-  const today = dToday(), rnd = Math.random;
-  const shared = dSharedTasks(today);
-  const gram = shared.gram;
-  const reserved = new Set(gram.filter(t=>t.item).map(t=>t.item.key));
+  const today = dToday(), rnd = dRng(dHash("deutsch-daily-"+today)), used = new Set();
+  const order = dLessonOrder(), N = order.length, per = D_PLAN.warm + D_PLAN.review + 6;
+  const start = (dDayIndex(today) * per) % N;
+  const items = [];
+  for(let k=0; k<D_PLAN.warm + D_PLAN.review && k<N; k++) items.push(order[(start+k) % N]);
 
-  // Только изученные слова: сначала те, что пора повторить, затем самые слабые из остальных
-  const due = dShuffle(dDueKeys(today), rnd).sort((a,b)=> dSrs[a].due.localeCompare(dSrs[b].due))
-    .filter(k=>!reserved.has(k)).map(k=>D_BYKEY[k]);
-  const dueKeys = new Set(due.map(i=>i.key));
-  const weakest = dShuffle(dStudied().filter(k=> !dueKeys.has(k) && !reserved.has(k)), rnd)
-    .sort((a,b)=> dSrs[a].lvl-dSrs[b].lvl || dSrs[a].due.localeCompare(dSrs[b].due)).map(k=>D_BYKEY[k]);
-  const items = due.concat(weakest).slice(0, D_PLAN.warm + D_PLAN.review - D_PLAN.bonus);
-
-  // Если изученных слов мало, пустые места занимает грамматика
-  const used = new Set(), themes = {};
+  const themes = {};
   const count = t=>{ const k = dThemeOf(t); if(k) themes[k] = (themes[k]||0) + 1; return t; };
-  const full = ty=> (themes[ty]||0) >= D_MAX_PER_THEME;
-  gram.forEach(count);
-  const fillTypes = dShuffle(D_BONUS_TYPES, rnd);
-  let fi = 0;
-  const filler = block=>{
-    for(let k=0; k<fillTypes.length; k++){
-      const ty = fillTypes[fi++ % fillTypes.length];
-      if(!full(ty)) return count(dGramTask(ty, rnd, block, used));
-    }
-    return count(dGramTask(fillTypes[fi++ % fillTypes.length], rnd, block, used));
-  };
-
+  const full = ty=> D_WORD_THEME[ty] && (themes[D_WORD_THEME[ty]]||0) >= D_MAX_PER_THEME;
   const tasks = [];
-  for(let k=0; k<D_PLAN.warm; k++){
-    tasks.push(items[k] ? dMakeMC(items[k], k%2 ? "ru-de" : "de-ru", "warm", rnd) : filler("warm"));
-  }
-  const revItems = items.slice(D_PLAN.warm);
-  let prevKey = tasks.length ? dTypeKey(tasks[tasks.length-1]) : "";
-  revItems.forEach((it, idx)=>{
-    const types = dTypesFor(it);
+  items.slice(0, D_PLAN.warm).forEach((it, k)=> tasks.push(dMakeMC(it, k%2 ? "ru-de" : "de-ru", "warm", rnd)));
+  let prevKey = "mc-" + (D_PLAN.warm%2 ? "de-ru" : "ru-de");
+  items.slice(D_PLAN.warm).forEach((it, idx)=>{
+    // Сначала грамматические типы (спряжение, Perfekt, артикль…), перевод — когда тема уже набрала два задания
+    const types = dTypesFor(it, true);
+    const off = Math.floor(rnd()*types.length);
     let task = null;
     for(let k=0; k<types.length && !task; k++){
-      const ty = types[(idx+k) % types.length];
-      const dir = prevKey==="mc-de-ru" ? "ru-de" : prevKey==="mc-ru-de" ? "de-ru" : (idx%2 ? "de-ru" : "ru-de");
+      const ty = types[(off+k) % types.length];
+      const dir = prevKey==="mc-de-ru" ? "ru-de" : "de-ru";
       const key = ty==="mc" ? "mc-"+dir : ty;
-      if(key!==prevKey && !(D_WORD_THEME[ty] && full(D_WORD_THEME[ty]))) task = dMakeTask(ty, it, "review", rnd, dir);
+      if(key!==prevKey && !full(ty)) task = dMakeTask(ty, it, "review", rnd, dir);
     }
-    task = task || dMakeTask(types.find(ty=> !(D_WORD_THEME[ty] && full(D_WORD_THEME[ty]))) || "mc", it, "review", rnd, "de-ru");
+    task = task || dMakeTask(types.find(ty=> !full(ty)) || "mc", it, "review", rnd, "de-ru");
     tasks.push(count(task));
     prevKey = dTypeKey(task);
   });
-  // Грамматика других тем, чем «Грамматика дня», равномерно вперемешку с повторением слов
-  const nFill = D_PLAN.review - revItems.length, revStart = tasks.length - revItems.length;
-  for(let k=0; k<nFill; k++){
-    const pos = revStart + Math.round((k+1) * (revItems.length + k + 1) / (nFill + 1));
-    tasks.splice(Math.min(pos, tasks.length), 0, filler("review"));
+
+  // Грамматика дня: две темы, по два задания; темы, уже набравшие два задания, пропускаем
+  const cand = dGramOfDay(today), free = cand.filter(x=> !(themes[x.type]||0));
+  const g = (free.length>=2 ? free : cand).slice(0,2);
+  [0,1,0,1].forEach(j=>{
+    const x = g[j % g.length];
+    tasks.push(count(Object.assign(dGramTask(x.type, rnd, "gram", used), {gLabel:x.label})));
+  });
+
+  // Финал: пары из следующих слов урока
+  const pairs = [], usedRu = new Set(), taken = new Set(items.map(i=> i.key));
+  for(let k=0; k<N && pairs.length<6; k++){
+    const i = order[(start + items.length + k) % N];
+    if(taken.has(i.key) || i.kind==="phrase" || i.ru.length>26 || i.de.length>18 || usedRu.has(i.ru)) continue;
+    usedRu.add(i.ru); pairs.push({de:i.de, ru:i.ru});
   }
-  tasks.push(...gram);
-  // «Грамматика дня» общая для всех и стоит после повторения — подсчёт тем уже учёл её в начале
-  for(let k=0; k<D_PLAN.slots; k++) tasks.push({type:"slot", block:"retry"});
-  tasks.push(shared.match);
-  return {tasks, gramLabel: shared.g.map(x=> x.label).join(" · "), used, themes};
+  tasks.push({type:"match", pairs, block:"match"});
+  return {tasks, gramLabel: g.map(x=> x.label).join(" · "), used, themes};
 }
 
 function dSrsUpdate(it, ok, hinted){
@@ -4184,6 +4166,7 @@ function dRenderTask(){
     dEl("dBlock").textContent = dBlockLabel(t);
   }
   const box = dEl("dTask");
+  if(t.type==="audio" && !D_TTS){ dRMC({type:"mc", dir:"de-ru", item:t.item, opts:t.opts, block:t.block}, box); window.scrollTo(0,0); return; }
   ({intro:dRIntro, mc:dRMC, input:dRInput, conj:dRConj, perf:dRPerf, art:dRArt, match:dRMatch,
     gap:dRGapMC, case:dRGapMC, vgap:dRVGap, order:dROrder, error:dRError, audio:dRAudio, situation:dRSituation,
     text:dRText, pick:dRPick})[t.type](t, box);
@@ -4597,30 +4580,27 @@ async function dShare(btn, res){
 
 function dRenderStart(){
   dS = null;
-  const today = dToday(), g = dGramOfDay(today), done = dStats.history[today], studied = dStudied().length;
+  const today = dToday(), built = dBuildSession(), done = dStats.history[today], studied = dStudied().length;
   dEl("dailyStart").innerHTML = `
     <h1 class="serif">Daily Challenge</h1>
-    <p class="sub">20 заданий на повторение изученных слов и грамматику, около 10 минут. «Грамматика дня» и финал у всех одинаковые — можно сравнить результат.</p>
+    <p class="sub">20 заданий, около 10 минут. Набор на день одинаковый у всех — можно сравнить результат. 80% заданий — слова и глаголы с урока, остальное — грамматика дня.</p>
     ${done ? `<div class="daily-done">Сегодня пройдено: <b>${done.score}/${done.total}</b></div>` : ""}
-    ${studied===0 ? `<div class="daily-note">Изученных слов пока нет, поэтому сегодня будет только грамматика. Новые слова учатся в «Горячей десятке», а Daily потом их повторяет.</div>` : ""}
     <div class="daily-stats">
       <div class="daily-stat"><div class="n">🔥 ${dStreakNow()}</div><div class="k">дней подряд</div></div>
-      <div class="daily-stat"><div class="n">${dDueKeys(today).length}</div><div class="k">к повторению</div></div>
+      <div class="daily-stat"><div class="n">${dLessonOrder().length}</div><div class="k">слов с урока</div></div>
       <div class="daily-stat"><div class="n">${studied}</div><div class="k">слов изучено</div></div>
     </div>
-    <div class="daily-gram">Грамматика дня: <b>${g.map(x=> x.label).join(" · ")}</b></div>
+    <div class="daily-gram">Грамматика дня: <b>${built.gramLabel}</b></div>
     <div class="daily-actions stack">
       <button class="primary" id="dGo">${done ? "Пройти ещё раз" : "Начать · 20 заданий"}</button>
-      ${studied===0 ? `<button id="dToHot">Сначала «Горячая десятка»</button>` : ""}
     </div>`;
   dEl("dGo").onclick = dStart;
-  if(dEl("dToHot")) dEl("dToHot").onclick = ()=> showScreen("screen-daily", "hot");
   dView("dailyStart");
 }
 function dUpdateHome(){
   const done = dStats.history[dToday()], st = dStreakNow();
   dEl("dailyHomeSub").textContent = done ? `Сегодня: ${done.score}/${done.total} ✓ · 🔥 ${st}`
-    : st ? `🔥 ${st} дн. подряд — не прерывай серию!` : "20 заданий на повторение · ~10 минут";
+    : st ? `🔥 ${st} дн. подряд — не прерывай серию!` : "20 заданий дня · ~10 минут";
   const hotToday = hStats.byDate[dToday()] || 0, studied = dStudied().length;
   dEl("hotHomeSub").textContent = hotToday ? `Сегодня +${hotToday} · изучено слов: ${studied}`
     : studied ? `Изучено слов: ${studied} · выучи ещё 10` : "10 новых слов: выучить и сразу применить";
