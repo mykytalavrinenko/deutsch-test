@@ -1510,6 +1510,11 @@ const LEX_LESSON_ADD = {
     {de:"die Geschäftsreise", ru:"командировка"}, {de:"die Leistung", ru:"достижение, результат"},
     {de:"die Veröffentlichung", ru:"публикация"}, {de:"die Zubereitung", ru:"приготовление"},
     {de:"die Pflege", ru:"уход (за больными, пожилыми)"}, {de:"der Arbeitsanfang", ru:"начало рабочего дня"},
+    {de:"der Vorgesetzte", ru:"начальник, руководитель (die Vorgesetzte — начальница)"},
+  ],
+  freizeit:[
+    {de:"das Zelt", ru:"палатка"}, {de:"die Isomatte", ru:"туристический коврик, каремат"},
+    {de:"das Schutzmittel", ru:"защитное средство (напр. спрей от комаров)"}, {de:"der Verein", ru:"клуб, объединение, общество"},
   ],
 };
 Object.keys(LEX_LESSON_ADD).forEach(k=>{
@@ -1532,6 +1537,7 @@ const LEX_LESSON_TOPICS = [
     {de:"das Studium", ru:"учёба в вузе"}, {de:"die Ausbildung", ru:"профессиональное обучение"},
     {de:"der Abschluss", ru:"окончание учёбы; диплом"}, {de:"die Zulassung", ru:"допуск, зачисление"},
     {de:"der Kurs", ru:"курс"}, {de:"der Wortschatz", ru:"словарный запас"},
+    {de:"die Gesamtschule", ru:"общеобразовательная школа (все типы школ в одной)"},
   ]},
   {key:"gefuehle", label:"Gefühle & Beziehungen", words:[
     {de:"die Beziehung", ru:"отношения"}, {de:"das Vertrauen", ru:"доверие"},
@@ -1573,7 +1579,21 @@ const LEX_LESSON_TOPICS = [
     {de:"manche", ru:"некоторые"}, {de:"verschieden", ru:"разный, различный"},
     {de:"unterschiedlich", ru:"неодинаковый, разный"}, {de:"vielfältig", ru:"разнообразный"},
     {de:"zweifellos", ru:"несомненно"}, {de:"normalerweise", ru:"обычно"},
+    {de:"empfindlich", ru:"чувствительный"}, {de:"fleißig", ru:"старательный, прилежный"},
+    {de:"glatt", ru:"гладкий; без проблем (Es lief alles glatt — всё прошло гладко)"}, {de:"köstlich", ru:"очень вкусный, восхитительный"},
+    {de:"voll", ru:"полный"}, {de:"dünn", ru:"тонкий; худой"},
+    {de:"schlank", ru:"стройный"}, {de:"niedrig", ru:"низкий"},
+    {de:"streng", ru:"строгий"}, {de:"blöd", ru:"глупый, дурацкий"},
+    {de:"meistens", ru:"чаще всего, в основном"},
     {de:"gewöhnlich", ru:"обычно; обычный"}, {de:"dazu", ru:"к этому, вдобавок"},
+  ]},
+  {key:"zeitleben", label:"Zeit & Leben", words:[
+    {de:"die Vergangenheit", ru:"прошлое"}, {de:"die Gegenwart", ru:"настоящее"},
+    {de:"die Zukunft", ru:"будущее"}, {de:"die Jugendzeit", ru:"юность"},
+    {de:"der Jugendliche", ru:"подросток, молодой человек (die Jugendliche — девушка)"}, {de:"die Pflicht", ru:"обязанность, долг"},
+    {de:"der Vorteil", ru:"преимущество"}, {de:"der Nachteil", ru:"недостаток"},
+    {de:"die Lage", ru:"положение, ситуация; расположение (района)"}, {de:"die Bewegung", ru:"движение"},
+    {de:"die Zustandsänderung", ru:"изменение состояния"},
   ]},
   {key:"sonstiges", label:"Alltag & Sonstiges", words:[
     {de:"der Laden", ru:"магазин, лавка"}, {de:"das Geschäft", ru:"магазин; дело, бизнес"},
@@ -1596,7 +1616,8 @@ LEX_LESSON_TOPICS.forEach(t=>{ t.words = t.words.map(w=>({...w, u:1})); LEX_TOPI
 
 // Слова, которые уже были на сайте и тоже звучали на уроке
 const LEX_LESSON_EXISTING = ["der Kopf","der Bauch","das Bein","der Arm","die Hand","das Auge","die Nase","der Mund",
-  "das Ohr","der Rücken","die Erkältung","die Schmerzen","der Arzt","die Bewerbung","der Lebenslauf"];
+  "das Ohr","der Rücken","die Erkältung","die Schmerzen","der Arzt","die Bewerbung","der Lebenslauf",
+  "der Chef","das Gehalt","die Erfahrung","der Wettbewerb"];
 LEX_TOPICS.forEach(t=> t.words.forEach(w=>{ if(LEX_LESSON_EXISTING.includes(w.de)) w.u = 1; }));
 
 LEX_TOPICS.find(t=>t.key==="koerper").intro = `
@@ -1898,6 +1919,9 @@ PHRASES.push(...[
   {de:"Ich bin gerade beschäftigt.", ru:"Я сейчас занят(а).", cat:"meinung", note:"mit etwas beschäftigt sein — быть занятым чем-то"},
   {de:"Sei gesund!", ru:"Будь здоров(а)!", cat:"alltag", note:"пожелание; когда чихают, говорят «Gesundheit!»"},
   {de:"Pech gehabt!", ru:"Не повезло!", cat:"alltag"},
+  {de:"Kannst du mir einen Gefallen tun?", ru:"Можешь сделать мне одолжение?", cat:"hoeflich", note:"jemandem einen Gefallen tun — сделать кому-то одолжение"},
+  {de:"Das wäre alles.", ru:"Это всё (больше ничего не нужно).", cat:"hoeflich", note:"вежливо в магазине или кафе — Konjunktiv II от sein"},
+  {de:"Ich weiß es nicht mehr.", ru:"Я уже не помню.", cat:"alltag", note:"дословно: «я этого больше не знаю»"},
 ].map(p=>({...p, u:1})));
 const PHRASE_LESSON_EXISTING = ["außerdem","deshalb","trotzdem","sowieso","im Gegenteil"];
 PHRASES.forEach(p=>{ if(PHRASE_LESSON_EXISTING.includes(p.de)) p.u = 1; });
@@ -2550,6 +2574,36 @@ const VERBS_LESSON = [
    ich:"säume", du:"säumst", er:"säumt", wir:"säumen", ihr:"säumt", sie:"säumen",
    perf:["hat","gesäumt"], ex:"Bäume säumen die Straße.", exRu:"Деревья обрамляют улицу."},
 
+  {inf:"segeln", ru:"ходить под парусом", cat:"reg", sep:false,
+   ich:"segle", du:"segelst", er:"segelt", wir:"segeln", ihr:"segelt", sie:"segeln",
+   perf:["ist","gesegelt"], ex:"Im Sommer sind wir auf dem See gesegelt.", exRu:"Летом мы ходили под парусом по озеру."},
+  {inf:"landen", ru:"приземляться", cat:"reg", sep:false,
+   ich:"lande", du:"landest", er:"landet", wir:"landen", ihr:"landet", sie:"landen",
+   perf:["ist","gelandet"], ex:"Das Flugzeug ist pünktlich gelandet.", exRu:"Самолёт приземлился вовремя."},
+  {inf:"tauchen", ru:"нырять", cat:"reg", sep:false,
+   ich:"tauche", du:"tauchst", er:"taucht", wir:"tauchen", ihr:"taucht", sie:"tauchen",
+   perf:["ist","getaucht"], ex:"Im Urlaub sind wir im Meer getaucht.", exRu:"В отпуске мы ныряли в море."},
+  {inf:"wandern", ru:"ходить в поход, путешествовать пешком (в горах)", cat:"reg", sep:false,
+   ich:"wandere", du:"wanderst", er:"wandert", wir:"wandern", ihr:"wandert", sie:"wandern",
+   perf:["ist","gewandert"], ex:"Am Wochenende sind wir in den Bergen gewandert.", exRu:"На выходных мы ходили в поход в горы."},
+  {inf:"beobachten", ru:"наблюдать", cat:"reg", sep:false,
+   ich:"beobachte", du:"beobachtest", er:"beobachtet", wir:"beobachten", ihr:"beobachtet", sie:"beobachten",
+   perf:["hat","beobachtet"], ex:"Ich beobachte gern die Vögel im Park.", exRu:"Я люблю наблюдать за птицами в парке."},
+  {inf:"betrachten", ru:"рассматривать", cat:"reg", sep:false,
+   ich:"betrachte", du:"betrachtest", er:"betrachtet", wir:"betrachten", ihr:"betrachtet", sie:"betrachten",
+   perf:["hat","betrachtet"], ex:"Sie betrachtet das Bild ganz genau.", exRu:"Она очень внимательно рассматривает картину."},
+  {inf:"beachten", ru:"обращать внимание, соблюдать", cat:"reg", sep:false,
+   ich:"beachte", du:"beachtest", er:"beachtet", wir:"beachten", ihr:"beachtet", sie:"beachten",
+   perf:["hat","beachtet"], ex:"Bitte beachten Sie die Regeln.", exRu:"Пожалуйста, соблюдайте правила."},
+  {inf:"vermissen", ru:"скучать (по кому-то)", cat:"reg", sep:false,
+   ich:"vermisse", du:"vermisst", er:"vermisst", wir:"vermissen", ihr:"vermisst", sie:"vermissen",
+   perf:["hat","vermisst"], ex:"Ich vermisse dich sehr.", exRu:"Я очень по тебе скучаю."},
+  {inf:"drehen", ru:"крутить, поворачивать; sich drehen — крутиться", cat:"reg", sep:false,
+   ich:"drehe", du:"drehst", er:"dreht", wir:"drehen", ihr:"dreht", sie:"drehen",
+   perf:["hat","gedreht"], ex:"Die Erde dreht sich um die Sonne.", exRu:"Земля вращается вокруг Солнца."},
+  {inf:"erwähnen", ru:"упоминать", cat:"reg", sep:false,
+   ich:"erwähne", du:"erwähnst", er:"erwähnt", wir:"erwähnen", ihr:"erwähnt", sie:"erwähnen",
+   perf:["hat","erwähnt"], ex:"Er hat das Problem nicht erwähnt.", exRu:"Он не упомянул эту проблему."},
   // Unregelmäßig
   {inf:"erfrieren", ru:"замёрзнуть; отморозить", cat:"unreg", sep:false,
    ich:"erfriere", du:"erfrierst", er:"erfriert", wir:"erfrieren", ihr:"erfriert", sie:"erfrieren",
@@ -2600,6 +2654,60 @@ const VERBS_LESSON = [
    ich:"schlage", du:"schlägst", er:"schlägt", wir:"schlagen", ihr:"schlagt", sie:"schlagen",
    perf:["hat","geschlagen"], ex:"Mein Herz schlägt schnell.", exRu:"Моё сердце бьётся быстро."},
 
+  {inf:"reiten", ru:"ездить верхом", cat:"unreg", sep:false,
+   ich:"reite", du:"reitest", er:"reitet", wir:"reiten", ihr:"reitet", sie:"reiten",
+   perf:["ist","geritten"], ex:"Als Kind bin ich oft geritten.", exRu:"В детстве я часто ездил(а) верхом."},
+  {inf:"springen", ru:"прыгать", cat:"unreg", sep:false,
+   ich:"springe", du:"springst", er:"springt", wir:"springen", ihr:"springt", sie:"springen",
+   perf:["ist","gesprungen"], ex:"Der Hund ist über den Zaun gesprungen.", exRu:"Собака перепрыгнула через забор."},
+  {inf:"geschehen", ru:"происходить, случаться (обычно es geschieht)", cat:"unreg", sep:false, impers:true,
+   ich:"geschehe", du:"geschiehst", er:"geschieht", wir:"geschehen", ihr:"gescheht", sie:"geschehen",
+   perf:["ist","geschehen"], ex:"Was ist hier geschehen?", exRu:"Что здесь произошло?"},
+  {inf:"erscheinen", ru:"появляться; выходить (о книге, фильме)", cat:"unreg", sep:false,
+   ich:"erscheine", du:"erscheinst", er:"erscheint", wir:"erscheinen", ihr:"erscheint", sie:"erscheinen",
+   perf:["ist","erschienen"], ex:"Das Buch ist letztes Jahr erschienen.", exRu:"Книга вышла в прошлом году."},
+  {inf:"erschrecken", ru:"пугаться (erschrickt, erschrak, ist erschrocken)", cat:"unreg", sep:false,
+   ich:"erschrecke", du:"erschrickst", er:"erschrickt", wir:"erschrecken", ihr:"erschreckt", sie:"erschrecken",
+   perf:["ist","erschrocken"], ex:"Ich bin furchtbar erschrocken!", exRu:"Я ужасно испугался/испугалась!"},
+  {inf:"ertrinken", ru:"тонуть (насмерть)", cat:"unreg", sep:false,
+   ich:"ertrinke", du:"ertrinkst", er:"ertrinkt", wir:"ertrinken", ihr:"ertrinkt", sie:"ertrinken",
+   perf:["ist","ertrunken"], ex:"Zum Glück ist niemand ertrunken.", exRu:"К счастью, никто не утонул."},
+  {inf:"empfehlen", ru:"рекомендовать, советовать", cat:"unreg", sep:false,
+   ich:"empfehle", du:"empfiehlst", er:"empfiehlt", wir:"empfehlen", ihr:"empfehlt", sie:"empfehlen",
+   perf:["hat","empfohlen"], ex:"Können Sie mir ein gutes Restaurant empfehlen?", exRu:"Можете посоветовать мне хороший ресторан?"},
+  {inf:"empfinden", ru:"чувствовать, ощущать, воспринимать", cat:"unreg", sep:false,
+   ich:"empfinde", du:"empfindest", er:"empfindet", wir:"empfinden", ihr:"empfindet", sie:"empfinden",
+   perf:["hat","empfunden"], ex:"Wie empfindest du die Situation?", exRu:"Как ты воспринимаешь эту ситуацию?"},
+  {inf:"zerbrechen", ru:"разбивать; разбиваться", cat:"unreg", sep:false,
+   ich:"zerbreche", du:"zerbrichst", er:"zerbricht", wir:"zerbrechen", ihr:"zerbrecht", sie:"zerbrechen",
+   perf:["hat","zerbrochen"], ex:"Ich habe die Tasse zerbrochen.", exRu:"Я разбил(а) чашку."},
+  {inf:"zerreißen", ru:"разрывать", cat:"unreg", sep:false,
+   ich:"zerreiße", du:"zerreißt", er:"zerreißt", wir:"zerreißen", ihr:"zerreißt", sie:"zerreißen",
+   perf:["hat","zerrissen"], ex:"Er hat den Brief zerrissen.", exRu:"Он разорвал письмо."},
+  {inf:"gelingen", ru:"удаваться (es gelingt mir — мне удаётся)", cat:"unreg", sep:false, impers:true,
+   ich:"gelinge", du:"gelingst", er:"gelingt", wir:"gelingen", ihr:"gelingt", sie:"gelingen",
+   perf:["ist","gelungen"], ex:"Der Kuchen ist mir gut gelungen.", exRu:"Пирог мне хорошо удался."},
+  {inf:"misslingen", ru:"не удаваться", cat:"unreg", sep:false, impers:true,
+   ich:"misslinge", du:"misslingst", er:"misslingt", wir:"misslingen", ihr:"misslingt", sie:"misslingen",
+   perf:["ist","misslungen"], ex:"Der Versuch ist leider misslungen.", exRu:"Попытка, к сожалению, не удалась."},
+  {inf:"missverstehen", ru:"неправильно понять", cat:"unreg", sep:false,
+   ich:"missverstehe", du:"missverstehst", er:"missversteht", wir:"missverstehen", ihr:"missversteht", sie:"missverstehen",
+   perf:["hat","missverstanden"], ex:"Entschuldigung, ich habe dich missverstanden.", exRu:"Извини, я тебя неправильно понял(а)."},
+  {inf:"vermeiden", ru:"избегать", cat:"unreg", sep:false,
+   ich:"vermeide", du:"vermeidest", er:"vermeidet", wir:"vermeiden", ihr:"vermeidet", sie:"vermeiden",
+   perf:["hat","vermieden"], ex:"Ich versuche, Stress zu vermeiden.", exRu:"Я стараюсь избегать стресса."},
+  {inf:"entkommen", ru:"убежать, спастись (от кого-то)", cat:"unreg", sep:false,
+   ich:"entkomme", du:"entkommst", er:"entkommt", wir:"entkommen", ihr:"entkommt", sie:"entkommen",
+   perf:["ist","entkommen"], ex:"Der Dieb ist der Polizei entkommen.", exRu:"Вор сбежал от полиции."},
+  {inf:"betreten", ru:"входить, ступать (на)", cat:"unreg", sep:false,
+   ich:"betrete", du:"betrittst", er:"betritt", wir:"betreten", ihr:"betretet", sie:"betreten",
+   perf:["hat","betreten"], ex:"Bitte betreten Sie den Rasen nicht.", exRu:"Пожалуйста, не ходите по газону."},
+  {inf:"beschließen", ru:"решать, принимать решение", cat:"unreg", sep:false,
+   ich:"beschließe", du:"beschließt", er:"beschließt", wir:"beschließen", ihr:"beschließt", sie:"beschließen",
+   perf:["hat","beschlossen"], ex:"Wir haben beschlossen, nach Berlin zu ziehen.", exRu:"Мы решили переехать в Берлин."},
+  {inf:"überspringen", ru:"перепрыгнуть; пропустить, скипнуть", cat:"unreg", sep:false,
+   ich:"überspringe", du:"überspringst", er:"überspringt", wir:"überspringen", ihr:"überspringt", sie:"überspringen",
+   perf:["hat","übersprungen"], ex:"Diese Aufgabe kannst du überspringen.", exRu:"Это задание можешь пропустить."},
   // Trennbar
   {inf:"ablenken", ru:"отвлекать", cat:"trenn", sep:true,
    ich:"lenke ab", du:"lenkst ab", er:"lenkt ab", wir:"lenken ab", ihr:"lenkt ab", sie:"lenken ab",
@@ -2650,6 +2758,12 @@ const VERBS_LESSON = [
    ich:"probiere an", du:"probierst an", er:"probiert an", wir:"probieren an", ihr:"probiert an", sie:"probieren an",
    perf:["hat","anprobiert"], ex:"Kann ich die Hose anprobieren?", exRu:"Можно примерить брюки?"},
 
+  {inf:"abschließen", ru:"заканчивать, завершать; запирать на ключ", cat:"trenn", sep:true,
+   ich:"schließe ab", du:"schließt ab", er:"schließt ab", wir:"schließen ab", ihr:"schließt ab", sie:"schließen ab",
+   perf:["hat","abgeschlossen"], ex:"Sie hat ihr Studium abgeschlossen.", exRu:"Она окончила учёбу."},
+  {inf:"eintreffen", ru:"прибывать", cat:"trenn", sep:true,
+   ich:"treffe ein", du:"triffst ein", er:"trifft ein", wir:"treffen ein", ihr:"trefft ein", sie:"treffen ein",
+   perf:["ist","eingetroffen"], ex:"Der Zug trifft um zehn Uhr ein.", exRu:"Поезд прибывает в десять часов."},
   // Reflexiv
   {inf:"sich melden", ru:"дать о себе знать; записаться", cat:"refl", sep:false, refl:true,
    ich:"melde mich", du:"meldest dich", er:"meldet sich", wir:"melden uns", ihr:"meldet euch", sie:"melden sich",
@@ -2678,9 +2792,11 @@ VERBS.push(...VERBS_LESSON.map(v=>({...v, u:1})));
 // Глаголы, которые уже были на сайте и звучали на уроке
 const VERBS_LESSON_EXISTING = ["atmen","verlieren","sich beeilen","sich bewerben","versuchen","sich ausruhen",
   "sich entspannen","husten","schaffen","dauern","denken","verdienen","anfangen","mieten","einladen",
-  "tragen","fallen","putzen","sterben","gewinnen","kaufen"];
+  "tragen","fallen","putzen","sterben","gewinnen","kaufen",
+  "wachsen","passieren","werden","entwickeln","aufhören","verstecken","genießen"];
 VERBS.forEach(v=>{ if(VERBS_LESSON_EXISTING.includes(v.inf)) v.u = 1; });
 VERBS.find(v=>v.inf==="verdienen").ru = "зарабатывать; заслуживать";
+VERBS.find(v=>v.inf==="verstecken").ru = "прятать; sich verstecken — прятаться";
 VERBS.find(v=>v.inf==="schaffen").ru = "справляться, успевать; создавать (schuf, geschaffen)";
 
 VERBS.forEach((v,i)=>v.id=i);
@@ -3759,7 +3875,7 @@ function dMakeJoin(rnd, block, used){
 }
 
 // Imperativ: формы для du / ihr / Sie строим из спряжения
-const D_IMP_VERBS = VERBS.filter(v=> !["grund","modal"].includes(v.cat) && !v.refl && v.inf!=="wissen"
+const D_IMP_VERBS = VERBS.filter(v=> !["grund","modal"].includes(v.cat) && !v.refl && !v.impers && v.inf!=="wissen"
   && (!v.sep || v.ich.split(" ").length===2));
 function dImpForms(v){
   const prefix = v.sep ? v.ich.split(" ")[1] : "";
@@ -3847,7 +3963,7 @@ function dGramTask(type, rnd, block, used){
 }
 function dGramTask0(type, rnd, block, used){
   switch(type){
-    case "conj":  return {type:"conj", item:dPickUnused(D_VERBS, rnd, used, i=>i.key), person:dPick(PERSONS, rnd), block};
+    case "conj":  return {type:"conj", item:dPickUnused(D_VERBS.filter(i=> !i.verb.impers), rnd, used, i=>i.key), person:dPick(PERSONS, rnd), block};
     case "perf":  return {type:"perf", item:dPickUnused(D_PERF_VERBS, rnd, used, i=>i.key), block};
     case "art":   return {type:"art", item:dPickUnused(D_NOUNS, rnd, used, i=>i.key), block};
     case "vgap":  { const it = dPickUnused(D_VGAP_ITEMS, rnd, used, i=>i.key); return {type:"vgap", item:it, gap:D_VGAPS.get(it.key), block}; }
@@ -3881,7 +3997,7 @@ function dMakeTask(ty, it, block, rnd, dir){
 function dTypesFor(it){
   const t = [];
   if(it.kind==="verb"){
-    t.push("conj");
+    if(!it.verb.impers) t.push("conj");
     if(D_VGAPS.has(it.key)) t.push("vgap");
     t.push("input");
     if(it.verb.perf) t.push("perf");
